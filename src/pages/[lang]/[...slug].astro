@@ -1,0 +1,52 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import DefaultLayout from "../../layouts/DefaultLayout.astro";
+
+export async function getStaticPaths() {
+  const poems = await getCollection("poems", (p) => !p.data.draft);
+  return poems.map((p) => ({
+    params: { lang: p.data.lang, slug: p.slug },
+    props: { poem: p },
+  }));
+}
+
+const { poem } = Astro.props;
+const { Content } = await poem.render();
+
+const translation = poem.data.translation
+  ? await getEntry("poems", poem.data.translation)
+  : null;
+---
+
+<DefaultLayout title={poem.data.title} lang={poem.data.lang}>
+  <article class="prose mx-auto">
+    <h1>{poem.data.title}</h1>
+    <p>
+      <time datetime={poem.data.date.toISOString()}>
+        {
+          poem.data.date.toLocaleDateString(poem.data.lang, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        }
+      </time>
+    </p>
+
+    <Content />
+
+    {
+      translation && (
+        <footer>
+          <hr />
+          <p>
+            {poem.data.lang === "es"
+              ? "También disponible en inglés:"
+              : "Also available in Spanish:"}{" "}
+            <a href={`/${translation.slug}/`}>{translation.data.title}</a>
+          </p>
+        </footer>
+      )
+    }
+  </article>
+</DefaultLayout>

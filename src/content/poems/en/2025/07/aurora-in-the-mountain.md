@@ -1,6 +1,9 @@
 ---
 title: "Aurora in the Mountain"
 date: 2025-07-31
+lang: en
+translation: "es/2025/07/aurora-en-la-montana"
+draft: false
 ---
 
 The mist dances on the summit,  

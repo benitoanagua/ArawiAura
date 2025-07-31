@@ -1,6 +1,9 @@
 ---
 title: "River of Memories"
 date: 2025-07-31
+lang: en
+translation: "es/2025/07/rio-de-recuerdos"
+draft: false
 ---
 
 The river runs among the stones,  

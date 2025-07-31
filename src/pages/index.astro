@@ -1,34 +1,5 @@
 ---
-import DefaultLayout from "../layouts/DefaultLayout.astro";
-import { getCollection } from "astro:content";
-
-const poems = await getCollection("poems");
-
-// Renderiza todos los contenidos de los poemas antes de pasarlos al HTML
-const poemContents = await Promise.all(
-  poems.map(async (poem) => {
-    const { Content } = await poem.render();
-    return {
-      title: poem.data.title,
-      date: poem.data.date,
-      Content,
-    };
-  })
-);
+const accepted = Astro.request.headers.get("accept-language") || "";
+const lang = accepted.includes("es") ? "es" : "en";
+return Astro.redirect(`/${lang}/`);
 ---
-
-<DefaultLayout title="Poems">
-  <ul class="prose">
-    {
-      poemContents.map(({ title, date, Content }) => (
-        <li>
-          <h2>{title}</h2>
-          <p>
-            <em>{date}</em>
-          </p>
-          <Content />
-        </li>
-      ))
-    }
-  </ul>
-</DefaultLayout>

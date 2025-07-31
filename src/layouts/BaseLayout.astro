@@ -1,9 +1,9 @@
 ---
 import "../styles/global.css";
-const { title = "Astro Site" } = Astro.props;
+const { title = "Astro Site", lang = "es" } = Astro.props;
 ---
 
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
