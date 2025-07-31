@@ -1,6 +1,9 @@
 ---
 import "../styles/global.css";
-const { title = "Astro Site", lang = "es" } = Astro.props;
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const { title = "Arawi Aura", lang = "en" } = Astro.props;
 ---
 
 <html lang={lang}>
@@ -11,14 +14,10 @@ const { title = "Astro Site", lang = "es" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot name="header" />
+    <Header {title} {lang} />
     <main class="container mx-auto">
       <slot />
     </main>
-    <slot name="footer">
-      <footer>
-        <small>&copy; {new Date().getFullYear()} Astro Site</small>
-      </footer>
-    </slot>
+    <Footer {lang} />
   </body>
 </html>

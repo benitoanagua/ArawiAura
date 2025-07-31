@@ -1,0 +1,53 @@
+---
+export interface Props {
+  title?: string;
+  lang: "en" | "es";
+}
+const { title = "Arawi Aura", lang } = Astro.props;
+
+const nav = {
+  en: [
+    { label: "Home", href: "/en/" },
+    { label: "About", href: "/en/about/" },
+    { label: "Poems", href: "/en/" },
+    { label: "Archive", href: "/en/archive/" },
+    { label: "Contact", href: "/en/contact/" },
+  ],
+  es: [
+    { label: "Inicio", href: "/es/" },
+    { label: "Acerca", href: "/es/about/" },
+    { label: "Poemas", href: "/es/" },
+    { label: "Archivo", href: "/es/archive/" },
+    { label: "Contacto", href: "/es/contact/" },
+  ],
+}[lang];
+---
+
+<header class="border-b border-stone-200 dark:border-stone-800">
+  <nav class="container mx-auto flex items-center justify-between py-4 px-6">
+    <a href={`/${lang}/`} class="text-2xl font-serif tracking-tight">
+      {title}
+    </a>
+
+    <ul class="flex gap-x-6 text-sm uppercase tracking-wider">
+      {
+        nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="hover:text-teal-600 transition-colors duration-200"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="flex gap-x-2 text-sm">
+      <a href="/en/" class={lang === "en" ? "font-bold" : ""}>EN</a>
+      <span>/</span>
+      <a href="/es/" class={lang === "es" ? "font-bold" : ""}>ES</a>
+    </div>
+  </nav>
+</header>

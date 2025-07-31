@@ -1,0 +1,24 @@
+---
+export interface Props {
+  lang: "en" | "es";
+}
+const { lang } = Astro.props;
+
+const text = {
+  en: {
+    rights: "© 2025 Arawi Aura. All rights reserved.",
+    quote: "Poetry is in the people. Praise the people. —Amanda Johnston",
+  },
+  es: {
+    rights: "© 2025 Arawi Aura. Todos los derechos reservados.",
+    quote: "La poesía está en la gente. Alaba a la gente. —Amanda Johnston",
+  },
+}[lang];
+---
+
+<footer class="border-t border-stone-200 dark:border-stone-800 mt-20">
+  <div class="container mx-auto py-8 px-6 text-center text-sm">
+    <p class="italic mb-2">{text.quote}</p>
+    <p>{text.rights}</p>
+  </div>
+</footer>
