@@ -1,16 +1,34 @@
 ---
+import DefaultLayout from "../layouts/DefaultLayout.astro";
+import { getCollection } from "astro:content";
 
+const poems = await getCollection("poems");
+
+// Renderiza todos los contenidos de los poemas antes de pasarlos al HTML
+const poemContents = await Promise.all(
+  poems.map(async (poem) => {
+    const { Content } = await poem.render();
+    return {
+      title: poem.data.title,
+      date: poem.data.date,
+      Content,
+    };
+  })
+);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<DefaultLayout title="Poems">
+  <ul>
+    {
+      poemContents.map(({ title, date, Content }) => (
+        <li>
+          <h2>{title}</h2>
+          <p>
+            <em>{date}</em>
+          </p>
+          <Content />
+        </li>
+      ))
+    }
+  </ul>
+</DefaultLayout>
