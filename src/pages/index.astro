@@ -18,7 +18,7 @@ const poemContents = await Promise.all(
 ---
 
 <DefaultLayout title="Poems">
-  <ul>
+  <ul class="prose">
     {
       poemContents.map(({ title, date, Content }) => (
         <li>
