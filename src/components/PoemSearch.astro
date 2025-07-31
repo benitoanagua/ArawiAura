@@ -1,0 +1,19 @@
+---
+import PoemSearchSvelte from "./PoemSearch.svelte";
+
+export interface Props {
+  lang: "es" | "en";
+}
+const { lang } = Astro.props;
+
+// Carga solo los poemas que necesitamos (reduce bundle)
+const poems = await Astro.glob("../content/poems/**/*.md");
+const data = poems.map((m) => ({
+  slug: m.file.split("/").slice(-4).join("/").replace(".md", ""),
+  title: m.frontmatter.title,
+  lang: m.frontmatter.lang,
+  body: m.rawContent(),
+}));
+---
+
+<PoemSearchSvelte client:only="svelte" poems={data} lang={lang} />
