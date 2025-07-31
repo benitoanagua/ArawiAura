@@ -1,5 +1,6 @@
 ---
-const accepted = Astro.request.headers.get("accept-language") || "";
-const lang = accepted.includes("es") ? "es" : "en";
+const lang = (Astro.request.headers.get("accept-language") || "").includes("es")
+  ? "es"
+  : "en";
 return Astro.redirect(`/${lang}/`);
 ---

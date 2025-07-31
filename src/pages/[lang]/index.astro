@@ -4,32 +4,40 @@ import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
   const langs = ["es", "en"] as const;
-  return langs.map((lang) => ({
-    params: { lang },
-    props: { lang },
-  }));
+
+  return await Promise.all(
+    langs.map(async (lang) => {
+      const poems = await getCollection(
+        "poems",
+        (p) => p.data.lang === lang && !p.data.draft
+      );
+
+      // Agrupamos por año y mes directamente aquí
+      const grouped = poems.reduce<
+        Record<string, Record<string, typeof poems>>
+      >((acc, poem) => {
+        const year = poem.data.date.getFullYear().toString();
+        const month = (poem.data.date.getMonth() + 1)
+          .toString()
+          .padStart(2, "0");
+        acc[year] ||= {};
+        acc[year][month] ||= [];
+        acc[year][month].push(poem);
+        return acc;
+      }, {});
+
+      return {
+        params: { lang },
+        props: { lang, grouped },
+      };
+    })
+  );
 }
 
-const { lang } = Astro.props;
-const poems = await getCollection(
-  "poems",
-  (p) => p.data.lang === lang && !p.data.draft
-);
-
-const grouped = poems.reduce<Record<string, Record<string, typeof poems>>>(
-  (acc, poem) => {
-    const year = poem.data.date.getFullYear().toString();
-    const month = (poem.data.date.getMonth() + 1).toString().padStart(2, "0");
-    acc[year] ||= {};
-    acc[year][month] ||= [];
-    acc[year][month].push(poem);
-    return acc;
-  },
-  {}
-);
+const { lang, grouped } = Astro.props;
 ---
 
-<DefaultLayout title={lang === "es" ? "Poemas" : "Poems"} {lang}>
+<DefaultLayout {lang}>
   <div class="prose mx-auto">
     {
       Object.entries(grouped)
@@ -47,14 +55,18 @@ const grouped = poems.reduce<Record<string, Record<string, typeof poems>>>(
                       Number(month) - 1
                     ).toLocaleDateString(lang, { month: "long" })}
                   </h3>
-                  <ul>
+                  <ul class="space-y-4">
                     {poems.map((p) => (
-                      <li>
-                        <a href={`/${lang}/${p.slug}/`}>{p.data.title}</a>
+                      <li class="border-l-2 pl-4">
+                        <a href={`/${p.slug}/`} class="text-xl font-semibold">
+                          {p.data.title}
+                        </a>
                         <br />
-                        <small>{p.data.date.toLocaleDateString(lang)}</small>
+                        <small class="text-gray-500">
+                          {p.data.date.toLocaleDateString(lang)}
+                        </small>
                         {p.data.translation && (
-                          <small>
+                          <small class="ml-2">
                             {" · "}
                             <a href={`/${p.data.translation}/`}>
                               {lang === "es" ? "en inglés" : "in Spanish"}

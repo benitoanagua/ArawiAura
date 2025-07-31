@@ -1,0 +1,52 @@
+---
+// src/pages/[...slug].astro
+import { getCollection } from "astro:content";
+import DefaultLayout from "../layouts/DefaultLayout.astro";
+
+export async function getStaticPaths() {
+  const poems = await getCollection("poems", (p) => !p.data.draft);
+
+  return poems.map((poem) => ({
+    params: {
+      // keep it a single string -> Astro splits it internally
+      slug: poem.slug, // "en/2025/07/song-of-the-earth"
+    },
+    props: { poem },
+  }));
+}
+
+const { poem } = Astro.props;
+const { Content } = await poem.render();
+---
+
+<DefaultLayout lang={poem.data.lang}>
+  <article class="prose mx-auto">
+    <h1>{poem.data.title}</h1>
+    <time datetime={poem.data.date.toISOString()}>
+      {
+        poem.data.date.toLocaleDateString(poem.data.lang, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      }
+    </time>
+
+    <Content />
+
+    {
+      poem.data.translation && (
+        <footer class="mt-12 pt-4 border-t">
+          <p>
+            {poem.data.lang === "es"
+              ? "También disponible en inglés:"
+              : "Also available in Spanish:"}{" "}
+            <a href={`/${poem.data.translation}/`}>
+              {poem.data.lang === "es" ? "Read translation" : "Leer traducción"}
+            </a>
+          </p>
+        </footer>
+      )
+    }
+  </article>
+</DefaultLayout>
