@@ -2,25 +2,8 @@
   import { fade, fly } from "svelte/transition";
 
   export let lang: "es" | "en";
-  export let title: string = "Arawi Aura";
-
-  const nav = {
-    en: [
-      { label: "Home", href: "/en/" },
-      { label: "About", href: "/en/about/" },
-      { label: "Poems", href: "/en/" },
-      { label: "Archive", href: "/en/archive/" },
-      { label: "Contact", href: "/en/contact/" },
-    ],
-    es: [
-      { label: "Inicio", href: "/es/" },
-      { label: "Acerca", href: "/es/about/" },
-      { label: "Poemas", href: "/es/" },
-      { label: "Archivo", href: "/es/archive/" },
-      { label: "Contacto", href: "/es/contact/" },
-    ],
-  }[lang];
-
+  export let title: string;
+  export let nav: Array<{ label: string; href: string }>;
   let open = false;
 </script>
 

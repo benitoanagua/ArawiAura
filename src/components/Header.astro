@@ -1,6 +1,28 @@
 ---
 import HeaderSvelte from "./Header.svelte";
-const { lang } = Astro.props;
+
+export interface Props {
+  lang: "es" | "en";
+  title?: string;
+}
+const { lang, title = "Arawi Aura" } = Astro.props;
+
+const nav = {
+  en: [
+    { label: "Home", href: "/en/" },
+    { label: "About", href: "/en/about/" },
+    { label: "Poems", href: "/en/" },
+    { label: "Archive", href: "/en/archive/" },
+    { label: "Contact", href: "/en/contact/" },
+  ],
+  es: [
+    { label: "Inicio", href: "/es/" },
+    { label: "Acerca", href: "/es/about/" },
+    { label: "Poemas", href: "/es/" },
+    { label: "Archivo", href: "/es/archive/" },
+    { label: "Contacto", href: "/es/contact/" },
+  ],
+}[lang];
 ---
 
-<HeaderSvelte client:only="svelte" {lang} />
+<HeaderSvelte client:only="svelte" {lang} {title} {nav} />

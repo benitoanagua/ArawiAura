@@ -6,14 +6,16 @@ export interface Props {
 }
 const { lang } = Astro.props;
 
-// Carga solo los poemas que necesitamos (reduce bundle)
-const poems = await Astro.glob("../content/poems/**/*.md");
-const data = poems.map((m) => ({
-  slug: m.file.split("/").slice(-4).join("/").replace(".md", ""),
-  title: m.frontmatter.title,
-  lang: m.frontmatter.lang,
-  body: m.rawContent(),
+const rawModules = import.meta.glob("../content/poems/**/*.md", {
+  eager: true,
+});
+
+const data = Object.entries(rawModules).map(([filePath, mod]) => ({
+  slug: filePath.replace("../content/poems/", "").replace(".md", ""),
+  title: (mod as any).frontmatter.title,
+  lang: (mod as any).frontmatter.lang,
+  body: (mod as any).rawContent?.() ?? "",
 }));
 ---
 
-<PoemSearchSvelte client:only="svelte" poems={data} lang={lang} />
+<PoemSearchSvelte client:only="svelte" {lang} poems={data} />
