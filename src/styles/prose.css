@@ -98,7 +98,7 @@
       color: var(--prose-code);
       font-size: 0.875em;
       font-weight: 600;
-      font-family: theme(fontFamily.mono);
+      font-family: monospace;
     }
 
     & pre {
