@@ -7,22 +7,27 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "lint:css": "stylelint src/**/*.{css,astro,svelte,scss}",
+    "lint:css": "stylelint src/**/*.{css,astro,tsx,scss}",
     "lint:css:fix": "pnpm lint:css --fix"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/svelte": "^7.1.0",
-    "@tailwindcss/vite": "^4.1.11",
-    "astro": "^5.12.3",
-    "svelte": "^5.37.1",
-    "tailwindcss": "^4.1.11",
+    "@astrojs/markdoc": "^0.15.5",
+    "@astrojs/react": "^4.3.0",
+    "@keystatic/astro": "^5.0.6",
+    "@keystatic/core": "^0.5.48",
+    "@tailwindcss/vite": "^4.1.12",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "astro": "^5.13.5",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2"
   },
   "devDependencies": {
-    "stylelint": "^16.23.0",
+    "stylelint": "^16.23.1",
     "stylelint-config-astro": "^1.0.4",
-    "stylelint-config-standard": "^39.0.0",
-    "svelte-check": "^4.3.0"
+    "stylelint-config-standard": "^39.0.0"
   }
 }

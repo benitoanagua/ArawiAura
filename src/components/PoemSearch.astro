@@ -1,5 +1,5 @@
 ---
-import PoemSearchSvelte from "./PoemSearch.svelte";
+import PoemSearchReact from "./PoemSearch";
 
 export interface Props {
   lang: "es" | "en";
@@ -18,4 +18,4 @@ const data = Object.entries(rawModules).map(([filePath, mod]) => ({
 }));
 ---
 
-<PoemSearchSvelte client:only="svelte" {lang} poems={data} />
+<PoemSearchReact client:load {lang} poems={data} />

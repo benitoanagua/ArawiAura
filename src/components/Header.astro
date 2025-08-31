@@ -1,5 +1,5 @@
 ---
-import HeaderSvelte from "./Header.svelte";
+import HeaderReact from "./Header";
 
 export interface Props {
   lang: "es" | "en";
@@ -25,4 +25,4 @@ const nav = {
 }[lang];
 ---
 
-<HeaderSvelte client:only="svelte" {lang} {title} {nav} />
+<HeaderReact client:load {lang} {title} {nav} />
