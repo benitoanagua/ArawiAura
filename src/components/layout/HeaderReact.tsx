@@ -4,6 +4,7 @@ import ThemeToggle from "./ThemeToggle";
 import LanguageToggle from "./LanguageToggle";
 import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
+import { BASE_SEO_CONFIG } from "../../utils/seo.constants";
 
 interface NavItem {
   label: string;
@@ -12,12 +13,20 @@ interface NavItem {
 
 interface HeaderProps {
   lang: Language;
-  title: string;
+  title?: string;
   nav: NavItem[];
 }
 
-const HeaderReact: React.FC<HeaderProps> = ({ lang, title, nav }) => {
+const HeaderReact: React.FC<HeaderProps> = ({
+  lang,
+  title = BASE_SEO_CONFIG[lang].siteName,
+  nav,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState("");
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
 
   useEffect(() => {
     if (isMenuOpen) {

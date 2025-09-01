@@ -1,14 +1,16 @@
 ---
 import HeaderReact from "./HeaderReact";
 import { translations, type Language } from "../../utils/i18n";
+import { BASE_SEO_CONFIG } from "../../utils/seo.constants";
 
 export interface Props {
   lang: Language;
-  title?: string;
 }
 
-const { lang, title = "Arawi Aura" } = Astro.props;
+const { lang } = Astro.props;
 const t = translations[lang];
+
+const siteTitle = BASE_SEO_CONFIG[lang].siteName;
 
 const nav = [
   { label: t.home, href: `/${lang}/` },
@@ -20,5 +22,5 @@ const nav = [
 ---
 
 <div class="bg-surface shadow-sm">
-  <HeaderReact client:load {lang} {title} {nav} />
+  <HeaderReact client:load {lang} title={siteTitle} {nav} />
 </div>

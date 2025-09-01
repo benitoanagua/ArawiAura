@@ -14,7 +14,7 @@ export const BASE_SEO_CONFIG: Record<Language, SEOConfig> = {
   en: {
     title: "Arawi Aura - Poetry Journal",
     description:
-      "A personal poetry log kept since 2017. Explore poems in English and Spanish with precise syllable analysis and pattern validation.",
+      "A personal poetry journal kept since 2017. Explore poems in English and Spanish with precise syllable analysis and pattern validation.",
     keywords:
       "poetry, poems, haiku, tanka, cinquain, limerick, syllable counter, poetry analysis, multilingual poetry, Spanish poems, English poems",
     image: "/images/og-image.jpg",
@@ -34,6 +34,17 @@ export const BASE_SEO_CONFIG: Record<Language, SEOConfig> = {
     locale: "es_ES",
   },
 };
+
+// Nuevas constantes para el manifest (no dependen del idioma)
+export const MANIFEST_CONFIG = {
+  name: "Arawi Aura",
+  short_name: "ArawiAura",
+  description: "A personal poetry journal in English and Spanish",
+  start_url: "/",
+  display: "standalone",
+  background_color: "#fff8f4",
+  theme_color: "#bb3813",
+} as const;
 
 export const WEBSITE_URL = "https://arawi-aura.dev";
 
