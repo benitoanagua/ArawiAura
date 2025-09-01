@@ -1,0 +1,30 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import SearchDialog from "../components/ui/SearchDialog.tsx";
+import { getCollection } from "astro:content";
+import type { Language } from "../utils/i18n";
+
+export interface Props {
+  title?: string;
+  lang: Language;
+}
+
+const { title = "Arawi Aura", lang } = Astro.props;
+
+const poems = await getCollection(
+  "poems",
+  (p) => !p.data.draft && p.slug.startsWith(lang + "/")
+);
+
+const searchPoems = poems.map((p) => ({
+  slug: p.slug,
+  title: p.data.title,
+  lang: p.data.lang,
+  body: p.body,
+}));
+---
+
+<BaseLayout {title} {lang}>
+  <SearchDialog client:load poems={searchPoems} {lang} />
+  <slot />
+</BaseLayout>

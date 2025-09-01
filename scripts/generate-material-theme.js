@@ -116,8 +116,8 @@ ${Object.entries(darkColors)
 }`;
 
   mkdirSync(outputDir, { recursive: true });
-  writeFileSync(`${outputDir}/material-theme.css`, cssContent);
-  console.log("✅ Tema optimizado generado: src/styles/material-theme.css");
+  writeFileSync(`${outputDir}/material-tokens.css`, cssContent);
+  console.log("✅ Tema optimizado generado: src/styles/material-tokens.css");
 }
 
 generateOptimizedTheme();

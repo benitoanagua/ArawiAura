@@ -1,53 +1,34 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { searchPoems, type SearchResult } from "../../utils/search";
+import type { Language } from "../../utils/i18n";
+import { translations } from "../../utils/i18n";
 
-interface Poem {
-  slug: string;
-  title: string;
-  lang: string;
-  body: string;
+interface SearchDialogProps {
+  poems?: SearchResult[];
+  lang: Language;
 }
 
-interface PoemSearchProps {
-  poems?: Poem[];
-  lang: "es" | "en";
-}
-
-const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
+const SearchDialog: React.FC<SearchDialogProps> = ({ poems = [], lang }) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [searchLang, setSearchLang] = useState<"es" | "en">(lang);
-  const [results, setResults] = useState<Poem[]>([]);
+  const [searchLang, setSearchLang] = useState<Language>(lang);
+  const [results, setResults] = useState<SearchResult[]>([]);
 
-  // Función para manejar escape
+  const t = translations[lang];
+
   const handleEscape = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") {
       setOpen(false);
     }
   }, []);
 
-  // Efecto para filtrar resultados cuando cambie la query
   useEffect(() => {
-    if (query) {
-      const q = query.toLowerCase();
-      const filtered = poems
-        .filter((p) => p.lang === searchLang)
-        .filter(
-          (p) =>
-            p.title.toLowerCase().includes(q) ||
-            p.body.toLowerCase().includes(q)
-        )
-        .slice(0, 10);
-      setResults(filtered);
-    } else {
-      setResults([]);
-    }
+    setResults(searchPoems(poems, query, searchLang));
   }, [query, searchLang, poems]);
 
-  // Efecto para manejar eventos de teclado y foco
   useEffect(() => {
     if (open) {
       window.addEventListener("keydown", handleEscape);
-      // Focus en el input después de que se abra el modal
       const timer = setTimeout(() => {
         const input = document.getElementById(
           "search-input"
@@ -73,14 +54,8 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
     setOpen(false);
   };
 
-  const focusInput = () => {
-    const input = document.getElementById("search-input") as HTMLInputElement;
-    input?.focus();
-  };
-
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSearchLang(e.target.value as "es" | "en");
-    focusInput();
+    setSearchLang(e.target.value as Language);
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -91,11 +66,10 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
 
   return (
     <>
-      {/* Botón flotante MD3 */}
       <button
         onClick={openModal}
         className="fixed bottom-6 right-6 bg-primary text-onPrimary rounded-full p-4 shadow-lg z-40 hover:bg-primary/90 transition-colors"
-        aria-label={lang === "es" ? "Buscar poemas" : "Search poems"}
+        aria-label={t.search}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -113,19 +87,17 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
         </svg>
       </button>
 
-      {/* Modal MD3 */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-scrim/40 z-50 flex items-center justify-center p-4"
           role="dialog"
           tabIndex={-1}
           onClick={handleOverlayClick}
         >
-          <div className="bg-surface dark:bg-surfaceContainerHighest rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
-            {/* Cabecera */}
+          <div className="bg-surfaceContainerHighest rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
             <div className="flex items-center justify-between px-6 py-4 border-b border-outlineVariant">
               <div className="flex items-center gap-2 text-sm text-onSurfaceVariant">
-                <span>{lang === "es" ? "Idioma:" : "Language:"}</span>
+                <span>{t.language}:</span>
                 <select
                   value={searchLang}
                   onChange={handleLanguageChange}
@@ -144,21 +116,17 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
               </button>
             </div>
 
-            {/* Input */}
             <div className="px-6 py-4">
               <input
                 id="search-input"
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={
-                  searchLang === "es" ? "Buscar poemas..." : "Search poems..."
-                }
+                placeholder={t.search}
                 className="w-full bg-surfaceContainer text-onSurfaceContainer rounded-md px-4 py-3 text-lg outline-none placeholder:text-onSurfaceVariant"
               />
             </div>
 
-            {/* Resultados */}
             <div className="max-h-80 overflow-y-auto border-t border-outlineVariant">
               {results.length > 0 ? (
                 <ul className="p-2">
@@ -176,13 +144,7 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
                 </ul>
               ) : (
                 <div className="p-6 text-center text-onSurfaceVariant">
-                  {query
-                    ? searchLang === "es"
-                      ? "No se encontraron resultados"
-                      : "No results found"
-                    : searchLang === "es"
-                    ? "Escribe para buscar poemas..."
-                    : "Type to search poems..."}
+                  {query ? t.noResults : t.typeToSearch}
                 </div>
               )}
             </div>
@@ -193,4 +155,4 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
   );
 };
 
-export default PoemSearch;
+export default SearchDialog;

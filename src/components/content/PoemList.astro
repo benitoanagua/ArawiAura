@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+import PoemCard from "./PoemCard.astro";
+import type { Language } from "../../utils/i18n";
+
+export interface Props {
+  lang: Language;
+  limit?: number;
+}
+
+const { lang, limit } = Astro.props;
+
+const poems = await getCollection(
+  "poems",
+  (p) => p.slug.startsWith(lang + "/") && !p.data.draft
+);
+
+const sortedPoems = poems
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, limit);
+---
+
+<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+  {sortedPoems.map((poem) => <PoemCard {poem} {lang} />)}
+</div>

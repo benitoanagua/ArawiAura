@@ -1,0 +1,64 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Card from "../../components/ui/Card.astro";
+import type { Language } from "../../utils/i18n";
+
+export async function getStaticPaths() {
+  return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
+}
+
+const { lang } = Astro.params;
+
+// Verificar que el lang es válido
+const validLang: Language = lang === "es" || lang === "en" ? lang : "en";
+---
+
+<MainLayout title="About" lang={validLang}>
+  <Card elevated class="max-w-3xl mx-auto">
+    <article class="prose mx-auto">
+      <h1 class="text-3xl font-bold text-onSurface">
+        {validLang === "es" ? "Acerca de este diario" : "About this journal"}
+      </h1>
+
+      <p class="text-onSurface">
+        {
+          validLang === "es"
+            ? "Arawi Aura es un diario personal de poesía mantenido desde 2017."
+            : "Arawi Aura is a personal poetry log kept since 2017."
+        }
+      </p>
+
+      <p class="text-onSurface">
+        {
+          validLang === "es"
+            ? "La palabra arawi en Quechua significa poema, y aura es la brisa que lo lleva."
+            : "The word arawi in Quechua means poem, and aura is the breeze that carries it."
+        }
+      </p>
+
+      <p class="text-onSurface">
+        {
+          validLang === "es"
+            ? "Aquí encontrarás palabras que recuerdan montañas, ríos y pequeños milagros cotidianos."
+            : "Here you will find words that remember mountains, rivers, and small daily miracles."
+        }
+      </p>
+
+      <p class="text-onSurface">
+        {
+          validLang === "es"
+            ? "Siéntete libre de leer, escuchar o traducir; la poesía pertenece a todos."
+            : "Feel free to read, listen, or translate—poetry belongs to everyone."
+        }
+      </p>
+
+      <p class="text-onSurface">
+        {
+          validLang === "es"
+            ? "Si deseas compartir tu propia brisa, ponte en contacto."
+            : "If you wish to share your own breeze, get in touch."
+        }
+      </p>
+    </article>
+  </Card>
+</MainLayout>

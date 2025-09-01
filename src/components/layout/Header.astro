@@ -1,0 +1,24 @@
+---
+import HeaderReact from "./HeaderReact";
+import { translations, type Language } from "../../utils/i18n";
+
+export interface Props {
+  lang: Language;
+  title?: string;
+}
+
+const { lang, title = "Arawi Aura" } = Astro.props;
+const t = translations[lang];
+
+const nav = [
+  { label: t.home, href: `/${lang}/` },
+  { label: t.about, href: `/${lang}/about/` },
+  { label: t.poems, href: `/${lang}/` },
+  { label: t.archive, href: `/${lang}/archive/` },
+  { label: t.contact, href: `/${lang}/contact/` },
+];
+---
+
+<div class="bg-surface shadow-sm">
+  <HeaderReact client:load {lang} {title} {nav} />
+</div>

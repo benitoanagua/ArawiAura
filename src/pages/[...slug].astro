@@ -1,7 +1,9 @@
 ---
 import { getCollection } from "astro:content";
-import DefaultLayout from "../layouts/DefaultLayout.astro";
-import MD3Card from "../components/MD3Card.astro";
+import MainLayout from "../layouts/MainLayout.astro";
+import Card from "../components/ui/Card.astro";
+import type { Language } from "../utils/i18n";
+import { translations } from "../utils/i18n";
 
 export async function getStaticPaths() {
   const poems = await getCollection("poems", (p) => !p.data.draft);
@@ -22,11 +24,12 @@ if (!poem) {
 }
 
 const { Content } = await poem.render();
-const langFromSlug = poem.slug.split("/")[0];
+const langFromSlug = poem.slug.split("/")[0] as Language;
+const t = translations[langFromSlug];
 ---
 
-<DefaultLayout lang={langFromSlug}>
-  <MD3Card elevated class="max-w-3xl mx-auto">
+<MainLayout lang={langFromSlug} title={poem.data.title}>
+  <Card elevated class="max-w-3xl mx-auto">
     <article class="prose mx-auto">
       <h1 class="text-3xl font-bold text-onSurface">{poem.data.title}</h1>
       <time
@@ -48,21 +51,17 @@ const langFromSlug = poem.slug.split("/")[0];
         poem.data.translation && (
           <footer class="mt-12 pt-6 border-t border-outlineVariant">
             <p class="text-onSurfaceVariant">
-              {poem.data.lang === "es"
-                ? "También disponible en inglés:"
-                : "Also available in Spanish:"}{" "}
+              {t.alsoAvailable}{" "}
               <a
                 href={`/${poem.data.translation}/`}
                 class="text-primary hover:text-primary/80 transition-colors"
               >
-                {poem.data.lang === "es"
-                  ? "Read translation"
-                  : "Leer traducción"}
+                {t.readTranslation}
               </a>
             </p>
           </footer>
         )
       }
     </article>
-  </MD3Card>
-</DefaultLayout>
+  </Card>
+</MainLayout>

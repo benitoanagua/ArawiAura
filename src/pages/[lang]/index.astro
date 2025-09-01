@@ -1,7 +1,8 @@
 ---
-import DefaultLayout from "../../layouts/DefaultLayout.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import Card from "../../components/ui/Card.astro";
 import { getCollection } from "astro:content";
-import MD3Card from "../../components/MD3Card.astro";
+import type { Language } from "../../utils/i18n";
 
 export async function getStaticPaths() {
   const langs = ["es", "en"] as const;
@@ -13,11 +14,9 @@ export async function getStaticPaths() {
         (p) => p.slug.startsWith(lang + "/") && !p.data.draft
       );
 
-      // Agrupamos por año y mes
       const grouped = poems.reduce<
         Record<string, Record<string, typeof poems>>
       >((acc, poem) => {
-        // Extraer año y mes del slug (formato: es/2025/07/titulo)
         const parts = poem.slug.split("/");
         if (parts.length >= 3) {
           const year = parts[1];
@@ -40,13 +39,13 @@ export async function getStaticPaths() {
 const { lang, grouped } = Astro.props;
 ---
 
-<DefaultLayout {lang}>
+<MainLayout {lang}>
   <div class="space-y-8">
     {
       Object.entries(grouped)
         .sort(([a], [b]) => Number(b) - Number(a))
         .map(([year, months]) => (
-          <MD3Card elevated>
+          <Card elevated>
             <h2 class="text-2xl font-semibold text-onSurface mb-6">{year}</h2>
             {Object.entries(months)
               .sort(([a], [b]) => Number(b) - Number(a))
@@ -87,8 +86,8 @@ const { lang, grouped } = Astro.props;
                   </ul>
                 </div>
               ))}
-          </MD3Card>
+          </Card>
         ))
     }
   </div>
-</DefaultLayout>
+</MainLayout>

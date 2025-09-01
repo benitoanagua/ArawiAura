@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import type { Language } from "../../utils/i18n";
 
 interface NavItem {
   label: string;
@@ -6,15 +7,14 @@ interface NavItem {
 }
 
 interface HeaderProps {
-  lang: "es" | "en";
+  lang: Language;
   title: string;
   nav: NavItem[];
 }
 
-const Header: React.FC<HeaderProps> = ({ lang, title, nav }) => {
+const HeaderReact: React.FC<HeaderProps> = ({ lang, title, nav }) => {
   const [open, setOpen] = useState(false);
 
-  // Efecto para limpiar el scroll cuando se abre el drawer
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -22,42 +22,30 @@ const Header: React.FC<HeaderProps> = ({ lang, title, nav }) => {
       document.body.style.overflow = "unset";
     }
 
-    // Cleanup
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [open]);
 
-  const toggleMenu = () => {
-    setOpen(!open);
-  };
-
-  const closeMenu = () => {
-    setOpen(false);
-  };
-
-  const handleOverlayClick = () => {
-    setOpen(false);
-  };
+  const toggleMenu = () => setOpen(!open);
+  const closeMenu = () => setOpen(false);
 
   return (
-    <header className="border-b border-stone-200 dark:border-stone-800">
+    <header className="border-b border-outlineVariant">
       <nav className="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
-        {/* Logo */}
         <a
           href={`/${lang}/`}
-          className="text-xl md:text-2xl font-serif tracking-tight"
+          className="text-xl md:text-2xl font-serif tracking-tight text-onSurface"
         >
           {title}
         </a>
 
-        {/* Desktop nav */}
-        <ul className="hidden md:flex gap-x-6 text-sm uppercase tracking-wider">
+        <ul className="hidden md:flex gap-x-6 text-sm uppercase tracking-wider text-onSurfaceVariant">
           {nav.map((item, index) => (
             <li key={index}>
               <a
                 href={item.href}
-                className="hover:text-teal-600 transition-colors"
+                className="hover:text-primary transition-colors"
               >
                 {item.label}
               </a>
@@ -65,14 +53,13 @@ const Header: React.FC<HeaderProps> = ({ lang, title, nav }) => {
           ))}
         </ul>
 
-        {/* Desktop lang */}
-        <div className="hidden md:flex gap-x-2 text-sm">
+        <div className="hidden md:flex gap-x-2 text-sm text-onSurfaceVariant">
           <a
             href="/en/"
             className={
               lang === "en"
-                ? "font-bold"
-                : "hover:text-teal-600 transition-colors"
+                ? "font-bold text-primary"
+                : "hover:text-primary transition-colors"
             }
           >
             EN
@@ -82,17 +69,16 @@ const Header: React.FC<HeaderProps> = ({ lang, title, nav }) => {
             href="/es/"
             className={
               lang === "es"
-                ? "font-bold"
-                : "hover:text-teal-600 transition-colors"
+                ? "font-bold text-primary"
+                : "hover:text-primary transition-colors"
             }
           >
             ES
           </a>
         </div>
 
-        {/* Mobile hamburger */}
         <button
-          className="md:hidden text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+          className="md:hidden text-onSurfaceVariant hover:text-onSurface transition-colors"
           aria-label={lang === "es" ? "Abrir menú" : "Open menu"}
           onClick={toggleMenu}
         >
@@ -122,27 +108,20 @@ const Header: React.FC<HeaderProps> = ({ lang, title, nav }) => {
         </button>
       </nav>
 
-      {/* Mobile drawer */}
       {open && (
         <>
-          {/* Overlay */}
           <button
-            className={`md:hidden fixed inset-0 bg-black/60 z-40 transition-opacity duration-200 ${
-              open ? "opacity-100" : "opacity-0"
-            }`}
+            className="md:hidden fixed inset-0 bg-scrim/60 z-40"
             aria-label={lang === "es" ? "Cerrar overlay" : "Close overlay"}
-            onClick={handleOverlayClick}
+            onClick={closeMenu}
           />
 
-          {/* Panel */}
           <div
-            className={`md:hidden fixed top-0 right-0 h-full w-64 bg-white dark:bg-stone-900 shadow-xl z-50 
-                       flex flex-col p-6 space-y-4 transform transition-transform duration-300 ${
-                         open ? "translate-x-0" : "translate-x-full"
-                       }`}
+            className="md:hidden fixed top-0 right-0 h-full w-64 bg-surfaceContainerHighest shadow-xl z-50 
+                       flex flex-col p-6 space-y-4"
           >
             <button
-              className="self-end text-2xl text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+              className="self-end text-2xl text-onSurfaceVariant hover:text-onSurface transition-colors"
               aria-label={lang === "es" ? "Cerrar menú" : "Close menu"}
               onClick={closeMenu}
             >
@@ -153,22 +132,22 @@ const Header: React.FC<HeaderProps> = ({ lang, title, nav }) => {
               <a
                 key={index}
                 href={item.href}
-                className="text-sm uppercase tracking-wider hover:text-teal-600 transition-colors"
+                className="text-sm uppercase tracking-wider text-onSurfaceVariant hover:text-primary transition-colors"
                 onClick={closeMenu}
               >
                 {item.label}
               </a>
             ))}
 
-            <hr className="border-stone-300 dark:border-stone-700" />
+            <hr className="border-outlineVariant" />
 
-            <div className="flex gap-x-2 text-sm">
+            <div className="flex gap-x-2 text-sm text-onSurfaceVariant">
               <a
                 href="/en/"
                 className={
                   lang === "en"
-                    ? "font-bold"
-                    : "hover:text-teal-600 transition-colors"
+                    ? "font-bold text-primary"
+                    : "hover:text-primary transition-colors"
                 }
               >
                 EN
@@ -178,8 +157,8 @@ const Header: React.FC<HeaderProps> = ({ lang, title, nav }) => {
                 href="/es/"
                 className={
                   lang === "es"
-                    ? "font-bold"
-                    : "hover:text-teal-600 transition-colors"
+                    ? "font-bold text-primary"
+                    : "hover:text-primary transition-colors"
                 }
               >
                 ES
@@ -192,4 +171,4 @@ const Header: React.FC<HeaderProps> = ({ lang, title, nav }) => {
   );
 };
 
-export default Header;
+export default HeaderReact;
