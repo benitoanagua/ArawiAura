@@ -1,3 +1,5 @@
 @import "tailwindcss";
 
 @import "./prose.css";
+
+@import "./material-theme.css";
