@@ -35,15 +35,29 @@ const { title = "Arawi Aura", lang = "en" } = Astro.props;
     </div>
 
     <script>
-      if (
-        localStorage.theme === "dark" ||
-        (!("theme" in localStorage) &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+      // Sistema de tema manual usando data-theme attribute (inspirado en Svelte)
+      (function () {
+        try {
+          // Intentar obtener el tema guardado
+          const savedTheme = localStorage.getItem("theme");
+
+          let theme;
+          if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
+            theme = savedTheme;
+          } else {
+            // Si no hay tema guardado, usar las preferencias del sistema
+            theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          }
+
+          // Aplicar el tema inmediatamente
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {
+          // En caso de error, usar tema claro por defecto
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
     </script>
   </body>
 </html>

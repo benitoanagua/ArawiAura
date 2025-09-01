@@ -19,6 +19,10 @@ export const translations = {
     readTranslation: "Leer traducción",
     rights: "© 2025 Arawi Aura. Todos los derechos reservados.",
     quote: "La poesía está en la gente. Alaba a la gente. —Amanda Johnston",
+    lightTheme: "Tema claro",
+    darkTheme: "Tema oscuro",
+    switchToLight: "Cambiar a tema claro",
+    switchToDark: "Cambiar a tema oscuro",
   },
   en: {
     home: "Home",
@@ -34,5 +38,9 @@ export const translations = {
     readTranslation: "Read translation",
     rights: "© 2025 Arawi Aura. All rights reserved.",
     quote: "Poetry is in the people. Praise the people. —Amanda Johnston",
+    lightTheme: "Light theme",
+    darkTheme: "Dark theme",
+    switchToLight: "Switch to light theme",
+    switchToDark: "Switch to dark theme",
   },
 };

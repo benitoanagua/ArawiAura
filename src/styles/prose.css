@@ -1,53 +1,199 @@
 @layer utilities {
-  /* Variables CSS para modo claro */
-  :root {
-    --prose-body: theme(colors.gray.800);
-    --prose-headings: theme(colors.gray.900);
-    --prose-links: theme(colors.blue.600);
-    --prose-bold: theme(colors.gray.900);
-    --prose-bullets: theme(colors.gray.500);
-    --prose-hr: theme(colors.gray.200);
-    --prose-quotes: theme(colors.gray.900);
-    --prose-code: theme(colors.gray.900);
-    --prose-pre-bg: theme(colors.gray.100);
-    --prose-th-borders: theme(colors.gray.300);
-    --prose-td-borders: theme(colors.gray.200);
-  }
-
-  /* Variables CSS para modo oscuro */
-  .dark {
-    --prose-body: theme(colors.gray.300);
-    --prose-headings: theme(colors.white);
-    --prose-links: theme(colors.blue.400);
-    --prose-bold: theme(colors.white);
-    --prose-bullets: theme(colors.gray.400);
-    --prose-hr: theme(colors.gray.700);
-    --prose-quotes: theme(colors.gray.300);
-    --prose-code: theme(colors.gray.100);
-    --prose-pre-bg: theme(colors.gray.900);
-    --prose-th-borders: theme(colors.gray.600);
-    --prose-td-borders: theme(colors.gray.700);
-  }
-
-  /* Estilos base de prose */
+  /* Estilos base de prose con variables MD3 */
   .prose {
-    color: var(--prose-body);
+    color: var(--color-onSurface);
     max-width: 65ch;
     line-height: 1.75;
+    font-size: 1rem;
 
-    /* Encabezados */
+    /* Encabezados - Tipografía MD3 */
     & h1,
     & h2,
     & h3,
     & h4,
     & h5,
     & h6 {
-      color: var(--prose-headings);
+      color: var(--color-onSurface);
       font-weight: 600;
       line-height: 1.25;
       margin-top: 1.5em;
       margin-bottom: 0.5em;
     }
+
+    & h1 {
+      font-size: 2.25em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    & h2 {
+      font-size: 1.75em;
+      font-weight: 600;
+      letter-spacing: -0.25px;
+    }
+
+    & h3 {
+      font-size: 1.375em;
+      font-weight: 600;
+    }
+
+    & h4 {
+      font-size: 1.125em;
+      font-weight: 600;
+    }
+
+    /* Párrafos - Espaciado MD3 */
+    & p {
+      margin: 1em 0;
+      line-height: 1.6;
+    }
+
+    /* Enlaces - Colores MD3 */
+    & a {
+      color: var(--color-primary);
+      text-decoration: underline;
+      font-weight: 500;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--color-primaryContainer);
+        text-decoration: none;
+      }
+    }
+
+    /* Listas - Estilo MD3 */
+    & ul,
+    & ol {
+      padding-left: 1.5em;
+      margin: 1em 0;
+
+      & li {
+        margin-bottom: 0.5em;
+        padding-left: 0.5em;
+
+        &::marker {
+          color: var(--color-outline);
+        }
+      }
+    }
+
+    /* Código - Estilo MD3 */
+    & code {
+      color: var(--color-onSurfaceVariant);
+      background-color: var(--color-surfaceVariant);
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.875em;
+      font-family: "Roboto Mono", monospace;
+      font-weight: 500;
+    }
+
+    & pre {
+      background-color: var(--color-surfaceContainerHighest);
+      color: var(--color-onSurface);
+      padding: 1.25rem 1.5rem;
+      border-radius: 0.75rem;
+      overflow-x: auto;
+      border: 1px solid var(--color-outlineVariant);
+      margin: 1.5em 0;
+
+      & code {
+        background: transparent;
+        padding: 0;
+        color: inherit;
+      }
+    }
+
+    /* Tablas - Estilo MD3 */
+    & table {
+      width: 100%;
+      margin: 1.5em 0;
+      border-collapse: collapse;
+      border: 1px solid var(--color-outlineVariant);
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    & th,
+    & td {
+      border: 1px solid var(--color-outlineVariant);
+      padding: 0.875rem 1rem;
+      text-align: left;
+    }
+
+    & th {
+      background-color: var(--color-surfaceContainer);
+      color: var(--color-onSurface);
+      font-weight: 600;
+    }
+
+    & td {
+      background-color: var(--color-surface);
+      color: var(--color-onSurfaceVariant);
+    }
+
+    /* Elementos varios - Estilo MD3 */
+    & hr {
+      margin: 2em 0;
+      border: none;
+      height: 1px;
+      background-color: var(--color-outlineVariant);
+    }
+
+    & blockquote {
+      margin: 1.5em 0;
+      padding: 1.5rem;
+      background-color: var(--color-surfaceContainerLow);
+      border-left: 4px solid var(--color-primary);
+      border-radius: 0 0.75rem 0.75rem 0;
+      font-style: italic;
+      color: var(--color-onSurfaceVariant);
+
+      & p {
+        margin: 0;
+      }
+    }
+
+    & strong {
+      color: var(--color-onSurface);
+      font-weight: 600;
+    }
+
+    /* Imágenes - Estilo MD3 */
+    & img {
+      border-radius: 0.75rem;
+      margin: 1.5em 0;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Citas - Estilo MD3 */
+    & cite {
+      display: block;
+      margin-top: 0.5em;
+      font-size: 0.875em;
+      color: var(--color-onSurfaceVariant);
+      font-style: normal;
+    }
+  }
+
+  /* Variantes de tamaño ajustadas a MD3 */
+  .prose-sm {
+    font-size: 0.875rem;
+
+    & h1 {
+      font-size: 1.875em;
+    }
+    & h2 {
+      font-size: 1.5em;
+    }
+    & h3 {
+      font-size: 1.25em;
+    }
+  }
+
+  .prose-base {
+    font-size: 1rem;
 
     & h1 {
       font-size: 2.25em;
@@ -58,107 +204,47 @@
     & h3 {
       font-size: 1.375em;
     }
-    & h4 {
-      font-size: 1.125em;
-    }
-
-    /* Párrafos */
-    & p {
-      margin: 1em 0;
-    }
-
-    /* Enlaces */
-    & a {
-      color: var(--prose-links);
-      text-decoration: underline;
-      font-weight: 500;
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-
-    /* Listas */
-    & ul,
-    & ol {
-      padding-left: 1.5em;
-      margin: 1em 0;
-
-      & li {
-        margin-bottom: 0.5em;
-
-        &::marker {
-          color: var(--prose-bullets);
-        }
-      }
-    }
-
-    /* Código */
-    & code {
-      color: var(--prose-code);
-      font-size: 0.875em;
-      font-weight: 600;
-      font-family: monospace;
-    }
-
-    & pre {
-      background: var(--prose-pre-bg);
-      padding: 1.25rem 1.5rem;
-      border-radius: 0.375rem;
-      overflow-x: auto;
-    }
-
-    /* Tablas */
-    & table {
-      width: 100%;
-      margin: 1em 0;
-      border-collapse: collapse;
-    }
-
-    & th,
-    & td {
-      border: 1px solid var(--prose-td-borders);
-      padding: 0.625em 1em;
-    }
-
-    & th {
-      border-color: var(--prose-th-borders);
-    }
-
-    /* Elementos varios */
-    & hr {
-      margin: 2em 0;
-      border: 1px solid var(--prose-hr);
-    }
-
-    & blockquote {
-      margin: 1em 0;
-      padding-left: 1em;
-      font-style: italic;
-      border-left: 0.25em solid var(--prose-hr);
-      color: var(--prose-quotes);
-    }
-
-    & strong {
-      color: var(--prose-bold);
-      font-weight: 600;
-    }
   }
 
-  /* Variantes de tamaño */
-  .prose-sm {
-    font-size: 0.875rem;
-  }
-  .prose-base {
-    font-size: 1rem;
-  }
   .prose-lg {
     font-size: 1.125rem;
+
+    & h1 {
+      font-size: 2.5em;
+    }
+    & h2 {
+      font-size: 2em;
+    }
+    & h3 {
+      font-size: 1.5em;
+    }
   }
+
   .prose-xl {
     font-size: 1.25rem;
+
+    & h1 {
+      font-size: 2.75em;
+    }
+    & h2 {
+      font-size: 2.25em;
+    }
+    & h3 {
+      font-size: 1.75em;
+    }
   }
+
   .prose-2xl {
     font-size: 1.5rem;
+
+    & h1 {
+      font-size: 3em;
+    }
+    & h2 {
+      font-size: 2.5em;
+    }
+    & h3 {
+      font-size: 2em;
+    }
   }
 }
