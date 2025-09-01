@@ -1,0 +1,36 @@
+import React from "react";
+import type { Language } from "../../utils/i18n";
+
+interface LanguageToggleProps {
+  lang: Language;
+}
+
+const LanguageToggle: React.FC<LanguageToggleProps> = ({ lang }) => {
+  return (
+    <div className="hidden md:flex gap-x-2 text-sm text-onSurfaceVariant">
+      <a
+        href="/en/"
+        className={
+          lang === "en"
+            ? "font-bold text-primary"
+            : "hover:text-primary transition-colors"
+        }
+      >
+        EN
+      </a>
+      <span>/</span>
+      <a
+        href="/es/"
+        className={
+          lang === "es"
+            ? "font-bold text-primary"
+            : "hover:text-primary transition-colors"
+        }
+      >
+        ES
+      </a>
+    </div>
+  );
+};
+
+export default LanguageToggle;

@@ -12,7 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const outputDir = resolve(__dirname, "../src/styles");
 
 const themeConfig = {
-  seedColor: "#c39c6c",
+  seedColor: "#bb3813",
   variant: "tonalSpot",
   contrastLevel: 0,
 };
