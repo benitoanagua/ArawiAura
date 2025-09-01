@@ -8,6 +8,9 @@ import keystatic from "@keystatic/astro";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://benitoanagua.github.io",
+  // base: "/ArawiAura",
+
   vite: {
     plugins: [tailwindcss()],
   },

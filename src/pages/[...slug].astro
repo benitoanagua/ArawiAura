@@ -1,62 +1,68 @@
 ---
 import { getCollection } from "astro:content";
 import DefaultLayout from "../layouts/DefaultLayout.astro";
+import MD3Card from "../components/MD3Card.astro";
 
 export async function getStaticPaths() {
   const poems = await getCollection("poems", (p) => !p.data.draft);
 
   return poems.map((poem) => ({
     params: {
-      // Para rutas catch-all, necesitamos pasar el slug como string unido
-      slug: poem.slug, // "en/2025/07/river-of-memories"
+      slug: poem.slug,
     },
     props: { poem },
   }));
 }
 
-// Extraer el slug de los parámetros
 const { slug } = Astro.params;
 const { poem } = Astro.props;
 
-// Verificar que tenemos el poema
 if (!poem) {
   throw new Error(`Poem not found for slug: ${slug}`);
 }
 
 const { Content } = await poem.render();
-
-// Extraer el idioma del slug
 const langFromSlug = poem.slug.split("/")[0];
 ---
 
 <DefaultLayout lang={langFromSlug}>
-  <article class="prose mx-auto">
-    <h1>{poem.data.title}</h1>
-    <time datetime={poem.data.date.toISOString()}>
+  <MD3Card elevated class="max-w-3xl mx-auto">
+    <article class="prose mx-auto">
+      <h1 class="text-3xl font-bold text-onSurface">{poem.data.title}</h1>
+      <time
+        datetime={poem.data.date.toISOString()}
+        class="text-onSurfaceVariant block mb-6"
+      >
+        {
+          poem.data.date.toLocaleDateString(poem.data.lang, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        }
+      </time>
+
+      <Content />
+
       {
-        poem.data.date.toLocaleDateString(poem.data.lang, {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
+        poem.data.translation && (
+          <footer class="mt-12 pt-6 border-t border-outlineVariant">
+            <p class="text-onSurfaceVariant">
+              {poem.data.lang === "es"
+                ? "También disponible en inglés:"
+                : "Also available in Spanish:"}{" "}
+              <a
+                href={`/${poem.data.translation}/`}
+                class="text-primary hover:text-primary/80 transition-colors"
+              >
+                {poem.data.lang === "es"
+                  ? "Read translation"
+                  : "Leer traducción"}
+              </a>
+            </p>
+          </footer>
+        )
       }
-    </time>
-
-    <Content />
-
-    {
-      poem.data.translation && (
-        <footer class="mt-12 pt-4 border-t">
-          <p>
-            {poem.data.lang === "es"
-              ? "También disponible en inglés:"
-              : "Also available in Spanish:"}{" "}
-            <a href={`/${poem.data.translation}/`}>
-              {poem.data.lang === "es" ? "Read translation" : "Leer traducción"}
-            </a>
-          </p>
-        </footer>
-      )
-    }
-  </article>
+    </article>
+  </MD3Card>
 </DefaultLayout>

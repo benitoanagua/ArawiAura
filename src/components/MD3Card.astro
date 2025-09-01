@@ -1,0 +1,20 @@
+---
+export interface Props {
+  elevated?: boolean;
+  outlined?: boolean;
+  class?: string;
+}
+
+const { elevated = false, outlined = false, class: className } = Astro.props;
+
+const baseClasses = `rounded-xl p-6`;
+const variantClasses = {
+  "bg-surface shadow": elevated,
+  "bg-surface border border-outline": outlined && !elevated,
+  "bg-surface": !elevated && !outlined,
+};
+---
+
+<div class:list={[baseClasses, variantClasses, className]}>
+  <slot />
+</div>

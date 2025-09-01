@@ -1,6 +1,7 @@
 ---
 import DefaultLayout from "../../layouts/DefaultLayout.astro";
 import { getCollection } from "astro:content";
+import MD3Card from "../../components/MD3Card.astro";
 
 export async function getStaticPaths() {
   const langs = ["es", "en"] as const;
@@ -40,18 +41,18 @@ const { lang, grouped } = Astro.props;
 ---
 
 <DefaultLayout {lang}>
-  <div class="prose mx-auto">
+  <div class="space-y-8">
     {
       Object.entries(grouped)
         .sort(([a], [b]) => Number(b) - Number(a))
         .map(([year, months]) => (
-          <section>
-            <h2>{year}</h2>
+          <MD3Card elevated>
+            <h2 class="text-2xl font-semibold text-onSurface mb-6">{year}</h2>
             {Object.entries(months)
               .sort(([a], [b]) => Number(b) - Number(a))
               .map(([month, poems]) => (
-                <div>
-                  <h3>
+                <div class="mb-6 last:mb-0">
+                  <h3 class="text-xl font-medium text-onSurfaceVariant mb-4">
                     {new Date(
                       Number(year),
                       Number(month) - 1
@@ -59,19 +60,24 @@ const { lang, grouped } = Astro.props;
                   </h3>
                   <ul class="space-y-4">
                     {poems.map((p) => (
-                      <li class="border-l-2 pl-4">
-                        {/* Cambia el enlace para usar el slug completo */}
-                        <a href={`/${p.slug}/`} class="text-xl font-semibold">
+                      <li class="border-l-2 border-outlineVariant pl-4 py-2">
+                        <a
+                          href={`/${p.slug}/`}
+                          class="text-xl font-semibold text-primary hover:text-primary/80 transition-colors"
+                        >
                           {p.data.title}
                         </a>
                         <br />
-                        <small class="text-gray-500">
+                        <small class="text-onSurfaceVariant">
                           {p.data.date.toLocaleDateString(lang)}
                         </small>
                         {p.data.translation && (
                           <small class="ml-2">
                             {" · "}
-                            <a href={`/${p.data.translation}/`}>
+                            <a
+                              href={`/${p.data.translation}/`}
+                              class="text-secondary hover:text-secondary/80 transition-colors"
+                            >
                               {lang === "es" ? "en inglés" : "in Spanish"}
                             </a>
                           </small>
@@ -81,7 +87,7 @@ const { lang, grouped } = Astro.props;
                   </ul>
                 </div>
               ))}
-          </section>
+          </MD3Card>
         ))
     }
   </div>

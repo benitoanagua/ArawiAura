@@ -7,20 +7,41 @@ import PoemSearch from "../components/PoemSearch.astro";
 const { title = "Arawi Aura", lang = "en" } = Astro.props;
 ---
 
-<html lang={lang}>
+<!doctype html>
+<html lang={lang} class="scroll-smooth">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="var(--color-primary)" />
     <title>{title}</title>
   </head>
-  <body>
-    <PoemSearch {lang} />
+  <body
+    class="min-h-screen bg-background text-onBackground transition-colors duration-200"
+  >
+    <div class="min-h-screen flex flex-col">
+      <PoemSearch {lang} />
 
-    <Header {title} {lang} />
-    <main class="container mx-auto">
-      <slot />
-    </main>
-    <Footer {lang} />
+      <Header {title} {lang} />
+
+      <main class="flex-1 container mx-auto px-4 py-8">
+        <slot />
+      </main>
+
+      <Footer {lang} />
+    </div>
+
+    <script>
+      // Detectar preferencia de tema del sistema
+      if (
+        localStorage.theme === "dark" ||
+        (!("theme" in localStorage) &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
   </body>
 </html>

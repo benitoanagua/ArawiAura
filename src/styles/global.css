@@ -1,5 +1,4 @@
 @import "tailwindcss";
+@import "./material-theme.css";
 
 @import "./prose.css";
-
-@import "./material-theme.css";

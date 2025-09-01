@@ -91,38 +91,45 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
 
   return (
     <>
-      {/* Botón flotante */}
+      {/* Botón flotante MD3 */}
       <button
         onClick={openModal}
-        className="fixed bottom-6 right-6 bg-stone-900 text-white rounded-full p-3 shadow-lg z-40 hover:bg-stone-800 transition-colors"
+        className="fixed bottom-6 right-6 bg-primary text-onPrimary rounded-full p-4 shadow-lg z-40 hover:bg-primary/90 transition-colors"
         aria-label={lang === "es" ? "Buscar poemas" : "Search poems"}
       >
-        🔍
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
       </button>
 
-      {/* Modal */}
+      {/* Modal MD3 */}
       {open && (
         <div
-          className={`fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${
-            open ? "opacity-100" : "opacity-0"
-          }`}
+          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
           role="dialog"
           tabIndex={-1}
           onClick={handleOverlayClick}
         >
-          <div
-            className={`bg-white dark:bg-stone-800 rounded-xl shadow-2xl w-full max-w-lg transform transition-transform duration-200 ${
-              open ? "scale-100" : "scale-95"
-            }`}
-          >
+          <div className="bg-surface dark:bg-surfaceContainerHighest rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
             {/* Cabecera */}
-            <div className="flex items-center justify-between border-b px-4 py-3">
-              <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-outlineVariant">
+              <div className="flex items-center gap-2 text-sm text-onSurfaceVariant">
                 <span>{lang === "es" ? "Idioma:" : "Language:"}</span>
                 <select
                   value={searchLang}
                   onChange={handleLanguageChange}
-                  className="bg-transparent border-none outline-none cursor-pointer dark:text-white"
+                  className="bg-surfaceContainer text-onSurfaceContainer rounded-sm px-2 py-1 outline-none cursor-pointer"
                 >
                   <option value="es">ES</option>
                   <option value="en">EN</option>
@@ -130,7 +137,7 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
               </div>
               <button
                 onClick={closeModal}
-                className="text-2xl leading-none text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+                className="text-2xl leading-none text-onSurfaceVariant hover:text-onSurface transition-colors"
                 aria-label="Close"
               >
                 &times;
@@ -138,41 +145,47 @@ const PoemSearch: React.FC<PoemSearchProps> = ({ poems = [], lang }) => {
             </div>
 
             {/* Input */}
-            <input
-              id="search-input"
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={searchLang === "es" ? "Buscar…" : "Search…"}
-              className="w-full bg-transparent px-4 py-3 text-lg outline-none dark:text-white"
-            />
+            <div className="px-6 py-4">
+              <input
+                id="search-input"
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={
+                  searchLang === "es" ? "Buscar poemas..." : "Search poems..."
+                }
+                className="w-full bg-surfaceContainer text-onSurfaceContainer rounded-md px-4 py-3 text-lg outline-none placeholder:text-onSurfaceVariant"
+              />
+            </div>
 
             {/* Resultados */}
-            <ul className="max-h-80 overflow-y-auto p-4 space-y-2">
+            <div className="max-h-80 overflow-y-auto border-t border-outlineVariant">
               {results.length > 0 ? (
-                results.map((p) => (
-                  <li key={p.slug}>
-                    <a
-                      href={`/${p.slug}/`}
-                      className="block hover:bg-stone-100 dark:hover:bg-stone-700 p-2 rounded transition-colors"
-                      onClick={closeModal}
-                    >
-                      {p.title}
-                    </a>
-                  </li>
-                ))
+                <ul className="p-2">
+                  {results.map((p) => (
+                    <li key={p.slug}>
+                      <a
+                        href={`/${p.slug}/`}
+                        className="block px-4 py-3 hover:bg-surfaceContainerHighest rounded-md transition-colors text-onSurface"
+                        onClick={closeModal}
+                      >
+                        {p.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               ) : (
-                <li className="text-center text-stone-400">
+                <div className="p-6 text-center text-onSurfaceVariant">
                   {query
                     ? searchLang === "es"
-                      ? "Sin resultados"
-                      : "No results"
+                      ? "No se encontraron resultados"
+                      : "No results found"
                     : searchLang === "es"
-                    ? "Empieza a escribir…"
-                    : "Start typing…"}
-                </li>
+                    ? "Escribe para buscar poemas..."
+                    : "Type to search poems..."}
+                </div>
               )}
-            </ul>
+            </div>
           </div>
         </div>
       )}

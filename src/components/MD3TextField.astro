@@ -1,0 +1,93 @@
+---
+export interface Props {
+  label: string;
+  id: string;
+  type?: "text" | "email" | "password" | "textarea";
+  value?: string;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  error?: string;
+  helperText?: string;
+}
+
+const {
+  label,
+  id,
+  type = "text",
+  value = "",
+  placeholder = "",
+  required = false,
+  disabled = false,
+  error = "",
+  helperText = "",
+} = Astro.props;
+---
+
+<div class="relative">
+  {
+    type === "textarea" ? (
+      <textarea
+        id={id}
+        name={id}
+        value={value}
+        placeholder={placeholder}
+        required={required}
+        disabled={disabled}
+        class={`
+        peer w-full rounded-md border border-outline
+        bg-surface px-4 py-3
+        text-onSurface placeholder-transparent
+        focus:border-2 focus:border-primary focus:outline-none
+        disabled:bg-surfaceVariant disabled:text-onSurfaceVariant
+        ${error ? "border-error focus:border-error" : ""}
+        resize-none
+      `}
+        rows="4"
+      />
+    ) : (
+      <input
+        type={type}
+        id={id}
+        name={id}
+        value={value}
+        placeholder={placeholder}
+        required={required}
+        disabled={disabled}
+        class={`
+        peer w-full rounded-md border border-outline
+        bg-surface px-4 py-3
+        text-onSurface placeholder-transparent
+        focus:border-2 focus:border-primary focus:outline-none
+        disabled:bg-surfaceVariant disabled:text-onSurfaceVariant
+        ${error ? "border-error focus:border-error" : ""}
+      `}
+      />
+    )
+  }
+
+  <label
+    for={id}
+    class={`
+      absolute left-4 -top-2.5
+      bg-surface px-1.5
+      text-sm transition-all
+      peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base
+      peer-focus:-top-2.5 peer-focus:text-sm
+      ${error ? "text-error" : "text-primary"}
+      ${disabled ? "text-onSurfaceVariant" : ""}
+    `}
+  >
+    {label}
+  </label>
+
+  {
+    (error || helperText) && (
+      <p
+        class={`mt-2 text-sm ${error ? "text-error" : "text-onSurfaceVariant"}`}
+      >
+        {error || helperText}
+      </p>
+    )
+  }
+</div>

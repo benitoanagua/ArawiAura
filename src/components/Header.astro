@@ -25,4 +25,7 @@ const nav = {
 }[lang];
 ---
 
-<HeaderReact client:load {lang} {title} {nav} />
+<!-- Agregar clases MD3 al contenedor -->
+<div class="bg-surface shadow-sm">
+  <HeaderReact client:load {lang} {title} {nav} />
+</div>

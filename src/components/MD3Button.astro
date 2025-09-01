@@ -1,0 +1,60 @@
+---
+export interface Props {
+  variant?: "filled" | "outlined" | "text" | "elevated" | "tonal";
+  disabled?: boolean;
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  onClick?: () => void;
+}
+
+const {
+  variant = "filled",
+  disabled = false,
+  href,
+  type = "button",
+  onClick,
+} = Astro.props;
+
+const baseClasses = `
+  inline-flex items-center justify-center
+  rounded-md px-6 py-3
+  text-sm font-medium tracking-wide
+  transition-all duration-200
+  focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+  disabled:pointer-events-none disabled:opacity-50
+`;
+
+const variantClasses = {
+  filled: `bg-primary text-onPrimary shadow hover:shadow-md`,
+  outlined: `border border-outline bg-transparent text-primary hover:bg-primary/8`,
+  text: `bg-transparent text-primary hover:bg-primary/8`,
+  elevated: `bg-surface text-primary shadow hover:shadow-md`,
+  tonal: `bg-secondaryContainer text-onSecondaryContainer hover:bg-secondaryContainer/80`,
+};
+
+const computedClasses = `${baseClasses} ${variantClasses[variant]}`;
+
+// Generar el código onclick como string si se proporciona una función
+const onclickString = onClick ? `(${onClick.toString()})()` : undefined;
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class={computedClasses}
+      class:list={{ "pointer-events-none opacity-50": disabled }}
+    >
+      <slot />
+    </a>
+  ) : (
+    <button
+      type={type}
+      class={computedClasses}
+      disabled={disabled}
+      onclick={onclickString}
+    >
+      <slot />
+    </button>
+  )
+}
