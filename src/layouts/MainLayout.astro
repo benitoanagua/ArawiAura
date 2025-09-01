@@ -6,10 +6,12 @@ import type { Language } from "../utils/i18n";
 
 export interface Props {
   title?: string;
+  description?: string;
   lang: Language;
+  canonicalPath?: string;
 }
 
-const { title = "Arawi Aura", lang } = Astro.props;
+const { title = "Arawi Aura", description, lang, canonicalPath } = Astro.props;
 
 const poems = await getCollection(
   "poems",
@@ -24,7 +26,7 @@ const searchPoems = poems.map((p) => ({
 }));
 ---
 
-<BaseLayout {title} {lang}>
+<BaseLayout {title} {description} {lang} {canonicalPath}>
   <SearchDialog client:load poems={searchPoems} {lang} />
   <slot />
 </BaseLayout>

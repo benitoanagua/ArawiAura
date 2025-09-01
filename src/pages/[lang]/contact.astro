@@ -1,0 +1,146 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Card from "../../components/ui/Card.astro";
+import type { Language } from "../../utils/i18n";
+import { translations } from "../../utils/i18n";
+
+export async function getStaticPaths() {
+  return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
+}
+
+const { lang } = Astro.params;
+const validLang: Language = lang === "es" || lang === "en" ? lang : "en";
+const t = translations[validLang];
+
+const pageTitle = t.contact;
+const pageDescription =
+  validLang === "es"
+    ? "Contacta con Arawi Aura. Comparte tus pensamientos sobre poesía, sugerencias o simplemente saluda."
+    : "Get in touch with Arawi Aura. Share your thoughts on poetry, suggestions, or just say hello.";
+---
+
+<MainLayout
+  title={pageTitle}
+  description={pageDescription}
+  lang={validLang}
+  canonicalPath={`/${validLang}/contact/`}
+>
+  <Card elevated class="max-w-3xl mx-auto">
+    <article class="prose mx-auto">
+      <h1 class="text-3xl font-bold text-onSurface mb-6">
+        {validLang === "es" ? "Di hola" : "Say hello"}
+      </h1>
+
+      {
+        validLang === "es" ? (
+          <>
+            <p class="text-onSurface mb-6">
+              Me encantaría saber cómo un verso aterrizó en tu día.
+            </p>
+
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">📧</span>
+                <div>
+                  <h3 class="font-semibold text-onSurface">
+                    Correo electrónico
+                  </h3>
+                  <a
+                    href="mailto:hello@arawi-aura.dev"
+                    class="text-primary hover:text-primary/80"
+                  >
+                    hello@arawi-aura.dev
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">🐦</span>
+                <div>
+                  <h3 class="font-semibold text-onSurface">Twitter</h3>
+                  <a
+                    href="https://twitter.com/arawi_aura"
+                    class="text-primary hover:text-primary/80"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @arawi_aura
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">📖</span>
+                <div>
+                  <h3 class="font-semibold text-onSurface">Libro de visitas</h3>
+                  <p class="text-onSurfaceVariant">
+                    O simplemente deja un susurro en el libro de visitas
+                    (próximamente).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-primaryContainer/20 rounded-lg">
+              <p class="text-onPrimaryContainer text-center">
+                Gracias por leer.
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <p class="text-onSurface mb-6">
+              I'd love to hear how a line landed in your day.
+            </p>
+
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">📧</span>
+                <div>
+                  <h3 class="font-semibold text-onSurface">Email</h3>
+                  <a
+                    href="mailto:hello@arawi-aura.dev"
+                    class="text-primary hover:text-primary/80"
+                  >
+                    hello@arawi-aura.dev
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">🐦</span>
+                <div>
+                  <h3 class="font-semibold text-onSurface">Twitter</h3>
+                  <a
+                    href="https://twitter.com/arawi_aura"
+                    class="text-primary hover:text-primary/80"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @arawi_aura
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">📖</span>
+                <div>
+                  <h3 class="font-semibold text-onSurface">Guestbook</h3>
+                  <p class="text-onSurfaceVariant">
+                    Or simply leave a whisper in the guestbook (coming soon).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-primaryContainer/20 rounded-lg">
+              <p class="text-onPrimaryContainer text-center">
+                Thank you for reading.
+              </p>
+            </div>
+          </>
+        )
+      }
+    </article>
+  </Card>
+</MainLayout>

@@ -7,11 +7,8 @@ import { translations } from "../utils/i18n";
 
 export async function getStaticPaths() {
   const poems = await getCollection("poems", (p) => !p.data.draft);
-
   return poems.map((poem) => ({
-    params: {
-      slug: poem.slug,
-    },
+    params: { slug: poem.slug },
     props: { poem },
   }));
 }
@@ -24,11 +21,31 @@ if (!poem) {
 }
 
 const { Content } = await poem.render();
-const langFromSlug = poem.slug.split("/")[0] as Language;
-const t = translations[langFromSlug];
+const langFromSlug = poem.slug.split("/")[0];
+const validLang: Language =
+  langFromSlug === "es" || langFromSlug === "en" ? langFromSlug : "en";
+const t = translations[validLang];
+
+// Función segura para obtener el nombre del formulario
+const getFormName = (form: string) => {
+  const formKey = `form_${form}` as keyof typeof t;
+  return t[formKey] || form;
+};
+
+// Metadatos específicos para el poema
+const pageTitle = poem.data.title;
+const pageDescription =
+  validLang === "es"
+    ? `Lee "${poem.data.title}" - un poema ${getFormName(poem.data.form || "")} en Arawi Aura`
+    : `Read "${poem.data.title}" - a ${getFormName(poem.data.form || "")} poem on Arawi Aura`;
 ---
 
-<MainLayout lang={langFromSlug} title={poem.data.title}>
+<MainLayout
+  title={pageTitle}
+  description={pageDescription}
+  lang={validLang}
+  canonicalPath={`/${poem.slug}/`}
+>
   <Card elevated class="max-w-3xl mx-auto">
     <article class="prose mx-auto">
       <h1 class="text-3xl font-bold text-onSurface">{poem.data.title}</h1>
@@ -51,12 +68,16 @@ const t = translations[langFromSlug];
         poem.data.translation && (
           <footer class="mt-12 pt-6 border-t border-outlineVariant">
             <p class="text-onSurfaceVariant">
-              {t.alsoAvailable}{" "}
+              {poem.data.lang === "es"
+                ? "También disponible en inglés:"
+                : "Also available in Spanish:"}{" "}
               <a
                 href={`/${poem.data.translation}/`}
                 class="text-primary hover:text-primary/80 transition-colors"
               >
-                {t.readTranslation}
+                {poem.data.lang === "es"
+                  ? "Read translation"
+                  : "Leer traducción"}
               </a>
             </p>
           </footer>

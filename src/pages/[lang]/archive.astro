@@ -1,0 +1,116 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Card from "../../components/ui/Card.astro";
+import type { Language } from "../../utils/i18n";
+import { translations } from "../../utils/i18n";
+
+export async function getStaticPaths() {
+  return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
+}
+
+const { lang } = Astro.params;
+const validLang: Language = lang === "es" || lang === "en" ? lang : "en";
+const t = translations[validLang];
+
+const pageTitle = t.archive;
+const pageDescription =
+  validLang === "es"
+    ? "Archivo completo de poemas Arawi Aura organizados por año y mes. Explora la colección completa."
+    : "Complete archive of Arawi Aura poems organized by year and month. Explore the full collection.";
+---
+
+<MainLayout
+  title={pageTitle}
+  description={pageDescription}
+  lang={validLang}
+  canonicalPath={`/${validLang}/archive/`}
+>
+  <Card elevated class="max-w-3xl mx-auto">
+    <article class="prose mx-auto">
+      <h1 class="text-3xl font-bold text-onSurface mb-6">{pageTitle}</h1>
+
+      {
+        validLang === "es" ? (
+          <>
+            <p class="text-onSurface mb-4">
+              Todos los poemas están organizados por año y mes. Usa la lista
+              principal o el selector de idioma para navegar en el tiempo.
+            </p>
+            <blockquote class="border-l-4 border-primary pl-4 italic text-onSurfaceVariant my-6">
+              "Escribimos para saborear la vida dos veces."
+              <br />
+              —Anaïs Nin
+            </blockquote>
+          </>
+        ) : (
+          <>
+            <p class="text-onSurface mb-4">
+              All poems are stored by year and month. Use the main list or the
+              language switcher to wander through time.
+            </p>
+            <blockquote class="border-l-4 border-primary pl-4 italic text-onSurfaceVariant my-6">
+              "We write to taste life twice."
+              <br />
+              —Anaïs Nin
+            </blockquote>
+          </>
+        )
+      }
+
+      <div class="mt-8 p-4 bg-surfaceContainer rounded-lg">
+        <h2 class="text-xl font-semibold text-onSurface mb-4">
+          {
+            validLang === "es"
+              ? "Cómo navegar el archivo"
+              : "How to navigate the archive"
+          }
+        </h2>
+        <ul class="list-disc list-inside space-y-2 text-onSurfaceVariant">
+          {
+            validLang === "es" ? (
+              <>
+                <li>
+                  Visita la{" "}
+                  <a
+                    href={`/${validLang}/`}
+                    class="text-primary hover:text-primary/80"
+                  >
+                    página principal
+                  </a>{" "}
+                  para ver poemas organizados por año
+                </li>
+                <li>
+                  Usa el buscador en la esquina inferior derecha para encontrar
+                  poemas específicos
+                </li>
+                <li>
+                  Cambia entre español e inglés usando el selector de idioma
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  Visit the{" "}
+                  <a
+                    href={`/${validLang}/`}
+                    class="text-primary hover:text-primary/80"
+                  >
+                    main page
+                  </a>{" "}
+                  to see poems organized by year
+                </li>
+                <li>
+                  Use the search button in the bottom right corner to find
+                  specific poems
+                </li>
+                <li>
+                  Switch between English and Spanish using the language toggle
+                </li>
+              </>
+            )
+          }
+        </ul>
+      </div>
+    </article>
+  </Card>
+</MainLayout>

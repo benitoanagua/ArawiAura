@@ -6,6 +6,18 @@ const poems = defineCollection({
     title: z.string(),
     date: z.date(),
     lang: z.enum(["es", "en"]),
+    form: z
+      .enum([
+        "haiku",
+        "tanka",
+        "cinquain",
+        "limerick",
+        "redondilla",
+        "lanterne",
+        "diamante",
+        "fib",
+      ])
+      .optional(),
     translation: z.string().optional(),
     draft: z.boolean().default(false),
   }),

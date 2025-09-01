@@ -23,6 +23,16 @@ export const translations = {
     darkTheme: "Tema oscuro",
     switchToLight: "Cambiar a tema claro",
     switchToDark: "Cambiar a tema oscuro",
+
+    // Nombres de formularios poéticos
+    form_haiku: "haiku",
+    form_tanka: "tanka",
+    form_cinquain: "cinquain",
+    form_limerick: "limerick",
+    form_redondilla: "redondilla",
+    form_lanterne: "lanterne",
+    form_diamante: "diamante",
+    form_fib: "fibonacci",
   },
   en: {
     home: "Home",
@@ -42,5 +52,15 @@ export const translations = {
     darkTheme: "Dark theme",
     switchToLight: "Switch to light theme",
     switchToDark: "Switch to dark theme",
+
+    // Poetry form names
+    form_haiku: "haiku",
+    form_tanka: "tanka",
+    form_cinquain: "cinquain",
+    form_limerick: "limerick",
+    form_redondilla: "redondilla",
+    form_lanterne: "lanterne",
+    form_diamante: "diamante",
+    form_fib: "fibonacci",
   },
 };

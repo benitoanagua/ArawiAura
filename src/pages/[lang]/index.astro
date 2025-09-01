@@ -3,6 +3,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import Card from "../../components/ui/Card.astro";
 import { getCollection } from "astro:content";
 import type { Language } from "../../utils/i18n";
+import { translations } from "../../utils/i18n";
 
 export async function getStaticPaths() {
   const langs = ["es", "en"] as const;
@@ -36,10 +37,24 @@ export async function getStaticPaths() {
   );
 }
 
-const { lang, grouped } = Astro.props;
+const { lang: urlLang, grouped } = Astro.props;
+const lang: Language = urlLang === "es" || urlLang === "en" ? urlLang : "en";
+const t = translations[lang];
+
+// Metadatos SEO para la página principal
+const pageTitle = t.home;
+const pageDescription =
+  lang === "es"
+    ? "Explora el diario de poesía Arawi Aura. Poemas en español e inglés organizados por año y mes."
+    : "Explore the Arawi Aura poetry journal. Poems in English and Spanish organized by year and month.";
 ---
 
-<MainLayout {lang}>
+<MainLayout
+  title={pageTitle}
+  description={pageDescription}
+  {lang}
+  canonicalPath={`/${lang}/`}
+>
   <div class="space-y-8">
     {
       Object.entries(grouped)
@@ -55,7 +70,10 @@ const { lang, grouped } = Astro.props;
                     {new Date(
                       Number(year),
                       Number(month) - 1
-                    ).toLocaleDateString(lang, { month: "long" })}
+                    ).toLocaleDateString(lang, {
+                      month: "long",
+                      year: "numeric",
+                    })}
                   </h3>
                   <ul class="space-y-4">
                     {poems.map((p) => (
@@ -68,7 +86,11 @@ const { lang, grouped } = Astro.props;
                         </a>
                         <br />
                         <small class="text-onSurfaceVariant">
-                          {p.data.date.toLocaleDateString(lang)}
+                          {p.data.date.toLocaleDateString(lang, {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
                         </small>
                         {p.data.translation && (
                           <small class="ml-2">
