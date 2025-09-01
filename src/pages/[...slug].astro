@@ -7,10 +7,33 @@ import { translations } from "../utils/i18n";
 
 export async function getStaticPaths() {
   const poems = await getCollection("poems", (p) => !p.data.draft);
-  return poems.map((poem) => ({
-    params: { slug: poem.slug },
-    props: { poem },
-  }));
+
+  // Lista de rutas que NO deben ser manejadas por esta ruta dinámica
+  const excludedRoutes = [
+    "android-chrome-192x192",
+    "android-chrome-192x192.png",
+    "icon-192x192.png",
+    "favicon.ico",
+    "site.webmanifest",
+    "apple-touch-icon.png",
+    "favicon-32x32.png",
+    "favicon-16x16.png",
+    "robots.txt",
+    "sitemap.xml",
+  ];
+
+  return poems
+    .filter((poem) => {
+      // Excluir rutas que coincidan con archivos estáticos
+      const slug = poem.slug;
+      return !excludedRoutes.some(
+        (excluded) => slug === excluded || slug.endsWith(`/${excluded}`)
+      );
+    })
+    .map((poem) => ({
+      params: { slug: poem.slug },
+      props: { poem },
+    }));
 }
 
 const { slug } = Astro.params;

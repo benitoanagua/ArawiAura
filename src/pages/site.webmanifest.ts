@@ -12,7 +12,7 @@ export const GET: APIRoute = () => {
     theme_color: MANIFEST_CONFIG.theme_color,
     icons: [
       {
-        src: "/android-chrome-192x192",
+        src: "/android-chrome-192x192.png",
         sizes: "192x192",
         type: "image/png",
       },
