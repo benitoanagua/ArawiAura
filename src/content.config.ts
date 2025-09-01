@@ -1,11 +1,12 @@
 import { defineCollection, z } from "astro:content";
 
 const poems = defineCollection({
+  type: "content",
   schema: z.object({
     title: z.string(),
     date: z.date(),
     lang: z.enum(["es", "en"]),
-    translation: z.string().optional(), // slug del poema en otro idioma
+    translation: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });

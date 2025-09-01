@@ -9,20 +9,22 @@ export async function getStaticPaths() {
     langs.map(async (lang) => {
       const poems = await getCollection(
         "poems",
-        (p) => p.data.lang === lang && !p.data.draft
+        (p) => p.slug.startsWith(lang + "/") && !p.data.draft
       );
 
-      // Agrupamos por año y mes directamente aquí
+      // Agrupamos por año y mes
       const grouped = poems.reduce<
         Record<string, Record<string, typeof poems>>
       >((acc, poem) => {
-        const year = poem.data.date.getFullYear().toString();
-        const month = (poem.data.date.getMonth() + 1)
-          .toString()
-          .padStart(2, "0");
-        acc[year] ||= {};
-        acc[year][month] ||= [];
-        acc[year][month].push(poem);
+        // Extraer año y mes del slug (formato: es/2025/07/titulo)
+        const parts = poem.slug.split("/");
+        if (parts.length >= 3) {
+          const year = parts[1];
+          const month = parts[2];
+          acc[year] ||= {};
+          acc[year][month] ||= [];
+          acc[year][month].push(poem);
+        }
         return acc;
       }, {});
 
@@ -58,6 +60,7 @@ const { lang, grouped } = Astro.props;
                   <ul class="space-y-4">
                     {poems.map((p) => (
                       <li class="border-l-2 pl-4">
+                        {/* Cambia el enlace para usar el slug completo */}
                         <a href={`/${p.slug}/`} class="text-xl font-semibold">
                           {p.data.title}
                         </a>

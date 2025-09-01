@@ -8,10 +8,15 @@ export default config({
     poems: collection({
       label: "Poems",
       slugField: "title",
-      path: "src/content/poems/*", // Simplificado inicialmente
+      path: "src/content/poems/**",
       format: { contentField: "content" },
       schema: {
-        title: fields.slug({ name: { label: "Title" } }),
+        title: fields.slug({
+          name: {
+            label: "Title",
+            validation: { isRequired: true },
+          },
+        }),
         date: fields.date({
           label: "Date",
           defaultValue: { kind: "today" },
@@ -26,7 +31,8 @@ export default config({
         }),
         translation: fields.text({
           label: "Translation slug",
-          description: "Slug of the poem in the other language",
+          description:
+            "Full slug of the translation (e.g., 'es/2025/07/titulo')",
         }),
         draft: fields.checkbox({
           label: "Draft",
@@ -46,5 +52,8 @@ export default config({
   },
   ui: {
     brand: { name: "Arawi Aura CMS" },
+    // navigation: {
+    //   Poems: ["poems"],
+    // },
   },
 });

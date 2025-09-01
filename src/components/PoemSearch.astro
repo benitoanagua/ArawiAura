@@ -6,16 +6,20 @@ export interface Props {
 }
 const { lang } = Astro.props;
 
-const rawModules = import.meta.glob("../content/poems/**/*.md", {
-  eager: true,
-});
-
-const data = Object.entries(rawModules).map(([filePath, mod]) => ({
-  slug: filePath.replace("../content/poems/", "").replace(".md", ""),
-  title: (mod as any).frontmatter.title,
-  lang: (mod as any).frontmatter.lang,
-  body: (mod as any).rawContent?.() ?? "",
-}));
+import { getCollection } from "astro:content";
+const poems = await getCollection(
+  "poems",
+  (p) => !p.data.draft && p.slug.startsWith(lang + "/")
+);
 ---
 
-<PoemSearchReact client:load {lang} poems={data} />
+<PoemSearchReact
+  client:load
+  {lang}
+  poems={poems.map((p) => ({
+    slug: p.slug,
+    title: p.data.title,
+    lang: p.data.lang,
+    body: p.body,
+  }))}
+/>

@@ -7,18 +7,29 @@ export async function getStaticPaths() {
 
   return poems.map((poem) => ({
     params: {
-      // keep it a single string -> Astro splits it internally
-      slug: poem.slug, // "en/2025/07/song-of-the-earth"
+      // Para rutas catch-all, necesitamos pasar el slug como string unido
+      slug: poem.slug, // "en/2025/07/river-of-memories"
     },
     props: { poem },
   }));
 }
 
+// Extraer el slug de los parámetros
+const { slug } = Astro.params;
 const { poem } = Astro.props;
+
+// Verificar que tenemos el poema
+if (!poem) {
+  throw new Error(`Poem not found for slug: ${slug}`);
+}
+
 const { Content } = await poem.render();
+
+// Extraer el idioma del slug
+const langFromSlug = poem.slug.split("/")[0];
 ---
 
-<DefaultLayout lang={poem.data.lang}>
+<DefaultLayout lang={langFromSlug}>
   <article class="prose mx-auto">
     <h1>{poem.data.title}</h1>
     <time datetime={poem.data.date.toISOString()}>
