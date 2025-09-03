@@ -9,8 +9,17 @@ export default defineConfig({
   site: "https://benitoanagua.github.io",
   // base: "/ArawiAura",
 
+  // output: "static",
+  // trailingSlash: "always",
+  // build: {
+  //   format: "directory",
+  // },
+
   vite: {
     plugins: [tailwindcss()],
+    // optimizeDeps: {
+    //   exclude: ["@astrojs/react"],
+    // },
   },
 
   integrations: [react()],

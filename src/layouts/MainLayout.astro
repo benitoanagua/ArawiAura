@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import SearchDialog from "../components/ui/SearchDialog.tsx";
-import { getCollection } from "astro:content";
 import type { Language } from "../utils/i18n";
+import { wordpressClient } from "../utils/wordpressClient";
+import type { SearchablePost } from "../components/ui/SearchDialog.tsx";
 
 export interface Props {
   title?: string;
@@ -13,20 +14,27 @@ export interface Props {
 
 const { title = "Arawi Aura", description, lang, canonicalPath } = Astro.props;
 
-const poems = await getCollection(
-  "poems",
-  (p) => !p.data.draft && p.slug.startsWith(lang + "/")
-);
+// Get posts for search functionality
+let searchPosts: SearchablePost[] = [];
 
-const searchPoems = poems.map((p) => ({
-  slug: p.slug,
-  title: p.data.title,
-  lang: p.data.lang,
-  body: p.body,
-}));
+try {
+  const allPostsResult = await wordpressClient.getPosts(1000);
+  searchPosts = allPostsResult.posts.map((post) => ({
+    id: post.id,
+    slug: post.slug,
+    title: post.title,
+    content: post.content,
+    excerpt: post.excerpt || "",
+    language: post.language,
+    categories: post.categories,
+    tags: post.tags,
+  }));
+} catch (error) {
+  console.error("Error fetching posts for search:", error);
+}
 ---
 
 <BaseLayout {title} {description} {lang} {canonicalPath}>
-  <SearchDialog client:load poems={searchPoems} {lang} />
+  <SearchDialog client:load posts={searchPosts} {lang} />
   <slot />
 </BaseLayout>

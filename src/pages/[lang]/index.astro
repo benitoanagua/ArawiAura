@@ -1,50 +1,32 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import Card from "../../components/ui/Card.astro";
-import { getCollection } from "astro:content";
 import type { Language } from "../../utils/i18n";
 import { translations } from "../../utils/i18n";
+import { wordpressClient } from "../../utils/wordpressClient";
 
 export async function getStaticPaths() {
-  const langs = ["es", "en"] as const;
-
-  return await Promise.all(
-    langs.map(async (lang) => {
-      const poems = await getCollection(
-        "poems",
-        (p) => p.slug.startsWith(lang + "/") && !p.data.draft
-      );
-
-      const grouped = poems.reduce<
-        Record<string, Record<string, typeof poems>>
-      >((acc, poem) => {
-        const parts = poem.slug.split("/");
-        if (parts.length >= 3) {
-          const year = parts[1];
-          const month = parts[2];
-          acc[year] ||= {};
-          acc[year][month] ||= [];
-          acc[year][month].push(poem);
-        }
-        return acc;
-      }, {});
-
-      return {
-        params: { lang },
-        props: { lang, grouped },
-      };
-    })
-  );
+  return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
 }
 
-const { lang: urlLang, grouped } = Astro.props;
-const lang: Language = urlLang === "es" || urlLang === "en" ? urlLang : "en";
-const t = translations[lang];
+const { lang } = Astro.params;
+const validLang: Language = lang === "es" || lang === "en" ? lang : "en";
+const t = translations[validLang];
 
-// Metadatos SEO para la página principal
+// Get posts for this language
+let posts: any[] = [];
+let grouped: Record<string, Record<string, any[]>> = {};
+
+try {
+  posts = await wordpressClient.getPostsByLanguage(validLang);
+  grouped = wordpressClient.groupPostsByDate(posts);
+} catch (error) {
+  console.error("Error fetching posts:", error);
+}
+
 const pageTitle = t.home;
 const pageDescription =
-  lang === "es"
+  validLang === "es"
     ? "Explora el diario de poesía Arawi Aura. Poemas en español e inglés organizados por año y mes."
     : "Explore the Arawi Aura poetry journal. Poems in English and Spanish organized by year and month.";
 ---
@@ -52,59 +34,129 @@ const pageDescription =
 <MainLayout
   title={pageTitle}
   description={pageDescription}
-  {lang}
-  canonicalPath={`/${lang}/`}
+  lang={validLang}
+  canonicalPath={`/${validLang}/`}
 >
   <div class="space-y-8">
+    {
+      posts.length === 0 && (
+        <Card elevated={true}>
+          <div class="text-center py-12">
+            <p class="text-onSurfaceVariant text-lg">
+              {validLang === "es"
+                ? "No hay poemas disponibles en este momento."
+                : "No poems available at the moment."}
+            </p>
+          </div>
+        </Card>
+      )
+    }
+
     {
       Object.entries(grouped)
         .sort(([a], [b]) => Number(b) - Number(a))
         .map(([year, months]) => (
-          <Card elevated>
+          <Card elevated={true}>
             <h2 class="text-2xl font-semibold text-onSurface mb-6">{year}</h2>
             {Object.entries(months)
               .sort(([a], [b]) => Number(b) - Number(a))
-              .map(([month, poems]) => (
+              .map(([month, monthPosts]) => (
                 <div class="mb-6 last:mb-0">
                   <h3 class="text-xl font-medium text-onSurfaceVariant mb-4">
                     {new Date(
                       Number(year),
                       Number(month) - 1
-                    ).toLocaleDateString(lang, {
+                    ).toLocaleDateString(validLang, {
                       month: "long",
                       year: "numeric",
                     })}
                   </h3>
                   <ul class="space-y-4">
-                    {poems.map((p) => (
-                      <li class="border-l-2 border-outlineVariant pl-4 py-2">
-                        <a
-                          href={`/${p.slug}/`}
-                          class="text-xl font-semibold text-primary hover:text-primary/80 transition-colors"
-                        >
-                          {p.data.title}
-                        </a>
-                        <br />
-                        <small class="text-onSurfaceVariant">
-                          {p.data.date.toLocaleDateString(lang, {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
-                        </small>
-                        {p.data.translation && (
-                          <small class="ml-2">
-                            {" · "}
-                            <a
-                              href={`/${p.data.translation}/`}
-                              class="text-secondary hover:text-secondary/80 transition-colors"
-                            >
-                              {lang === "es" ? "en inglés" : "in Spanish"}
-                            </a>
-                          </small>
-                        )}
-                      </li>
-                    ))}
+                    {monthPosts.map((post) => {
+                      const hasTranslation =
+                        post.translations && post.translations.length > 0;
+                      const translationLang = hasTranslation
+                        ? (post.translations[0].language.code.toLowerCase() as Language)
+                        : null;
+
+                      return (
+                        <li class="border-l-2 border-outlineVariant pl-4 py-2">
+                          <a
+                            href={`/${validLang}/${post.slug}/`}
+                            class="text-xl font-semibold text-primary hover:text-primary/80 transition-colors block"
+                          >
+                            {post.title}
+                            {hasTranslation && (
+                              <span class="ml-2 text-xs font-normal text-onSurfaceVariant align-super">
+                                {validLang === "es" ? "↗" : "↗"}
+                              </span>
+                            )}
+                          </a>
+                          <div class="flex flex-wrap items-center gap-2 mt-1">
+                            <small class="text-onSurfaceVariant">
+                              {new Date(post.date).toLocaleDateString(
+                                validLang,
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </small>
+
+                            {/* Show translation link if available */}
+                            {hasTranslation && (
+                              <small class="ml-2">
+                                {" • "}
+                                <a
+                                  href={`/${translationLang}/${post.translations[0].slug}/`}
+                                  class="text-secondary hover:text-secondary/80 transition-colors"
+                                  title={
+                                    validLang === "es"
+                                      ? `También disponible en ${translationLang === "es" ? "español" : "inglés"}`
+                                      : `Also available in ${translationLang === "es" ? "Spanish" : "English"}`
+                                  }
+                                >
+                                  {translationLang === "es" ? "ES" : "EN"}
+                                </a>
+                              </small>
+                            )}
+
+                            {/* Show author if available */}
+                            {post.author && (
+                              <small class="text-onSurfaceVariant/70">
+                                {" • "}
+                                {validLang === "es" ? "Por" : "By"}{" "}
+                                {post.author.node.name}
+                              </small>
+                            )}
+                          </div>
+
+                          {/* Show categories if available */}
+                          {post.categories?.nodes.length > 0 && (
+                            <div class="flex flex-wrap gap-1 mt-2">
+                              {post.categories.nodes
+                                .slice(0, 3)
+                                .map((category: any) => (
+                                  <span class="text-xs px-2 py-1 bg-surfaceVariant/30 text-onSurfaceVariant rounded-full">
+                                    {category.name}
+                                  </span>
+                                ))}
+                            </div>
+                          )}
+
+                          {/* Show excerpt if available */}
+                          {post.excerpt && (
+                            <p class="text-onSurfaceVariant text-sm mt-2 line-clamp-2">
+                              {post.excerpt
+                                .replace(/<[^>]*>/g, "")
+                                .slice(0, 120)}
+                              ...
+                            </p>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               ))}
