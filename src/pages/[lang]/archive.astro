@@ -70,7 +70,7 @@ const pageDescription =
 >
   <div class="space-y-8">
     <!-- Archive Header -->
-    <Card elevated class="text-center">
+    <Card elevated={true} class="text-center">
       <h1 class="text-3xl font-bold text-onSurface mb-4">{pageTitle}</h1>
       <p class="text-onSurfaceVariant mb-6">
         {
@@ -193,7 +193,6 @@ const pageDescription =
               <a
                 href={`/${validLang}/#${year}`}
                 class="bg-surfaceContainer hover:bg-surfaceContainerHighest text-center p-3 rounded-lg transition-colors group"
-                key={year}
               >
                 <div class="text-lg font-semibold text-onSurface group-hover:text-primary">
                   {year}
@@ -214,10 +213,7 @@ const pageDescription =
           </h2>
           <div class="flex flex-wrap gap-2">
             {stats.categories.map((category) => (
-              <span
-                class="px-3 py-1 bg-secondaryContainer/30 text-onSecondaryContainer rounded-full text-sm cursor-default"
-                key={category}
-              >
+              <span class="px-3 py-1 bg-secondaryContainer/30 text-onSecondaryContainer rounded-full text-sm cursor-default">
                 {category}
               </span>
             ))}

@@ -1,8 +1,17 @@
 import { WordPressBaseClient } from "./WordpressBaseClient";
 import type { WordPressPost, SearchablePost } from "../../types/wordpress";
 import type { Language } from "../../utils/i18n";
+import { cacheManager } from "../cache/CacheManager";
 
 export class WordPressPostClient extends WordPressBaseClient {
+  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+  private readonly CACHE_KEYS = {
+    POSTS_BY_LANGUAGE: (lang: Language) => `posts:${lang}`,
+    POST_BY_SLUG: (slug: string, lang?: Language) =>
+      lang ? `post:${slug}:${lang}` : `post:${slug}`,
+    ALL_POSTS: "posts:all",
+  };
+
   async getPosts(
     limit = 100,
     after?: string
@@ -11,6 +20,17 @@ export class WordPressPostClient extends WordPressBaseClient {
     hasNextPage: boolean;
     endCursor?: string;
   }> {
+    const cacheKey = this.CACHE_KEYS.ALL_POSTS + `:${limit}:${after || ""}`;
+    const cached = cacheManager.get<{
+      posts: WordPressPost[];
+      hasNextPage: boolean;
+      endCursor?: string;
+    }>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
     const query = `
       query GetPosts($first: Int, $after: String) {
         posts(first: $first, after: $after) {
@@ -72,58 +92,68 @@ export class WordPressPostClient extends WordPressBaseClient {
       };
     }>(query, { first: limit, after });
 
-    return {
+    const result = {
       posts: data.posts.nodes,
       hasNextPage: data.posts.pageInfo.hasNextPage,
       endCursor: data.posts.pageInfo.endCursor,
     };
+
+    cacheManager.set(cacheKey, result, this.CACHE_DURATION);
+    return result;
   }
 
   async getPostsByLanguage(
     language: Language,
     limit = 100
   ): Promise<WordPressPost[]> {
+    const cacheKey = this.CACHE_KEYS.POSTS_BY_LANGUAGE(language) + `:${limit}`;
+    const cached = cacheManager.get<WordPressPost[]>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
     const query = `
-    query GetPostsByLanguage($language: LanguageCodeFilterEnum!, $first: Int) {
-      posts(where: { language: $language }, first: $first) {
-        nodes {
-          id
-          title
-          excerpt
-          content
-          date
-          slug
-          language {
-            code
-            name
-          }
-          translations {
+      query GetPostsByLanguage($language: LanguageCodeFilterEnum!, $first: Int) {
+        posts(where: { language: $language }, first: $first) {
+          nodes {
+            id
             title
+            excerpt
+            content
+            date
             slug
             language {
               code
-            }
-          }
-          featuredImage {
-            node {
-              sourceUrl
-            }
-          }
-          categories {
-            nodes {
               name
+            }
+            translations {
+              title
               slug
+              language {
+                code
+              }
             }
-          }
-          author {
-            node {
-              name
+            featuredImage {
+              node {
+                sourceUrl
+              }
+            }
+            categories {
+              nodes {
+                name
+                slug
+              }
+            }
+            author {
+              node {
+                name
+              }
             }
           }
         }
       }
-    }
-  `;
+    `;
 
     const data = await this.query<{
       posts: {
@@ -134,6 +164,7 @@ export class WordPressPostClient extends WordPressBaseClient {
       first: limit,
     });
 
+    cacheManager.set(cacheKey, data.posts.nodes, this.CACHE_DURATION);
     return data.posts.nodes;
   }
 
@@ -141,9 +172,14 @@ export class WordPressPostClient extends WordPressBaseClient {
     slug: string,
     language?: Language
   ): Promise<WordPressPost | null> {
-    // Primero intentar con filtro de idioma si está especificado
-    if (language) {
-      const queryWithLanguage = `
+    const cacheKey = this.CACHE_KEYS.POST_BY_SLUG(slug, language);
+    const cached = cacheManager.get<WordPressPost>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
+    const query = `
       query GetPostBySlugAndLanguage($slug: String!, $language: LanguageCodeFilterEnum) {
         posts(where: { name: $slug, language: $language }, first: 1) {
           nodes {
@@ -190,75 +226,24 @@ export class WordPressPostClient extends WordPressBaseClient {
       }
     `;
 
-      const dataWithLanguage = await this.query<{
-        posts: {
-          nodes: WordPressPost[];
-        };
-      }>(queryWithLanguage, {
-        slug,
-        language: language.toUpperCase(),
-      });
-
-      if (dataWithLanguage.posts.nodes.length > 0) {
-        return dataWithLanguage.posts.nodes[0];
-      }
+    const variables: any = { slug };
+    if (language) {
+      variables.language = language.toUpperCase();
     }
-
-    // Si no se especificó idioma o no se encontró con filtro, buscar sin filtro
-    const query = `
-    query GetPostBySlug($slug: String!) {
-      posts(where: { name: $slug }, first: 1) {
-        nodes {
-          id
-          title
-          excerpt
-          content
-          date
-          slug
-          language {
-            code
-            name
-          }
-          translations {
-            title
-            slug
-            language {
-              code
-            }
-          }
-          featuredImage {
-            node {
-              sourceUrl
-            }
-          }
-          categories {
-            nodes {
-              name
-              slug
-            }
-          }
-          author {
-            node {
-              name
-            }
-          }
-          tags {
-            nodes {
-              name
-            }
-          }
-        }
-      }
-    }
-  `;
 
     const data = await this.query<{
       posts: {
         nodes: WordPressPost[];
       };
-    }>(query, { slug });
+    }>(query, variables);
 
-    return data.posts.nodes[0] || null;
+    const post = data.posts.nodes[0] || null;
+
+    if (post) {
+      cacheManager.set(cacheKey, post, this.CACHE_DURATION);
+    }
+
+    return post;
   }
 
   // Helper method to get translation slug for a post
@@ -314,5 +299,36 @@ export class WordPressPostClient extends WordPressBaseClient {
       categories: post.categories,
       tags: post.tags,
     };
+  }
+
+  // Método para invalidar cache específico - ACTUALIZADO
+  invalidateCache(keyPattern: string | RegExp): number {
+    return cacheManager.invalidateByPattern(keyPattern);
+  }
+
+  // Método para invalidar cache de posts por idioma
+  invalidatePostsByLanguage(lang: Language): number {
+    return this.invalidateCache(`posts:${lang}`);
+  }
+
+  // Método para invalidar cache de un post específico
+  invalidatePostBySlug(slug: string, lang?: Language): number {
+    const pattern = lang ? `post:${slug}:${lang}` : `post:${slug}`;
+    return this.invalidateCache(pattern);
+  }
+
+  // Método para invalidar todo el cache de posts
+  invalidateAllPosts(): number {
+    return this.invalidateCache(/^posts:/);
+  }
+
+  // Método para obtener estadísticas del cache
+  getCacheStats() {
+    return cacheManager.getStats();
+  }
+
+  // Método para limpiar items expirados
+  cleanupExpiredCache(): number {
+    return cacheManager.cleanupExpired();
   }
 }
