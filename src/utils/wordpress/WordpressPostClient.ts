@@ -84,8 +84,68 @@ export class WordPressPostClient extends WordPressBaseClient {
     limit = 100
   ): Promise<WordPressPost[]> {
     const query = `
-      query GetPostsByLanguage($language: LanguageCodeFilterEnum!, $first: Int) {
-        posts(where: { language: $language }, first: $first) {
+    query GetPostsByLanguage($language: LanguageCodeFilterEnum!, $first: Int) {
+      posts(where: { language: $language }, first: $first) {
+        nodes {
+          id
+          title
+          excerpt
+          content
+          date
+          slug
+          language {
+            code
+            name
+          }
+          translations {
+            title
+            slug
+            language {
+              code
+            }
+          }
+          featuredImage {
+            node {
+              sourceUrl
+            }
+          }
+          categories {
+            nodes {
+              name
+              slug
+            }
+          }
+          author {
+            node {
+              name
+            }
+          }
+        }
+      }
+    }
+  `;
+
+    const data = await this.query<{
+      posts: {
+        nodes: WordPressPost[];
+      };
+    }>(query, {
+      language: language.toUpperCase(),
+      first: limit,
+    });
+
+    return data.posts.nodes;
+  }
+
+  async getPostBySlug(
+    slug: string,
+    language?: Language
+  ): Promise<WordPressPost | null> {
+    // Primero intentar con filtro de idioma si está especificado
+    if (language) {
+      const queryWithLanguage = `
+      query GetPostBySlugAndLanguage($slug: String!, $language: LanguageCodeFilterEnum) {
+        posts(where: { name: $slug, language: $language }, first: 1) {
           nodes {
             id
             title
@@ -120,27 +180,35 @@ export class WordPressPostClient extends WordPressBaseClient {
                 name
               }
             }
+            tags {
+              nodes {
+                name
+              }
+            }
           }
         }
       }
     `;
 
-    const data = await this.query<{
-      posts: {
-        nodes: WordPressPost[];
-      };
-    }>(query, {
-      language: language.toUpperCase(),
-      first: limit,
-    });
+      const dataWithLanguage = await this.query<{
+        posts: {
+          nodes: WordPressPost[];
+        };
+      }>(queryWithLanguage, {
+        slug,
+        language: language.toUpperCase(),
+      });
 
-    return data.posts.nodes;
-  }
+      if (dataWithLanguage.posts.nodes.length > 0) {
+        return dataWithLanguage.posts.nodes[0];
+      }
+    }
 
-  async getPostBySlug(slug: string): Promise<WordPressPost | null> {
+    // Si no se especificó idioma o no se encontró con filtro, buscar sin filtro
     const query = `
-      query GetPostBySlug($slug: ID!) {
-        post(id: $slug, idType: SLUG) {
+    query GetPostBySlug($slug: String!) {
+      posts(where: { name: $slug }, first: 1) {
+        nodes {
           id
           title
           excerpt
@@ -181,13 +249,16 @@ export class WordPressPostClient extends WordPressBaseClient {
           }
         }
       }
-    `;
+    }
+  `;
 
     const data = await this.query<{
-      post: WordPressPost | null;
+      posts: {
+        nodes: WordPressPost[];
+      };
     }>(query, { slug });
 
-    return data.post;
+    return data.posts.nodes[0] || null;
   }
 
   // Helper method to get translation slug for a post

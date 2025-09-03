@@ -32,8 +32,8 @@ class WordPressClient {
     return this.postClient.getPostsByLanguage(language, limit);
   }
 
-  getPostBySlug(slug: string) {
-    return this.postClient.getPostBySlug(slug);
+  getPostBySlug(slug: string, language?: Language) {
+    return this.postClient.getPostBySlug(slug, language);
   }
 
   getTranslationSlug(post: WordPressPost, targetLang: Language) {
@@ -50,6 +50,48 @@ class WordPressClient {
 
   toSearchablePost(post: WordPressPost) {
     return this.postClient.toSearchablePost(post);
+  }
+
+  async getPostWithTranslationHandling(
+    slug: string,
+    requestedLang: Language
+  ): Promise<{
+    post: WordPressPost | null;
+    shouldRedirect: boolean;
+    redirectTo?: string;
+  }> {
+    // Primero intentar obtener el post en el idioma solicitado
+    const post = await this.getPostBySlug(slug, requestedLang);
+
+    if (post) {
+      return { post, shouldRedirect: false };
+    }
+
+    // Si no se encuentra en el idioma solicitado, buscar en cualquier idioma
+    const fallbackPost = await this.getPostBySlug(slug);
+
+    if (!fallbackPost) {
+      return { post: null, shouldRedirect: false };
+    }
+
+    // Verificar si el post tiene una traducción al idioma solicitado
+    const currentLang = fallbackPost.language?.code.toLowerCase();
+    if (currentLang !== requestedLang) {
+      const translation = fallbackPost.translations?.find(
+        (t) => t.language.code.toLowerCase() === requestedLang
+      );
+
+      if (translation) {
+        return {
+          post: null,
+          shouldRedirect: true,
+          redirectTo: `/${requestedLang}/${translation.slug}/`,
+        };
+      }
+    }
+
+    // Si no hay traducción pero el post existe, devolver el post encontrado
+    return { post: fallbackPost, shouldRedirect: false };
   }
 
   // Page methods
@@ -77,5 +119,5 @@ export const fetchWordPressPost = (
   slug: string,
   lang: Language
 ): Promise<WordPressPost | null> => {
-  return wordpressClient.getPostBySlug(slug);
+  return wordpressClient.getPostBySlug(slug, lang);
 };

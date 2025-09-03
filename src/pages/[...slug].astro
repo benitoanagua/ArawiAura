@@ -30,11 +30,7 @@ export async function getStaticPaths() {
             paths.push({
               params: { slug: `${translationLang}/${translation.slug}` },
               props: {
-                post: {
-                  ...post,
-                  title: translation.title,
-                  slug: translation.slug,
-                },
+                post: null, // No pasar el post, se cargará dinámicamente
                 lang: translationLang,
                 type: "post",
               },
@@ -69,7 +65,16 @@ if (!finalPost && slug) {
       langParam === "es" || langParam === "en" ? (langParam as Language) : "en";
 
     try {
-      finalPost = await wordpressClient.getPostBySlug(postSlug);
+      const result = await wordpressClient.getPostWithTranslationHandling(
+        postSlug,
+        finalLang
+      );
+
+      if (result.shouldRedirect && result.redirectTo) {
+        return Astro.redirect(result.redirectTo);
+      }
+
+      finalPost = result.post;
     } catch (error) {
       console.error("Error fetching post:", error);
     }
