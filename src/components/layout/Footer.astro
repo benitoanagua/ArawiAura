@@ -1,5 +1,6 @@
 ---
 import { translations, type Language } from "../../utils/i18n";
+import { AUTHOR_SOCIAL_LINKS } from "../../utils/seo.constants";
 
 export interface Props {
   lang: Language;
@@ -13,7 +14,23 @@ const t = translations[lang];
   <div
     class="container mx-auto py-8 px-6 text-center text-sm text-onSurfaceVariant font-mono"
   >
-    <p class="italic mb-2">{t.quote}</p>
+    <!-- Redes sociales -->
+    <div class="flex flex-col md:flex-row justify-center gap-6 mb-4">
+      {
+        AUTHOR_SOCIAL_LINKS.map((social) => (
+          <a
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-onSurfaceVariant hover:text-primary transition-colors"
+            title={social.title}
+          >
+            {social.title}
+          </a>
+        ))
+      }
+    </div>
+
     <p class="border-t border-outline pt-4">{t.rights}</p>
   </div>
 </footer>

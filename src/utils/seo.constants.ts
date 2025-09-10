@@ -48,6 +48,30 @@ export const MANIFEST_CONFIG = {
 
 export const WEBSITE_URL = "https://arawi-aura.dev";
 
+// Array de redes sociales del autor
+export const AUTHOR_SOCIAL_LINKS = [
+  {
+    url: "https://benitoanagua.me",
+    title: "Personal Website",
+  },
+  {
+    url: "https://linkedin.com/in/benito-anagua",
+    title: "LinkedIn",
+  },
+  {
+    url: "https://github.com/benitoanagua",
+    title: "GitHub",
+  },
+  {
+    url: "https://gitlab.com/benito.anagua",
+    title: "GitLab",
+  },
+  {
+    url: "https://behance.net/benitoanagua",
+    title: "Behance",
+  },
+] as const;
+
 // Función para generar metadatos SEO completos
 export const generateSeoMetadata = (
   lang: Language,
