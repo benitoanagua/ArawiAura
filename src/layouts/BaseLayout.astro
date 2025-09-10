@@ -34,7 +34,7 @@ const {
 
   <body class="min-h-screen bg-background text-onBackground font-sans">
     <div class="min-h-screen flex flex-col">
-      <Header {title} {lang} />
+      <Header {lang} />
 
       <main class="flex-1 container mx-auto px-4 py-8">
         <slot />
@@ -42,7 +42,21 @@ const {
 
       <Footer {lang} />
     </div>
-
+    <script is:inline type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "{seo.siteName}",
+        "url": "{seo.url}",
+        "description": "{seo.description}",
+        "inLanguage": "{lang}",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "{seo.url}/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
     <script>
       // Sistema de tema manual usando data-theme attribute
       (function () {

@@ -1,6 +1,5 @@
 import React from "react";
 import type { Language } from "../../utils/i18n";
-import { translations } from "../../utils/i18n";
 
 interface NavItem {
   label: string;
@@ -20,8 +19,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   lang,
   nav,
 }) => {
-  const t = translations[lang];
-
   if (!isOpen) return null;
 
   return (

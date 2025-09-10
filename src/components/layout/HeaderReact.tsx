@@ -23,11 +23,6 @@ const HeaderReact: React.FC<HeaderProps> = ({
   nav,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentPath, setCurrentPath] = useState("");
-
-  useEffect(() => {
-    setCurrentPath(window.location.pathname);
-  }, []);
 
   useEffect(() => {
     if (isMenuOpen) {

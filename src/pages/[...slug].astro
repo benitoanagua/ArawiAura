@@ -2,7 +2,6 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import WordPressPostComponent from "../components/content/WordPressPost.astro";
 import type { Language } from "../utils/i18n";
-import { translations } from "../utils/i18n";
 import { wordpressClient, type WordPressPost } from "../utils/wordpressClient";
 
 export async function getStaticPaths() {
@@ -50,7 +49,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const { post, lang, type } = Astro.props;
+const { post, lang } = Astro.props;
 
 // If no props were passed (fallback case), try to fetch the post
 let finalPost: WordPressPost | null = post;
@@ -89,7 +88,6 @@ if (!finalPost) {
   });
 }
 
-const t = translations[finalLang];
 const pageTitle = finalPost.title;
 const pageDescription =
   finalLang === "es"

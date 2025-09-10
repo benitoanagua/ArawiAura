@@ -2,7 +2,6 @@
 import Card from "../ui/Card.astro";
 import type { WordPressPost } from "../../types/wordpress";
 import type { Language } from "../../utils/i18n";
-import { translations } from "../../utils/i18n";
 
 export interface Props {
   post: WordPressPost;
@@ -12,8 +11,6 @@ export interface Props {
 }
 
 const { post, lang, translationSlug = null, showMetadata = true } = Astro.props;
-
-const t = translations[lang];
 
 // Get all available translations
 const availableTranslations = post.translations || [];
