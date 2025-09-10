@@ -1,17 +1,4 @@
 @import "tailwindcss";
 @import "./material-tokens.css";
+@import "./brutalist-global.css";
 @import "./prose.css";
-
-/* Transiciones suaves para cambios de tema */
-* {
-  transition: background-color 0.2s ease, color 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.nav-item {
-  transition: color 0.2s ease;
-}
-
-.nav-item:hover {
-  color: var(--color-primary);
-}

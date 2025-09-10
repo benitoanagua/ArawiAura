@@ -2,19 +2,41 @@
 export interface Props {
   elevated?: boolean;
   outlined?: boolean;
+  brutal?: boolean;
   class?: string;
 }
 
-const { elevated = false, outlined = false, class: className } = Astro.props;
+const {
+  elevated = false,
+  outlined = false,
+  brutal = true,
+  class: className,
+} = Astro.props;
 
-const baseClasses = `rounded-xl p-6`;
+const baseClasses = `p-6 font-sans`;
 const variantClasses = {
-  "bg-surface shadow": elevated,
-  "bg-surface border border-outline": outlined && !elevated,
-  "bg-surface": !elevated && !outlined,
+  "bg-surface shadow-brutal brutal-border": elevated && brutal,
+  "bg-surface brutal-border-primary": outlined && brutal,
+  "bg-surface border-b border-outline": !brutal,
+  "bg-surface": !elevated && !outlined && !brutal,
 };
 ---
 
 <div class:list={[baseClasses, variantClasses, className]}>
   <slot />
 </div>
+
+<style>
+  div {
+    box-sizing: border-box;
+  }
+
+  /* Efecto hover brutalista */
+  div:hover {
+    transform: translate(-2px, -2px);
+  }
+
+  div:active {
+    transform: translate(1px, 1px);
+  }
+</style>

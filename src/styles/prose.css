@@ -1,12 +1,13 @@
 @layer utilities {
-  /* Estilos base de prose con variables MD3 */
+  /* Estilos brutalismos de prose con variables MD3 */
   .prose {
     color: var(--color-onSurface);
     max-width: 65ch;
-    line-height: 1.75;
+    line-height: 1.4;
     font-size: 1rem;
+    font-family: var(--font-sans);
 
-    /* Encabezados - Tipografía MD3 */
+    /* Encabezados brutalismos */
     & h1,
     & h2,
     & h3,
@@ -14,237 +15,167 @@
     & h5,
     & h6 {
       color: var(--color-onSurface);
-      font-weight: 600;
-      line-height: 1.25;
-      margin-top: 1.5em;
-      margin-bottom: 0.5em;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 2rem 0 1rem 0;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
     }
 
     & h1 {
-      font-size: 2.25em;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-size: clamp(2rem, 5vw, 3rem);
+      border-bottom: 4px solid var(--color-primary);
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
     }
 
     & h2 {
-      font-size: 1.75em;
-      font-weight: 600;
-      letter-spacing: -0.25px;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      border-bottom: 3px solid var(--color-outline);
+      padding-bottom: 0.25rem;
+      margin-bottom: 1.5rem;
     }
 
-    & h3 {
-      font-size: 1.375em;
-      font-weight: 600;
-    }
-
-    & h4 {
-      font-size: 1.125em;
-      font-weight: 600;
-    }
-
-    /* Párrafos - Espaciado MD3 */
+    /* Párrafos brutalismos */
     & p {
-      margin: 1em 0;
-      line-height: 1.6;
+      margin: 0 0 1.5rem 0;
+      line-height: 1.5;
+      font-family: var(--font-sans);
+      font-weight: 400;
     }
 
-    /* Enlaces - Colores MD3 */
+    /* Enlaces brutalismos */
     & a {
       color: var(--color-primary);
-      text-decoration: underline;
-      font-weight: 500;
-      transition: color 0.2s ease;
-
-      &:hover {
-        color: var(--color-primaryContainer);
-        text-decoration: none;
-      }
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 2px solid var(--color-primary);
+      font-family: var(--font-mono);
     }
 
-    /* Listas - Estilo MD3 */
+    & a:hover {
+      background-color: var(--color-primary);
+      color: var(--color-onPrimary);
+      border-bottom: 2px solid var(--color-primary);
+    }
+
+    /* Listas brutalismos */
     & ul,
     & ol {
-      padding-left: 1.5em;
-      margin: 1em 0;
-
-      & li {
-        margin-bottom: 0.5em;
-        padding-left: 0.5em;
-
-        &::marker {
-          color: var(--color-outline);
-        }
-      }
+      padding-left: 2rem;
+      margin: 1.5rem 0;
+      font-family: var(--font-sans);
     }
 
-    /* Código - Estilo MD3 */
+    & ul {
+      list-style: none;
+    }
+
+    & ul > li {
+      position: relative;
+      margin-bottom: 0.75rem;
+      padding-left: 1.5rem;
+    }
+
+    & ul > li::before {
+      content: "▪";
+      position: absolute;
+      left: 0;
+      color: var(--color-primary);
+      font-weight: 900;
+      font-size: 1.2em;
+    }
+
+    /* Código brutalismos */
     & code {
-      color: var(--color-onSurfaceVariant);
-      background-color: var(--color-surfaceVariant);
-      padding: 0.125rem 0.375rem;
-      border-radius: 0.25rem;
+      color: var(--color-onSurface);
+      background-color: var(--color-surfaceContainerHighest);
+      padding: 0.25rem 0.5rem;
+      border: 2px solid var(--color-outline);
       font-size: 0.875em;
-      font-family: "Roboto Mono", monospace;
+      font-family: var(--font-mono);
       font-weight: 500;
     }
 
     & pre {
       background-color: var(--color-surfaceContainerHighest);
       color: var(--color-onSurface);
-      padding: 1.25rem 1.5rem;
-      border-radius: 0.75rem;
+      padding: 1.5rem;
+      border: 3px solid var(--color-outline);
       overflow-x: auto;
-      border: 1px solid var(--color-outlineVariant);
-      margin: 1.5em 0;
+      margin: 2rem 0;
+      font-family: var(--font-mono);
 
       & code {
         background: transparent;
+        border: none;
         padding: 0;
         color: inherit;
       }
     }
 
-    /* Tablas - Estilo MD3 */
+    /* Tablas brutalismos */
     & table {
       width: 100%;
-      margin: 1.5em 0;
-      border-collapse: collapse;
-      border: 1px solid var(--color-outlineVariant);
-      border-radius: 0.75rem;
-      overflow: hidden;
-    }
-
-    & th,
-    & td {
-      border: 1px solid var(--color-outlineVariant);
-      padding: 0.875rem 1rem;
-      text-align: left;
+      margin: 2rem 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 3px solid var(--color-outline);
+      font-family: var(--font-mono);
     }
 
     & th {
-      background-color: var(--color-surfaceContainer);
-      color: var(--color-onSurface);
-      font-weight: 600;
+      background-color: var(--color-primary);
+      color: var(--color-onPrimary);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
-    & td {
-      background-color: var(--color-surface);
-      color: var(--color-onSurfaceVariant);
-    }
-
-    /* Elementos varios - Estilo MD3 */
+    /* Separador brutalismos */
     & hr {
-      margin: 2em 0;
+      margin: 3rem 0;
       border: none;
-      height: 1px;
-      background-color: var(--color-outlineVariant);
+      height: 3px;
+      background-color: var(--color-outline);
     }
 
+    /* Cita brutalismos */
     & blockquote {
-      margin: 1.5em 0;
-      padding: 1.5rem;
-      background-color: var(--color-surfaceContainerLow);
-      border-left: 4px solid var(--color-primary);
-      border-radius: 0 0.75rem 0.75rem 0;
-      font-style: italic;
-      color: var(--color-onSurfaceVariant);
-
-      & p {
-        margin: 0;
-      }
-    }
-
-    & strong {
+      margin: 2rem 0;
+      padding: 2rem;
+      background-color: var(--color-surfaceContainer);
+      border-left: 6px solid var(--color-primary);
+      border: 3px solid var(--color-outline);
+      font-family: var(--font-mono);
+      font-weight: 500;
       color: var(--color-onSurface);
-      font-weight: 600;
-    }
-
-    /* Imágenes - Estilo MD3 */
-    & img {
-      border-radius: 0.75rem;
-      margin: 1.5em 0;
-      max-width: 100%;
-      height: auto;
-    }
-
-    /* Citas - Estilo MD3 */
-    & cite {
-      display: block;
-      margin-top: 0.5em;
-      font-size: 0.875em;
-      color: var(--color-onSurfaceVariant);
       font-style: normal;
     }
-  }
 
-  /* Variantes de tamaño ajustadas a MD3 */
-  .prose-sm {
-    font-size: 0.875rem;
+    /* Énfasis brutalismos */
+    & strong {
+      color: var(--color-onSurface);
+      font-weight: 800;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
 
-    & h1 {
-      font-size: 1.875em;
+    & em {
+      font-style: normal;
+      color: var(--color-primary);
+      font-weight: 600;
+      font-family: var(--font-mono);
     }
-    & h2 {
-      font-size: 1.5em;
-    }
-    & h3 {
-      font-size: 1.25em;
-    }
-  }
 
-  .prose-base {
-    font-size: 1rem;
-
-    & h1 {
-      font-size: 2.25em;
-    }
-    & h2 {
-      font-size: 1.75em;
-    }
-    & h3 {
-      font-size: 1.375em;
-    }
-  }
-
-  .prose-lg {
-    font-size: 1.125rem;
-
-    & h1 {
-      font-size: 2.5em;
-    }
-    & h2 {
-      font-size: 2em;
-    }
-    & h3 {
-      font-size: 1.5em;
-    }
-  }
-
-  .prose-xl {
-    font-size: 1.25rem;
-
-    & h1 {
-      font-size: 2.75em;
-    }
-    & h2 {
-      font-size: 2.25em;
-    }
-    & h3 {
-      font-size: 1.75em;
-    }
-  }
-
-  .prose-2xl {
-    font-size: 1.5rem;
-
-    & h1 {
-      font-size: 3em;
-    }
-    & h2 {
-      font-size: 2.5em;
-    }
-    & h3 {
-      font-size: 2em;
+    /* Imágenes brutalismos */
+    & img {
+      border: 3px solid var(--color-outline);
+      margin: 2rem 0;
+      max-width: 100%;
+      height: auto;
     }
   }
 }
