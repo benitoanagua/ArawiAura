@@ -2,164 +2,122 @@ import { writeFileSync, mkdirSync } from "fs";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import {
-  themeFromSourceColor,
   argbFromHex,
   hexFromArgb,
-  DynamicScheme,
+  MaterialDynamicColors,
+  Hct,
+  SchemeTonalSpot,
+  SchemeNeutral,
+  SchemeVibrant,
+  SchemeExpressive,
+  SchemeMonochrome,
+  SchemeContent,
+  SchemeFidelity,
 } from "@material/material-color-utilities";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outputDir = resolve(__dirname, "../src/styles");
 
+// Configuración del tema
 const themeConfig = {
   seedColor: "#bb3813",
-  variant: "tonalSpot",
-  contrastLevel: 0,
+  variant: "CONTENT",
+  contrastLevel: 1,
 };
 
-function generateOptimizedTheme() {
-  const sourceColorArgb = argbFromHex(themeConfig.seedColor);
-  const theme = themeFromSourceColor(sourceColorArgb);
+// Mapeo de variantes a constructores de esquema
+const SCHEME_CONSTRUCTORS = {
+  TONAL_SPOT: SchemeTonalSpot,
+  NEUTRAL: SchemeNeutral,
+  VIBRANT: SchemeVibrant,
+  EXPRESSIVE: SchemeExpressive,
+  MONOCHROME: SchemeMonochrome,
+  CONTENT: SchemeContent,
+  FIDELITY: SchemeFidelity,
+};
 
-  const options = {
-    sourceColorArgb,
-    variant: themeConfig.variant,
-    contrastLevel: themeConfig.contrastLevel,
-    primaryPalette: theme.palettes.primary,
-    secondaryPalette: theme.palettes.secondary,
-    tertiaryPalette: theme.palettes.tertiary,
-    neutralPalette: theme.palettes.neutral,
-    neutralVariantPalette: theme.palettes.neutralVariant,
-  };
+function createScheme(isDark) {
+  const sourceColor = argbFromHex(themeConfig.seedColor);
+  const sourceHct = Hct.fromInt(sourceColor);
+  const SchemeConstructor =
+    SCHEME_CONSTRUCTORS[themeConfig.variant] || SchemeTonalSpot;
+  return new SchemeConstructor(sourceHct, isDark, themeConfig.contrastLevel);
+}
 
-  const lightScheme = new DynamicScheme({ ...options, isDark: false });
-  const darkScheme = new DynamicScheme({ ...options, isDark: true });
+function extractColors(scheme) {
+  const props = [
+    "primary",
+    "onPrimary",
+    "primaryContainer",
+    "onPrimaryContainer",
+    "secondary",
+    "onSecondary",
+    "secondaryContainer",
+    "onSecondaryContainer",
+    "tertiary",
+    "onTertiary",
+    "tertiaryContainer",
+    "onTertiaryContainer",
+    "error",
+    "onError",
+    "errorContainer",
+    "onErrorContainer",
+    "background",
+    "onBackground",
+    "surface",
+    "surfaceDim",
+    "surfaceBright",
+    "surfaceContainerLowest",
+    "surfaceContainerLow",
+    "surfaceContainer",
+    "surfaceContainerHigh",
+    "surfaceContainerHighest",
+    "onSurface",
+    "surfaceVariant",
+    "onSurfaceVariant",
+    "outline",
+    "outlineVariant",
+    "shadow",
+    "scrim",
+    "inverseSurface",
+    "inverseOnSurface",
+    "inversePrimary",
+  ];
 
-  const extractColors = (scheme) => {
-    const props = [
-      "primary",
-      "onPrimary",
-      "primaryContainer",
-      "onPrimaryContainer",
-      "secondary",
-      "onSecondary",
-      "secondaryContainer",
-      "onSecondaryContainer",
-      "tertiary",
-      "onTertiary",
-      "tertiaryContainer",
-      "onTertiaryContainer",
-      "error",
-      "onError",
-      "errorContainer",
-      "onErrorContainer",
-      "background",
-      "onBackground",
-      "surface",
-      "surfaceDim",
-      "surfaceBright",
-      "surfaceContainerLowest",
-      "surfaceContainerLow",
-      "surfaceContainer",
-      "surfaceContainerHigh",
-      "surfaceContainerHighest",
-      "onSurface",
-      "surfaceVariant",
-      "onSurfaceVariant",
-      "inverseSurface",
-      "inverseOnSurface",
-      "outline",
-      "outlineVariant",
-      "shadow",
-      "scrim",
-      "surfaceTint",
-      "inversePrimary",
-      "primaryFixed",
-      "primaryFixedDim",
-      "onPrimaryFixed",
-      "onPrimaryFixedVariant",
-      "secondaryFixed",
-      "secondaryFixedDim",
-      "onSecondaryFixed",
-      "onSecondaryFixedVariant",
-      "tertiaryFixed",
-      "tertiaryFixedDim",
-      "onTertiaryFixed",
-      "onTertiaryFixedVariant",
-    ];
+  const colors = {};
+  for (const prop of props) {
+    try {
+      const color = MaterialDynamicColors[prop]?.getArgb(scheme);
+      colors[prop] = hexFromArgb(color);
+    } catch {
+      colors[prop] = "#FF00FF"; // fallback
+    }
+  }
+  return colors;
+}
 
-    return props.reduce((acc, prop) => {
-      try {
-        acc[prop] = hexFromArgb(scheme[prop]);
-      } catch {}
-      return acc;
-    }, {});
-  };
+function generateTheme() {
+  const lightScheme = createScheme(false);
+  const darkScheme = createScheme(true);
 
   const lightColors = extractColors(lightScheme);
   const darkColors = extractColors(darkScheme);
 
-  // CSS con soporte para tema automático y manual usando data-theme
-  const cssContent = `/* Generated Material Design 3 Theme - Auto & Manual */
-@theme {
-  /* Tema claro por defecto */
+  const cssContent = `@theme {
 ${Object.entries(lightColors)
   .map(([k, v]) => `  --color-${k}: ${v};`)
   .join("\n")}
 }
 
-@media (prefers-color-scheme: dark) {
-  @theme {
-    /* Tema oscuro automático */
-${Object.entries(darkColors)
-  .map(([k, v]) => `    --color-${k}: ${v};`)
-  .join("\n")}
-  }
-}
-
-/* Tema claro manual (sobrescribe media queries) */
-[data-theme="light"] {
-${Object.entries(lightColors)
-  .map(([k, v]) => `  --color-${k}: ${v} !important;`)
-  .join("\n")}
-}
-
-/* Tema oscuro manual (sobrescribe media queries) */
 [data-theme="dark"] {
 ${Object.entries(darkColors)
-  .map(([k, v]) => `  --color-${k}: ${v} !important;`)
+  .map(([k, v]) => `  --color-${k}: ${v};`)
   .join("\n")}
-}
-
-/* Asegurar que los temas manuales tengan prioridad */
-[data-theme="light"],
-[data-theme="dark"] {
-  color-scheme: normal;
-}
-
-@media (prefers-color-scheme: dark) {
-  [data-theme="light"] {
-    /* Forzar tema claro incluso en modo oscuro del sistema */
-${Object.entries(lightColors)
-  .map(([k, v]) => `    --color-${k}: ${v} !important;`)
-  .join("\n")}
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  [data-theme="dark"] {
-    /* Forzar tema oscuro incluso en modo claro del sistema */
-${Object.entries(darkColors)
-  .map(([k, v]) => `    --color-${k}: ${v} !important;`)
-  .join("\n")}
-  }
 }`;
 
   mkdirSync(outputDir, { recursive: true });
   writeFileSync(`${outputDir}/material-tokens.css`, cssContent);
-  console.log(
-    "✅ Tema con soporte manual generado: src/styles/material-tokens.css"
-  );
+  console.log("✅ Tokens generados en src/styles/material-tokens.css");
 }
 
-generateOptimizedTheme();
+generateTheme();
