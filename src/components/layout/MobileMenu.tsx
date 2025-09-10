@@ -35,7 +35,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           aria-label={lang === "es" ? "Cerrar menú" : "Close menu"}
           onClick={onClose}
         >
-          &times;
+          <span className="icon-[streamline-sharp--delete-2-solid] text-2xl"></span>
         </button>
 
         {nav.map((item, index) => (

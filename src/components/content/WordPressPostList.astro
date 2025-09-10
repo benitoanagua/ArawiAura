@@ -68,7 +68,7 @@ const formatMonthYear = (year: string, month: string) => {
   {posts.length === 0 && (
     <Card elevated={true} class="text-center brutal-shadow">
       <div class="py-20 px-6">
-        <div class="i-ph-feather-duotone text-5xl text-primary/60 mb-6 mx-auto"></div>
+        <span class="icon-[streamline-sharp--feather-pen] text-5xl text-primary/60 mb-6 mx-auto"></span>
         <h2 class="text-2xl text-onSurface mb-3 font-mono">
           {lang === 'es' ? 'Silencio poético' : 'Poetic silence'}
         </h2>
@@ -77,7 +77,7 @@ const formatMonthYear = (year: string, month: string) => {
             ? 'Aún no hay poemas para mostrar.'
             : 'No poems to display yet.'}
         </p>
-        <div class="i-ph-wind-duotone text-2xl text-outline/50"></div>
+        <span class="icon-[streamline-sharp--layout-window-25-solid] text-2xl text-outline/50"></span>
       </div>
     </Card>
   )}
@@ -188,7 +188,6 @@ const formatMonthYear = (year: string, month: string) => {
                               
                               {hasTranslation && (
                                 <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-sm brutal-border flex items-center gap-1 font-mono">
-                                  <span class="i-ph-translate text-[0.7rem]"></span>
                                   {translationLang === 'es' ? 'ES' : 'EN'}
                                 </span>
                               )}
@@ -206,7 +205,7 @@ const formatMonthYear = (year: string, month: string) => {
                                       : `${translationLang === 'es' ? 'Spanish' : 'English'} version`
                                   }
                                 >
-                                  <span class="i-ph-arrows-left-right text-[0.7rem]"></span>
+                                  <span class="icon-[streamline-sharp--translate-text-remix] text-[0.7rem]"></span>
                                 </a>
                               )}
                               <a
@@ -216,7 +215,7 @@ const formatMonthYear = (year: string, month: string) => {
                                 <span class="group-hover/read:underline">
                                   {lang === 'es' ? 'Leer' : 'Read'}
                                 </span>
-                                <span class="i-ph-arrow-right text-xs transform group-hover/read:translate-x-0.5"></span>
+                                <span class="icon-[streamline-sharp--line-arrow-right-1-remix] text-xs transform group-hover/read:translate-x-0.5"></span>
                               </a>
                             </div>
                           </div>
@@ -232,33 +231,3 @@ const formatMonthYear = (year: string, month: string) => {
     ))}
 </div>
 
-<style>
-  /* Mejoras visuales brutalistas */
-  .group:hover h3 {
-    transform: translateX(2px);
-  }
-  
-  /* Efectos hover mejorados */
-  @media (hover: hover) {
-    .brutal-shadow-hover:hover {
-      box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.15) !important;
-      transform: translate(-2px, -2px);
-    }
-  }
-
-  /* Iconos brutalistas */
-  .i-ph-feather-duotone,
-  .i-ph-wind-duotone,
-  .i-ph-translate,
-  .i-ph-arrows-left-right,
-  .i-ph-arrow-right {
-    font-family: 'Phosphor' !important;
-    speak: none;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-  }
-</style>

@@ -25,6 +25,8 @@
     "typescript": "^5.9.2"
   },
   "devDependencies": {
+    "@iconify-json/streamline-sharp": "^1.2.0",
+    "@iconify/tailwind4": "^1.0.6",
     "stylelint": "^16.23.1",
     "stylelint-config-astro": "^1.0.4",
     "stylelint-config-standard": "^39.0.0"

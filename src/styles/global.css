@@ -2,3 +2,5 @@
 @import "./material-tokens.css";
 @import "./brutalist-global.css";
 @import "./prose.css";
+
+@plugin "@iconify/tailwind4";
