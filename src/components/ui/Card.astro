@@ -25,18 +25,3 @@ const variantClasses = {
 <div class:list={[baseClasses, variantClasses, className]}>
   <slot />
 </div>
-
-<style>
-  div {
-    box-sizing: border-box;
-  }
-
-  /* Efecto hover brutalista */
-  div:hover {
-    transform: translate(-2px, -2px);
-  }
-
-  div:active {
-    transform: translate(1px, 1px);
-  }
-</style>
