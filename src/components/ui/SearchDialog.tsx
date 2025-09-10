@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import type { Language } from "../../utils/i18n";
 import { translations } from "../../utils/i18n";
-import type { WordPressPost } from "../../utils/wordpressClient";
 
 interface SearchDialogProps {
   posts: SearchablePost[];
@@ -146,7 +145,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ posts = [], lang }) => {
     );
     return text.replace(
       regex,
-      '<mark class="bg-primary/20 text-onSurface">$1</mark>'
+      '<mark class="bg-primary text-onPrimary px-1">$1</mark>'
     );
   };
 
@@ -154,13 +153,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ posts = [], lang }) => {
     <>
       <button
         onClick={openModal}
-        className="fixed bottom-6 right-6 bg-primary text-onPrimary rounded-full p-4 shadow-lg z-40 hover:bg-primary/90 transition-colors group"
+        className="fixed bottom-6 right-6 bg-primary text-onPrimary p-4 z-40 group brutal-border-primary brutal-shadow-primary"
         aria-label={t.search}
         title={`${t.search} (Ctrl+K)`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 transition-transform group-hover:scale-110"
+          className="h-6 w-6"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -176,30 +175,32 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ posts = [], lang }) => {
 
       {open && (
         <div
-          className="fixed inset-0 bg-scrim/40 z-50 flex items-start justify-center p-4 pt-20"
+          className="fixed inset-0 bg-scrim/90 z-50 flex items-start justify-center p-4 pt-20"
           role="dialog"
           tabIndex={-1}
           onClick={handleOverlayClick}
         >
-          <div className="bg-surfaceContainerHighest rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-outlineVariant">
+          <div className="bg-surfaceContainerHighest brutal-border w-full max-w-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b-3 border-outline">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-sm text-onSurfaceVariant">
+                <div className="flex items-center gap-2 text-sm text-onSurfaceVariant font-mono">
                   <span>{t.language}:</span>
                   <select
                     value={searchLang}
                     onChange={handleLanguageChange}
-                    className="bg-surfaceContainer text-onSurfaceContainer rounded-sm px-2 py-1 outline-none cursor-pointer"
+                    className="bg-surfaceContainer text-onSurfaceContainer px-2 py-1 outline-none cursor-pointer brutal-border"
                   >
                     <option value="es">Español</option>
                     <option value="en">English</option>
                   </select>
                 </div>
-                <div className="text-xs text-onSurfaceVariant/70">Ctrl+K</div>
+                <div className="text-xs text-onSurfaceVariant/70 font-mono">
+                  Ctrl+K
+                </div>
               </div>
               <button
                 onClick={closeModal}
-                className="text-2xl leading-none text-onSurfaceVariant hover:text-onSurface transition-colors"
+                className="text-2xl leading-none text-onSurfaceVariant hover:text-onSurface font-mono"
                 aria-label="Close"
               >
                 ×
@@ -214,25 +215,25 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ posts = [], lang }) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={`${t.search} (mínimo 2 caracteres)`}
-                  className="w-full bg-surfaceContainer text-onSurfaceContainer rounded-md px-4 py-3 text-lg outline-none placeholder:text-onSurfaceVariant pr-10"
+                  className="w-full bg-surfaceContainer text-onSurfaceContainer px-4 py-3 text-lg outline-none placeholder:text-onSurfaceVariant pr-10 brutal-border font-mono"
                 />
                 {isSearching && (
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent"></div>
+                    <div className="rounded-full h-5 w-5 border-2 border-primary border-t-transparent"></div>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="max-h-96 overflow-y-auto border-t border-outlineVariant">
+            <div className="max-h-96 overflow-y-auto border-t-3 border-outline">
               {query.length < 2 ? (
                 <div className="p-6 text-center text-onSurfaceVariant">
-                  <div className="mb-2">
+                  <div className="mb-2 font-mono">
                     {lang === "es"
                       ? "Escribe al menos 2 caracteres para buscar"
                       : "Type at least 2 characters to search"}
                   </div>
-                  <div className="text-xs opacity-70">
+                  <div className="text-xs opacity-70 font-sans">
                     {lang === "es"
                       ? "Puedes buscar por título, contenido, categorías o etiquetas"
                       : "You can search by title, content, categories, or tags"}
@@ -244,18 +245,18 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ posts = [], lang }) => {
                     <li key={post.id}>
                       <a
                         href={`/${searchLang}/${post.slug}/`}
-                        className="block px-4 py-3 hover:bg-surfaceContainerHighest rounded-md transition-colors group"
+                        className="block px-4 py-3 hover:bg-surfaceContainerHighest brutal-border-primary brutal-shadow-hover m-2"
                         onClick={closeModal}
                       >
                         <div
-                          className="font-medium text-onSurface group-hover:text-primary transition-colors"
+                          className="font-medium text-onSurface group-hover:text-primary font-mono"
                           dangerouslySetInnerHTML={{
                             __html: highlightMatch(post.title, query),
                           }}
                         />
                         {post.excerpt && (
                           <div
-                            className="text-sm text-onSurfaceVariant mt-1 line-clamp-2"
+                            className="text-sm text-onSurfaceVariant mt-1 line-clamp-2 font-sans"
                             dangerouslySetInnerHTML={{
                               __html: highlightMatch(
                                 post.excerpt
@@ -272,7 +273,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ posts = [], lang }) => {
                             {post.categories?.nodes.slice(0, 2).map((cat) => (
                               <span
                                 key={cat.name}
-                                className="text-xs px-2 py-1 bg-primaryContainer/20 text-onPrimaryContainer rounded-full"
+                                className="text-xs px-2 py-1 bg-primaryContainer text-onPrimaryContainer rounded-sm font-mono brutal-border"
                               >
                                 {cat.name}
                               </span>
@@ -280,7 +281,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ posts = [], lang }) => {
                             {post.tags?.nodes.slice(0, 3).map((tag) => (
                               <span
                                 key={tag.name}
-                                className="text-xs px-1.5 py-0.5 bg-surfaceVariant/50 text-onSurfaceVariant rounded"
+                                className="text-xs px-1.5 py-0.5 bg-surfaceVariant text-onSurfaceVariant rounded-sm font-mono brutal-border"
                               >
                                 #{tag.name}
                               </span>
@@ -293,12 +294,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ posts = [], lang }) => {
                 </ul>
               ) : (
                 <div className="p-6 text-center text-onSurfaceVariant">
-                  <div className="mb-2">
+                  <div className="mb-2 font-mono">
                     {lang === "es"
                       ? "No se encontraron resultados"
                       : "No results found"}
                   </div>
-                  <div className="text-xs opacity-70">
+                  <div className="text-xs opacity-70 font-sans">
                     {lang === "es"
                       ? "Intenta con diferentes palabras clave"
                       : "Try different keywords"}

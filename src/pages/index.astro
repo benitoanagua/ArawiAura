@@ -1,6 +1,8 @@
 ---
 import { getLanguageFromRequest } from "../utils/i18n";
 
+export const prerender = false;
+
 const lang = getLanguageFromRequest(Astro.request.headers);
 return Astro.redirect(`/${lang}/`);
 ---

@@ -27,24 +27,26 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   return (
     <>
       <button
-        className="md:hidden fixed inset-0 bg-scrim/60 z-40"
+        className="md:hidden fixed inset-0 bg-scrim/90 z-40"
+        aria-label={lang === "es" ? "Cerrar overlay" : "Close overlay"}
         onClick={onClose}
-        aria-label="Close overlay"
       />
-      <div className="md:hidden fixed top-0 right-0 h-full w-64 bg-surfaceContainerHighest border-l-4 border-primary z-50 flex flex-col p-6 space-y-4">
+
+      <div className="md:hidden fixed top-0 right-0 h-full w-64 bg-surfaceContainerHighest border-l-3 border-outline z-50 flex flex-col p-6 space-y-4">
         <button
-          className="self-end text-2xl font-mono text-onSurfaceVariant hover:text-primary"
+          className="self-end text-2xl text-onSurfaceVariant hover:text-onSurface font-mono"
+          aria-label={lang === "es" ? "Cerrar menú" : "Close menu"}
           onClick={onClose}
         >
-          ×
+          &times;
         </button>
 
         {nav.map((item, index) => (
           <a
             key={index}
             href={item.href}
+            className="text-sm uppercase tracking-wider text-onSurfaceVariant hover:text-primary brutal-underline font-mono"
             onClick={onClose}
-            className="font-mono text-sm uppercase tracking-wide text-onSurfaceVariant hover:text-primary border-b-2 border-transparent hover:border-primary"
           >
             {item.label}
           </a>
@@ -52,24 +54,25 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
         <hr className="border-outline" />
 
-        <div className="flex gap-2 font-mono text-xs">
+        <div className="flex gap-x-2 text-sm text-onSurfaceVariant font-mono">
           <a
             href="/en/"
-            className={`px-2 py-1 border-2 ${
+            className={
               lang === "en"
-                ? "bg-primary text-onPrimary border-primary"
-                : "bg-surface text-onSurface border-outline"
-            }`}
+                ? "font-bold text-primary brutal-underline"
+                : "hover:text-primary brutal-underline"
+            }
           >
             EN
           </a>
+          <span>/</span>
           <a
             href="/es/"
-            className={`px-2 py-1 border-2 ${
+            className={
               lang === "es"
-                ? "bg-primary text-onPrimary border-primary"
-                : "bg-surface text-onSurface border-outline"
-            }`}
+                ? "font-bold text-primary brutal-underline"
+                : "hover:text-primary brutal-underline"
+            }
           >
             ES
           </a>

@@ -9,11 +9,18 @@ const { lang } = Astro.props;
 const t = translations[lang];
 ---
 
-<footer class="border-t-4 border-primary bg-surface mt-20">
+<footer class="border-t-3 border-outline mt-20">
   <div
-    class="container mx-auto py-8 px-6 text-center text-sm font-mono text-onSurfaceVariant"
+    class="container mx-auto py-8 px-6 text-center text-sm text-onSurfaceVariant font-mono"
   >
-    <p class="mb-2 italic">“{t.quote}”</p>
-    <p class="uppercase tracking-wide">{t.rights}</p>
+    <p class="italic mb-2">{t.quote}</p>
+    <p class="brutal-border-t pt-4">{t.rights}</p>
   </div>
 </footer>
+
+<style>
+  .brutal-border-t {
+    border-top: 2px solid var(--color-outline);
+    padding-top: 1rem;
+  }
+</style>

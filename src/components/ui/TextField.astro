@@ -24,7 +24,7 @@ const {
 } = Astro.props;
 ---
 
-<div class="relative">
+<div class="relative font-mono">
   {
     type === "textarea" ? (
       <textarea
@@ -35,13 +35,14 @@ const {
         required={required}
         disabled={disabled}
         class={`
-        peer w-full rounded-md border border-outline
+        peer w-full brutal-border
         bg-surface px-4 py-3
         text-onSurface placeholder-transparent
         focus:border-2 focus:border-primary focus:outline-none
         disabled:bg-surfaceVariant disabled:text-onSurfaceVariant
         ${error ? "border-error focus:border-error" : ""}
         resize-none
+        font-mono
       `}
         rows="4"
       />
@@ -55,12 +56,13 @@ const {
         required={required}
         disabled={disabled}
         class={`
-        peer w-full rounded-md border border-outline
+        peer w-full brutal-border
         bg-surface px-4 py-3
         text-onSurface placeholder-transparent
         focus:border-2 focus:border-primary focus:outline-none
         disabled:bg-surfaceVariant disabled:text-onSurfaceVariant
         ${error ? "border-error focus:border-error" : ""}
+        font-mono
       `}
       />
     )
@@ -76,6 +78,8 @@ const {
       peer-focus:-top-2.5 peer-focus:text-sm
       ${error ? "text-error" : "text-primary"}
       ${disabled ? "text-onSurfaceVariant" : ""}
+      font-mono
+      brutal-label
     `}
   >
     {label}
@@ -84,7 +88,7 @@ const {
   {
     (error || helperText) && (
       <p
-        class={`mt-2 text-sm ${error ? "text-error" : "text-onSurfaceVariant"}`}
+        class={`mt-2 text-sm ${error ? "text-error" : "text-onSurfaceVariant"} font-mono`}
       >
         {error || helperText}
       </p>
