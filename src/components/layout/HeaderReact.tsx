@@ -23,18 +23,9 @@ const HeaderReact: React.FC<HeaderProps> = ({
   nav,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentPath, setCurrentPath] = useState("");
-  useEffect(() => {
-    setCurrentPath(window.location.pathname);
-  }, []);
 
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
+    document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
     };
@@ -44,34 +35,26 @@ const HeaderReact: React.FC<HeaderProps> = ({
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <header className="border-b border-outlineVariant">
+    <header className="border-b-4 border-primary bg-surface">
       <nav className="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
-        {/* Logo */}
         <a
           href={`/${lang}/`}
-          className="text-xl md:text-2xl font-serif tracking-tight text-onSurface"
+          className="text-xl md:text-2xl font-mono font-black text-onSurface uppercase tracking-tight"
         >
           {title}
         </a>
 
-        {/* Desktop Navigation - ¡Ahora visible! */}
         <DesktopNav nav={nav} />
 
         <div className="flex items-center gap-4">
-          {/* Theme Toggle */}
           <ThemeToggle lang={lang} />
-
-          {/* Language Toggle (Desktop) */}
           <LanguageToggle lang={lang} />
-
-          {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-onSurfaceVariant hover:text-onSurface transition-colors"
-            aria-label={lang === "es" ? "Abrir menú" : "Open menu"}
             onClick={toggleMenu}
+            className="md:hidden text-onSurfaceVariant hover:text-primary"
+            aria-label={lang === "es" ? "Abrir menú" : "Open menu"}
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
@@ -81,14 +64,14 @@ const HeaderReact: React.FC<HeaderProps> = ({
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
+                  strokeWidth={3}
                   d="M6 18L18 6M6 6l12 12"
                 />
               ) : (
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
+                  strokeWidth={3}
                   d="M4 6h16M4 12h16M4 18h16"
                 />
               )}
@@ -97,7 +80,6 @@ const HeaderReact: React.FC<HeaderProps> = ({
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <MobileMenu
         isOpen={isMenuOpen}
         onClose={closeMenu}

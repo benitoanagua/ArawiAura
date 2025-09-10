@@ -7,25 +7,24 @@ interface LanguageToggleProps {
 
 const LanguageToggle: React.FC<LanguageToggleProps> = ({ lang }) => {
   return (
-    <div className="hidden md:flex gap-x-2 text-sm text-onSurfaceVariant">
+    <div className="hidden md:flex gap-2 font-mono text-xs uppercase">
       <a
         href="/en/"
-        className={
+        className={`px-2 py-1 border-2 ${
           lang === "en"
-            ? "font-bold text-primary"
-            : "hover:text-primary transition-colors"
-        }
+            ? "bg-primary text-onPrimary border-primary"
+            : "bg-surface text-onSurface border-outline hover:bg-primary hover:text-onPrimary"
+        }`}
       >
         EN
       </a>
-      <span>/</span>
       <a
         href="/es/"
-        className={
+        className={`px-2 py-1 border-2 ${
           lang === "es"
-            ? "font-bold text-primary"
-            : "hover:text-primary transition-colors"
-        }
+            ? "bg-primary text-onPrimary border-primary"
+            : "bg-surface text-onSurface border-outline hover:bg-primary hover:text-onPrimary"
+        }`}
       >
         ES
       </a>

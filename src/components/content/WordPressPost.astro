@@ -13,24 +13,17 @@ export interface Props {
 }
 
 const { post, lang, translationSlug = null, showMetadata = true } = Astro.props;
-
 const t = translations[lang];
 
-// Get all available translations
 const availableTranslations = post.translations || [];
 const currentLanguage = post.language?.code.toLowerCase() || lang;
 
-// Clean HTML content and preserve line breaks
 const cleanContent = post.content
-  .replace(/<[^>]*>/g, "") // Remove HTML tags
-  .replace(/&nbsp;/g, " ") // Replace &nbsp; with regular spaces
-  .replace(/&amp;/g, "&") // Replace &amp; with &
-  .replace(/&lt;/g, "<") // Replace &lt; with <
-  .replace(/&gt;/g, ">") // Replace &gt; with >
-  .replace(/&quot;/g, '"') // Replace &quot; with "
+  .replace(/<[^>]*>/g, "")
+  .replace(/&nbsp;/g, " ")
+  .replace(/&amp;/g, "&")
   .trim();
 
-// Format date
 const postDate = new Date(post.date);
 const formattedDate = postDate.toLocaleDateString(lang, {
   year: "numeric",
@@ -39,24 +32,22 @@ const formattedDate = postDate.toLocaleDateString(lang, {
 });
 ---
 
-<Card elevated class="max-w-3xl mx-auto">
-  <article class="prose mx-auto">
+<Card brutal class="max-w-3xl mx-auto">
+  <article class="prose prose-brutal mx-auto">
     <header>
-      <h1 class="text-3xl font-bold text-onSurface mb-2">{post.title}</h1>
+      <h1>{post.title}</h1>
 
       {
         showMetadata && (
-          <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-onSurfaceVariant">
+          <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-onSurfaceVariant font-mono">
             <time datetime={post.date}>{formattedDate}</time>
-
             {post.author && (
               <span>
                 {lang === "es" ? "Por" : "By"} {post.author.node.name}
               </span>
             )}
-
             {post.language && (
-              <span class="px-2 py-1 bg-primaryContainer/20 rounded-sm text-xs uppercase">
+              <span class="px-2 py-1 bg-primary text-onPrimary text-xs font-mono uppercase border-2 border-primary">
                 {post.language.name}
               </span>
             )}
@@ -65,22 +56,24 @@ const formattedDate = postDate.toLocaleDateString(lang, {
       }
     </header>
 
-    <div class="whitespace-pre-line text-onSurface leading-relaxed text-lg">
+    <div
+      class="whitespace-pre-line text-onSurface font-sans text-base leading-relaxed"
+    >
       {cleanContent}
     </div>
 
     {
       showMetadata &&
         (post.categories?.nodes.length || post.tags?.nodes.length) && (
-          <div class="mt-8 pt-6 border-t border-outlineVariant">
+          <div class="mt-8 pt-6 border-t-2 border-outline">
             {post.categories?.nodes.length && (
               <div class="mb-4">
-                <h3 class="text-sm font-semibold text-onSurfaceVariant mb-2 uppercase tracking-wide">
+                <h3 class="text-sm font-mono font-bold text-onSurfaceVariant uppercase tracking-wide mb-2">
                   {lang === "es" ? "Categorías" : "Categories"}
                 </h3>
                 <div class="flex flex-wrap gap-2">
                   {post.categories.nodes.map((category) => (
-                    <span class="px-3 py-1 bg-secondaryContainer/30 text-onSecondaryContainer rounded-full text-sm">
+                    <span class="px-3 py-1 bg-secondaryContainer text-onSecondaryContainer text-xs font-mono uppercase border-2 border-secondary">
                       {category.name}
                     </span>
                   ))}
@@ -90,12 +83,12 @@ const formattedDate = postDate.toLocaleDateString(lang, {
 
             {post.tags?.nodes.length && (
               <div>
-                <h3 class="text-sm font-semibold text-onSurfaceVariant mb-2 uppercase tracking-wide">
+                <h3 class="text-sm font-mono font-bold text-onSurfaceVariant uppercase tracking-wide mb-2">
                   {lang === "es" ? "Etiquetas" : "Tags"}
                 </h3>
                 <div class="flex flex-wrap gap-2">
                   {post.tags.nodes.map((tag) => (
-                    <span class="px-2 py-1 bg-surfaceVariant/50 text-onSurfaceVariant rounded text-xs">
+                    <span class="px-2 py-1 bg-surfaceVariant text-onSurfaceVariant text-xs font-mono uppercase border-2 border-outline">
                       #{tag.name}
                     </span>
                   ))}
@@ -108,57 +101,53 @@ const formattedDate = postDate.toLocaleDateString(lang, {
 
     {
       (availableTranslations.length > 0 || translationSlug) && (
-        <footer class="mt-12 pt-6 border-t border-outlineVariant">
-          <h3 class="text-sm font-semibold text-onSurfaceVariant mb-3 uppercase tracking-wide">
+        <footer class="mt-12 pt-6 border-t-2 border-outline">
+          <h3 class="text-sm font-mono font-bold text-onSurfaceVariant uppercase tracking-wide mb-3">
             {lang === "es"
               ? "Traducciones disponibles"
               : "Available translations"}
           </h3>
 
-          <div class="space-y-2">
-            {/* Show current language indicator */}
+          <div class="space-y-2 font-mono text-sm">
             <div class="flex items-center gap-2">
-              <span class="w-2 h-2 bg-primary rounded-full" />
-              <span class="text-onSurfaceVariant text-sm">
+              <span class="w-2 h-2 bg-primary border-2 border-primary" />
+              <span class="text-onSurfaceVariant">
                 {lang === "es"
                   ? "Estás viendo la versión en"
-                  : "You're viewing the"}
-                <strong class="text-onSurface ml-1">
+                  : "You're viewing the"}{" "}
+                <strong class="text-onSurface">
                   {post.language?.name ||
                     (currentLanguage === "es" ? "Español" : "English")}
                 </strong>
               </span>
             </div>
 
-            {/* Show available translations */}
             {availableTranslations.map((translation) => {
               const translationLang = translation.language.code.toLowerCase();
               const translationPath = `/${translationLang}/${translation.slug}/`;
               const isCurrent = translationLang === currentLanguage;
-
-              if (isCurrent) return null; // Skip current language
+              if (isCurrent) return null;
 
               return (
                 <div class="flex items-center gap-2">
-                  <span class="w-2 h-2 bg-outlineVariant rounded-full" />
+                  <span class="w-2 h-2 bg-outlineVariant border-2 border-outlineVariant" />
                   <a
                     href={translationPath}
-                    class="text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+                    class="text-primary hover:text-primary-dark font-mono uppercase border-b-2 border-primary"
                   >
                     {translation.title} (
-                    {translationLang === "es" ? "Español" : "English"})
+                    {translationLang === "es" ? "ES" : "EN"})
                   </a>
                 </div>
               );
             })}
 
-            {/* Fallback for direct translation slug */}
             {translationSlug && availableTranslations.length === 0 && (
               <div class="flex items-center gap-2">
-                <span class="w-2 h-2 bg-outlineVariant rounded-full" />
+                <span class="w-2 h-2 bg-outlineVariant border-2 border-outlineVariant" />
                 <a
                   href={`/${translationSlug}/`}
-                  class="text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+                  class="text-primary hover:text-primary-dark font-mono uppercase border-b-2 border-primary"
                 >
                   {lang === "es" ? "Leer en inglés" : "Read in Spanish"}
                 </a>

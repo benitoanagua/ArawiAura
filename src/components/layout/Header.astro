@@ -9,7 +9,6 @@ export interface Props {
 
 const { lang } = Astro.props;
 const t = translations[lang];
-
 const siteTitle = BASE_SEO_CONFIG[lang].siteName;
 
 const nav = [
@@ -21,6 +20,6 @@ const nav = [
 ];
 ---
 
-<div class="bg-surface shadow-sm">
+<header class="border-b-4 border-primary bg-surface">
   <HeaderReact client:load {lang} title={siteTitle} {nav} />
-</div>
+</header>

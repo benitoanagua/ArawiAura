@@ -11,10 +11,13 @@ interface DesktopNavProps {
 
 const DesktopNav: React.FC<DesktopNavProps> = ({ nav }) => {
   return (
-    <ul className="hidden md:flex gap-x-6 text-sm uppercase tracking-wider text-onSurfaceVariant">
+    <ul className="hidden md:flex gap-6 font-mono text-sm uppercase tracking-wide text-onSurfaceVariant">
       {nav.map((item, index) => (
         <li key={index}>
-          <a href={item.href} className="hover:text-primary transition-colors">
+          <a
+            href={item.href}
+            className="hover:text-primary border-b-2 border-transparent hover:border-primary"
+          >
             {item.label}
           </a>
         </li>
