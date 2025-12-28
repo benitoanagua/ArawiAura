@@ -1,0 +1,36 @@
+<header class="site-header">
+  <div class="header-container">
+    <!-- Meta info superior -->
+    <div class="site-meta">
+      <div class="newspaper-date">
+        {{ 'now' | date: "%A, %B %d, %Y" }}
+      </div>
+      <div class="newspaper-issue">
+        {% if page.lang %}{{ page.lang | upcase }}{% else %}EN{% endif %} Edition
+      </div>
+    </div>
+
+    <!-- Título principal -->
+    <div class="site-title-area">
+      <h1 class="site-title">
+        <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+      </h1>
+      <p class="site-tagline">A Literary Journal of Contemporary Poetry</p>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        {% assign nav_items = site.data.navigation[page.lang] | default: site.data.navigation[site.default_lang] %}
+        {% for item in nav_items %}
+          <li>
+            <a href="{{ item.url | relative_url }}" {% if page.url == item.url %}class="current"{% endif %}>
+              {{ item.title }}
+            </a>
+          </li>
+        {% endfor %}
+        <li>{% include language_switcher.html %}</li>
+      </ul>
+    </nav>
+  </div>
+</header>

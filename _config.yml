@@ -1,0 +1,154 @@
+# Site settings
+title: "Arawi Aura"
+description: "Arawi Aura - Poetry and Literary Blog"
+baseurl: ""
+url: "https://benitoanagua.github.io"
+
+# Author
+author:
+  name: "Benito Anagua"
+  email: ""
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+timezone: America/Lima
+
+# Configuración de Sass
+sass:
+  style: compressed
+  sass_dir: _sass
+  load_paths:
+    - _sass
+
+# Collections
+collections:
+  poems_en:
+    output: true
+    permalink: /en/:slug/
+  poems_es:
+    output: true
+    permalink: /es/:slug/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "poems_en"
+    values:
+      layout: "post"
+      lang: "en"
+  - scope:
+      path: ""
+      type: "poems_es"
+    values:
+      layout: "post"
+      lang: "es"
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+# Language settings
+languages: ["en", "es"]
+default_lang: "en"
+
+# Poetry blog configuration
+poetry:
+  posts_per_page: 12
+  featured_posts: 3
+  recent_posts: 6
+
+# Navigation
+navigation:
+  - title: "Home"
+    url: "/"
+  - title: "English Poems"
+    url: "/en/"
+  - title: "Poemas en Español"
+    url: "/es/"
+  - title: "Archive"
+    url: "/archive/"
+  - title: "About"
+    url: "/about/"
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-include-cache
+
+# SEO
+twitter:
+  username: benitoanagua
+  card: summary_large_image
+
+social:
+  name: Benito Anagua
+  links:
+    - https://github.com/benitoanagua
+    - https://twitter.com/benitoanagua
+
+# Default Social Image
+default_social_image: "/assets/images/social-share.jpg"
+
+# Pagination
+paginate: 10
+paginate_path: "/page:num/"
+
+# Internationalization
+default_lang: "en"
+languages: ["en", "es"]
+
+# Performance
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  startings: []
+  blanklines: false
+  profile: false
+
+# Asset Configuration
+assets:
+  sources:
+    - _assets
+    - assets
+  compress:
+    css: true
+    js: true
+  gzip: true
+  caching:
+    enabled: true
+    path: ".jekyll-cache/assets"
+    type: file
+
+# Exclude from processing
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+  - .bundle/
+  - .git/
+  - .gitignore
+  - README.md
+  - package.json
+  - package-lock.json
+  - pnpm-lock.yaml
+  - astro.config.mjs
+  - tsconfig.json
+  - .stylelintrc.mjs
+  - env.d.ts
+  - .env
+  - .env.example
+  - src/
+  - scripts/
+  - .astro/
+  - dist/

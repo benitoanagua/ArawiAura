@@ -1,0 +1,83 @@
+---
+layout: default
+title: "Home"
+lang: "en"
+---
+
+<div class="hero-section">
+  <div class="hero-content">
+    <h1>Welcome to Arawi Aura</h1>
+    <p>
+      A bilingual literary journal dedicated to contemporary poetry and verse.
+      Bridging cultures through the universal language of poetry.
+    </p>
+    <div class="hero-actions">
+      <a href="/en/">English Poems</a>
+      <a href="/es/">Poemas en Español</a>
+    </div>
+  </div>
+</div>
+
+<section class="featured-section">
+  <div class="main-container">
+    <div class="section-header">
+      <h2>Latest Poetry</h2>
+      <p>Discover our newest works in English and Spanish</p>
+    </div>
+
+    <div class="poems-grid">
+      {% assign all_poems = site.poems_en | concat: site.poems_es | sort: 'date' | reverse %}
+      {% for poem in all_poems limit:6 %}
+      <article class="poem-card">
+        <div class="poem-content">
+          <div class="poem-meta">
+            <time datetime="{{ poem.date | date_to_xmlschema }}">
+              {{ poem.date | date: "%B %d, %Y" }}
+            </time>
+            <span> • </span>
+            <span class="poem-lang">{{ poem.lang | upcase }}</span>
+          </div>
+          
+          <h3 class="poem-title">
+            <a href="{{ poem.url | relative_url }}">{{ poem.title }}</a>
+          </h3>
+          
+          <div class="poem-excerpt">
+            {% if poem.excerpt %}
+              {{ poem.excerpt | strip_html | truncate: 120 }}
+            {% else %}
+              {{ poem.content | strip_html | truncate: 120 }}
+            {% endif %}
+          </div>
+          
+          <a href="{{ poem.url | relative_url }}" class="poem-read-more">
+            {% if poem.lang == 'es' %}Leer más{% else %}Read more{% endif %} →
+          </a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-xl">
+      <div class="hero-actions">
+        <a href="/en/">View All English Poems</a>
+        <a href="/es/">Ver Todos los Poemas en Español</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about-section">
+  <div class="about-content">
+    <h2>About Arawi Aura</h2>
+    <p>
+      Arawi Aura is a bilingual literary journal that celebrates the beauty and power of poetry.
+      We publish contemporary verse in both English and Spanish, fostering cultural exchange
+      and literary dialogue across languages.
+    </p>
+    <blockquote>
+      "Poetry is the rhythmical creation of beauty in words."
+      <br><cite>— Edgar Allan Poe</cite>
+    </blockquote>
+  </div>
+</section>

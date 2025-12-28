@@ -1,0 +1,11 @@
+es:
+  - title: "Inicio"
+    url: "/"
+  - title: "Poemas"
+    url: "/es/"
+
+en:
+  - title: "Home"
+    url: "/"
+  - title: "Poems"
+    url: "/en/"

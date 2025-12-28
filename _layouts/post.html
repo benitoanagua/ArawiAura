@@ -1,0 +1,58 @@
+---
+layout: default
+---
+
+{% assign t = site.data.translations[page.lang] %}
+
+<div class="main-container">
+  <article class="post-article">
+    <header class="post-header">
+      <div class="post-meta">
+        {% if page.date %}
+          <time datetime="{{ page.date | date_to_xmlschema }}">
+            {% if page.lang == 'es' %}
+              {{ page.date | date: "%d de %B, %Y" }}
+            {% else %}
+              {{ page.date | date: "%B %d, %Y" }}
+            {% endif %}
+          </time>
+        {% endif %}
+
+        {% if page.lang %}
+          <span> • </span>
+          <span class="post-lang">{{ page.lang | upcase }}</span>
+        {% endif %}
+
+        {% if page.form %}
+          <span> • </span>
+          {% capture form_key %}form_{{ page.form }}{% endcapture %}
+          <span class="post-form">{{ t[form_key] | default: page.form }}</span>
+        {% endif %}
+      </div>
+
+      <h1 class="post-title">{{ page.title }}</h1>
+
+      {% if page.description %}
+        <p class="post-description">{{ page.description }}</p>
+      {% endif %}
+    </header>
+
+    <div class="post-content">
+      {{ content }}
+    </div>
+
+    {% if page.translation_slug %}
+    <footer class="post-footer">
+      <div class="translation-link">
+        <a href="{{ page.translation_slug }}" class="button-primary">
+          {% if page.lang == 'es' %}
+            Read in English →
+          {% else %}
+            Leer en Español →
+          {% endif %}
+        </a>
+      </div>
+    </footer>
+    {% endif %}
+  </article>
+</div>

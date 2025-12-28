@@ -1,0 +1,25 @@
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-ornament">✦</div>
+    
+    <p class="copyright">
+      © {{ 'now' | date: "%Y" }} {{ site.title }}. All rights reserved.
+    </p>
+
+    {% if site.data.social.links %}
+      <nav class="social-links" aria-label="Social media links">
+        {% for link in site.data.social.links %}
+          <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
+            {{ link.title }}
+          </a>
+        {% endfor %}
+      </nav>
+    {% endif %}
+
+    <p class="footer-meta">
+      Poetry by {{ site.author.name }}
+    </p>
+
+    <div class="footer-ornament">✦</div>
+  </div>
+</footer>

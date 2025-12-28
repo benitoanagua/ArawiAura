@@ -1,0 +1,111 @@
+---
+layout: default
+title: "Poemas en Español"
+lang: "es"
+---
+
+<div class="hero-section">
+  <div class="hero-content">
+    <h1>Poemas en Español</h1>
+    <p>Una revista literaria dedicada a la poesía contemporánea y el verso</p>
+    <div class="hero-actions">
+      <a href="/en/">English Poems</a>
+      <a href="/">Inicio</a>
+    </div>
+  </div>
+</div>
+
+<section class="main-container">
+  <div class="content-layout">
+    <!-- Contenido principal -->
+    <div class="primary-content">
+      <div class="poems-grid">
+        {% for poem in site.poems_es %}
+        <article class="poem-card">
+          <div class="poem-content">
+            <div class="poem-meta">
+              <time datetime="{{ poem.date | date_to_xmlschema }}">
+                {{ poem.date | date: "%d de %B, %Y" }}
+              </time>
+              {% if poem.form %}
+                <span> • </span>
+                <span>{{ poem.form }}</span>
+              {% endif %}
+            </div>
+            
+            <h2 class="poem-title">
+              <a href="{{ poem.url | relative_url }}">{{ poem.title }}</a>
+            </h2>
+            
+            <div class="poem-excerpt">
+              {% if poem.excerpt %}
+                {{ poem.excerpt | strip_html | truncate: 150 }}
+              {% else %}
+                {{ poem.content | strip_html | truncate: 150 }}
+              {% endif %}
+            </div>
+            
+            <a href="{{ poem.url | relative_url }}" class="poem-read-more">
+              Leer poema completo →
+            </a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-content">
+        <section class="sidebar-section">
+          <h3 class="sidebar-title">Últimos Poemas</h3>
+          <div class="poetry-preview">
+            {% for poem in site.poems_es limit:3 %}
+            <div class="poetry-item">
+              <h4 class="poetry-title">
+                <a href="{{ poem.url | relative_url }}">{{ poem.title }}</a>
+              </h4>
+              <p class="poetry-excerpt">
+                {{ poem.content | strip_html | truncate: 80 }}
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="sidebar-section">
+          <h3 class="sidebar-title">Rincón del Poeta</h3>
+          <div class="poet-quote">
+            <blockquote>
+              "La poesía es el eco de la melodía del universo en el corazón de los humanos."
+            </blockquote>
+            <cite class="quote-author">— Rabindranath Tagore</cite>
+          </div>
+        </section>
+
+        <section class="sidebar-section">
+          <h3 class="sidebar-title">Explorar</h3>
+          <div class="archive-list">
+            <a href="/en/" class="archive-link">Poemas en Inglés</a>
+            <a href="/" class="archive-link">Inicio</a>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="about-section">
+  <div class="about-content">
+    <h2>Sobre Poemas en Español</h2>
+    <p>
+      Arawi Aura es una revista literaria bilingüe que celebra la belleza y el poder de la poesía.
+      Publicamos verso contemporáneo en español e inglés, fomentando el intercambio cultural
+      y el diálogo literario a través de los idiomas.
+    </p>
+    <blockquote>
+      "La poesía es el ritmo creador de la belleza en las palabras."
+      <br><cite>— Edgar Allan Poe</cite>
+    </blockquote>
+  </div>
+</section>

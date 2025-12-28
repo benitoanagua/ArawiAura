@@ -1,0 +1,18 @@
+<nav class="language-switcher" aria-label="Language switcher">
+  <ul>
+    {% for lang in site.languages %}
+      {% if lang == page.lang %}
+        <li><span class="current-lang">{{ lang | upcase }}</span></li>
+      {% else %}
+        <li>
+          <a href="{% if page.url contains '/en/' %}{{ page.url | replace: '/en/', '/es/' }}{% elsif page.url contains '/es/' %}{{ page.url | replace: '/es/', '/en/' }}{% else %}/{{ lang }}/{% endif %}"
+             class="language-link"
+             hreflang="{{ lang }}"
+             lang="{{ lang }}">
+            {{ lang | upcase }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</nav>
