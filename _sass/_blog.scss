@@ -1,0 +1,279 @@
+@use 'variables' as *;
+
+// Estilos para la bitácora - Blog de Poesía
+
+// Página principal
+.main-header {
+  text-align: center;
+  padding: $space-2xl 0 $space-xl 0;
+  border-bottom: 1px solid $color-border-gray;
+  margin-bottom: $space-2xl;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    color: $color-primary-black;
+    margin-bottom: $space-sm;
+    letter-spacing: -0.02em;
+  }
+
+  .site-subtitle {
+    font-size: 1.25rem;
+    color: $color-text-medium;
+    margin-bottom: $space-lg;
+  }
+
+  .language-nav {
+    display: flex;
+    justify-content: center;
+    gap: $space-lg;
+
+    .lang-link {
+      padding: $space-sm $space-md;
+      background: $color-accent-gold;
+      color: $color-primary-black;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: darken($color-accent-gold, 10%);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// Secciones de poemas
+.recent-poems {
+  margin-bottom: $space-3xl;
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $color-text-dark;
+    margin-bottom: $space-lg;
+    text-align: center;
+  }
+}
+
+// Grid de poemas para homepage
+.poems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $space-lg;
+  margin-bottom: $space-2xl;
+}
+
+.poem-card {
+  background: $color-primary-white;
+  border: 1px solid $color-border-gray;
+  border-radius: 8px;
+  padding: $space-lg;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+  }
+
+  .poem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $space-sm;
+
+    .poem-lang {
+      background: $color-accent-gold;
+      color: $color-primary-black;
+      padding: $space-xs $space-sm;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 4px;
+    }
+
+    .poem-date {
+      font-size: 0.875rem;
+      color: $color-text-light;
+    }
+  }
+
+  .poem-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: $space-sm;
+
+    a {
+      color: $color-text-dark;
+      text-decoration: none;
+
+      &:hover {
+        color: $color-primary-black;
+      }
+    }
+  }
+
+  .poem-excerpt {
+    color: $color-text-medium;
+    line-height: 1.6;
+    margin-bottom: $space-md;
+    font-style: italic;
+  }
+
+  .read-more {
+    color: $color-accent-gold;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9rem;
+
+    &:hover {
+      color: darken($color-accent-gold, 10%);
+    }
+  }
+}
+
+// Lista de poemas para páginas por idioma
+.poems-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.poem-entry {
+  border-bottom: 1px solid $color-border-gray;
+  padding: $space-xl 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .poem-meta {
+    display: flex;
+    gap: $space-md;
+    align-items: center;
+    margin-bottom: $space-sm;
+
+    time {
+      font-size: 0.9rem;
+      color: $color-text-light;
+    }
+
+    .poem-form {
+      background: $color-bg-gray;
+      color: $color-text-dark;
+      padding: $space-xs $space-sm;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+  }
+
+  .poem-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: $space-sm;
+
+    a {
+      color: $color-text-dark;
+      text-decoration: none;
+
+      &:hover {
+        color: $color-primary-black;
+      }
+    }
+  }
+
+  .poem-excerpt {
+    color: $color-text-medium;
+    line-height: 1.7;
+    margin-bottom: $space-md;
+    font-style: italic;
+  }
+
+  .poem-footer {
+    display: flex;
+    gap: $space-lg;
+    align-items: center;
+
+    .read-more {
+      color: $color-accent-gold;
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        color: darken($color-accent-gold, 10%);
+      }
+    }
+
+    .translation-link {
+      color: $color-text-light;
+      text-decoration: none;
+      font-size: 0.9rem;
+
+      &:hover {
+        color: $color-text-dark;
+      }
+    }
+  }
+}
+
+// Headers de página
+.page-header {
+  text-align: center;
+  padding: $space-xl 0;
+  border-bottom: 1px solid $color-border-gray;
+  margin-bottom: $space-2xl;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $color-primary-black;
+    margin-bottom: $space-sm;
+  }
+
+  .page-subtitle {
+    font-size: 1.125rem;
+    color: $color-text-medium;
+  }
+}
+
+// Footer simple
+.site-footer-simple {
+  text-align: center;
+  padding: $space-xl 0;
+  border-top: 1px solid $color-border-gray;
+  margin-top: $space-3xl;
+
+  p {
+    color: $color-text-light;
+    font-size: 0.9rem;
+  }
+}
+
+// Responsive
+@media (max-width: $bp-sm) {
+  .main-header {
+    h1 {
+      font-size: 2.25rem;
+    }
+
+    .language-nav {
+      flex-direction: column;
+      align-items: center;
+      gap: $space-sm;
+    }
+  }
+
+  .poems-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .poem-entry {
+    .poem-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $space-sm;
+    }
+  }
+}

@@ -1,0 +1,74 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.site-header {
+  background: $color-primary-black;
+  padding: $space-md 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 60px; // Fixed height as described
+  
+  .header-inner {
+    max-width: $container-max;
+    margin: 0 auto;
+    padding: 0 $space-md;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .logo {
+    font-family: $font-sans;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: $color-primary-white;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    
+    &:hover {
+      color: $color-accent-gold;
+    }
+  }
+  
+  .main-nav {
+    display: flex;
+    gap: $space-lg;
+    
+    a {
+      color: $color-primary-white;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+      text-decoration: none;
+      
+      &:hover,
+      &.active {
+        color: $color-accent-gold;
+      }
+    }
+  }
+  
+  @media (max-width: $bp-md) {
+    .main-nav {
+      gap: $space-md;
+      font-size: 0.85rem;
+    }
+  }
+  
+  @media (max-width: $bp-sm) {
+    .header-inner {
+      padding: 0 $space-sm;
+    }
+    
+    .logo {
+      font-size: 1.25rem;
+    }
+    
+    .main-nav {
+      gap: $space-sm;
+      font-size: 0.8rem;
+    }
+  }
+}

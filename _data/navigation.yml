@@ -1,11 +1,15 @@
-es:
+main:
   - title: "Inicio"
     url: "/"
   - title: "Poemas"
     url: "/es/"
-
-en:
-  - title: "Home"
-    url: "/"
-  - title: "Poems"
+  - title: "English"
     url: "/en/"
+
+social:
+  - name: "GitHub"
+    url: "https://github.com/benitoanagua"
+    icon: "github"
+  - name: "LinkedIn"
+    url: "https://linkedin.com/in/benito-anagua"
+    icon: "linkedin"

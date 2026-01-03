@@ -1,92 +1,52 @@
 ---
 layout: default
-title: "English Poems"
-lang: "en"
+title: "Poems in English"
+lang: en
+description: "Contemporary poetry collection in English - Arawi Aura"
 ---
 
-<div class="hero-section">
-  <div class="hero-content">
-    <h1>English Poetry Collection</h1>
-    <p>Contemporary verse and literary works in English</p>
+<div class="container">
+  <header class="page-header">
+    <h1>Poems in English</h1>
+    <p class="page-subtitle">A collection of contemporary poetry</p>
+  </header>
+  
+  <div class="poems-list">
+    {% assign poems = site.poems_en | sort: 'date' | reverse %}
+    {% for poem in poems %}
+      <article class="poem-entry">
+        <div class="poem-meta">
+          <time datetime="{{ poem.date | date_to_xmlschema }}">
+            {{ poem.date | date: "%B %d, %Y" }}
+          </time>
+          
+          {% if poem.form %}
+            <span class="poem-form">{{ poem.form }}</span>
+          {% endif %}
+        </div>
+        
+        <h2 class="poem-title">
+          <a href="{{ poem.url | relative_url }}">{{ poem.title }}</a>
+        </h2>
+        
+        {% if poem.excerpt %}
+          <div class="poem-excerpt">
+            {{ poem.excerpt | strip_html | truncate: 200 }}
+          </div>
+        {% endif %}
+        
+        <div class="poem-footer">
+          <a href="{{ poem.url | relative_url }}" class="read-more">
+            Read full poem →
+          </a>
+          
+          {% if poem.translation_slug %}
+            <a href="{{ poem.translation_slug }}" class="translation-link" title="Disponible en español">
+              🌐 Español
+            </a>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
   </div>
 </div>
-
-<section class="main-container">
-  <div class="content-layout">
-    <!-- Contenido principal -->
-    <div class="primary-content">
-      <div class="poems-grid">
-        {% for poem in site.poems_en %}
-        <article class="poem-card">
-          <div class="poem-content">
-            <div class="poem-meta">
-              <time datetime="{{ poem.date | date_to_xmlschema }}">
-                {{ poem.date | date: "%B %d, %Y" }}
-              </time>
-              {% if poem.form %}
-                <span> • </span>
-                <span>{{ poem.form }}</span>
-              {% endif %}
-            </div>
-            
-            <h2 class="poem-title">
-              <a href="{{ poem.url | relative_url }}">{{ poem.title }}</a>
-            </h2>
-            
-            <div class="poem-excerpt">
-              {% if poem.excerpt %}
-                {{ poem.excerpt | strip_html | truncate: 150 }}
-              {% else %}
-                {{ poem.content | strip_html | truncate: 150 }}
-              {% endif %}
-            </div>
-            
-            <a href="{{ poem.url | relative_url }}" class="poem-read-more">
-              Read full poem →
-            </a>
-          </div>
-        </article>
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-content">
-        <section class="sidebar-section">
-          <h3 class="sidebar-title">Latest Poetry</h3>
-          <div class="poetry-preview">
-            {% for poem in site.poems_en limit:3 %}
-            <div class="poetry-item">
-              <h4 class="poetry-title">
-                <a href="{{ poem.url | relative_url }}">{{ poem.title }}</a>
-              </h4>
-              <p class="poetry-excerpt">
-                {{ poem.content | strip_html | truncate: 80 }}
-              </p>
-            </div>
-            {% endfor %}
-          </div>
-        </section>
-
-        <section class="sidebar-section">
-          <h3 class="sidebar-title">Poet's Corner</h3>
-          <div class="poet-quote">
-            <blockquote>
-              "Poetry is the spontaneous overflow of powerful feelings."
-            </blockquote>
-            <cite class="quote-author">— William Wordsworth</cite>
-          </div>
-        </section>
-
-        <section class="sidebar-section">
-          <h3 class="sidebar-title">Explore</h3>
-          <div class="archive-list">
-            <a href="/es/" class="archive-link">Spanish Poems</a>
-            <a href="/" class="archive-link">Home</a>
-          </div>
-        </section>
-      </div>
-    </aside>
-  </div>
-</section>
