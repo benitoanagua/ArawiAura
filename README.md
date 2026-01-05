@@ -1,38 +1,111 @@
-# sv
+# Arawi Aura
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Blog minimalista construido con **SvelteKit** y **SurrealDB Cloud**.
 
-## Creating a project
+## 🚀 Inicio Rápido
 
-If you're seeing this, you've probably already done this step. Congrats!
+### 1. Instalar dependencias
 
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+```bash
+pnpm install
 ```
 
-## Developing
+### 2. Configurar variables de entorno
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```bash
+cp .env.example .env
 ```
 
-## Building
+Edita el archivo `.env` con tus credenciales de SurrealDB Cloud:
 
-To create a production version of your app:
-
-```sh
-npm run build
+```env
+SURREALDB_URL=wss://your-instance.surreal.cloud
+SURREALDB_USERNAME=your_username
+SURREALDB_PASSWORD=your_password
+SURREALDB_NAMESPACE=your_namespace
+SURREALDB_DATABASE=your_database
 ```
 
-You can preview the production build with `npm run preview`.
+### 3. Inicializar la base de datos
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+**Opción A: Desde la línea de comandos**
+```bash
+pnpm db:init
+```
+
+**Opción B: Desde la interfaz web**
+```bash
+pnpm dev
+# Luego visita http://localhost:5173/admin
+```
+
+### 4. Iniciar el proyecto
+
+```bash
+pnpm dev
+```
+
+## 📚 Documentación
+
+Ver [README-SURREALDB.md](./README-SURREALDB.md) para documentación completa.
+
+## ✨ Características
+
+- ✅ **SurrealDB Cloud** - Base de datos moderna graph+document en la nube
+- ✅ **SvelteKit** - Framework web rápido y moderno
+- ✅ **TypeScript** - Tipado estático completo
+- ✅ **Variables de entorno** - Configuración segura
+- ✅ **API Routes** - Endpoints para administración
+- ✅ **Seed/Migration** - Inicialización de datos siguiendo convenciones
+- ✅ **Responsive** - Diseño adaptable
+- ✅ **SEO optimizado** - Meta tags y Open Graph
+- ✅ **Sin tablas intermedias** - Relaciones directas
+- ✅ **Schema flexible** - Evoluciona con tu proyecto
+
+## 🗄️ Esquema
+
+```
+user (autores)
+post (artículos) → author: user, tags: array<tag>
+tag (etiquetas)
+asset (imágenes)
+setting (configuración)
+```
+
+## 🛠️ Comandos
+
+```bash
+pnpm dev          # Desarrollo
+pnpm build        # Build para producción
+pnpm preview      # Preview del build
+pnpm db:init      # Inicializar esquema (CLI)
+pnpm db:seed      # Solo crear datos de ejemplo
+```
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── lib/
+│   └── db/
+│       ├── index.ts          # Barrel exports
+│       ├── connection.ts     # Conexión a SurrealDB
+│       ├── queries.ts        # Consultas de datos
+│       ├── types.ts          # Tipos TypeScript
+│       ├── seed.ts           # Funciones de inicialización
+│       └── schema.surql      # Esquema SQL
+├── routes/
+│   ├── api/db/              # API endpoints para DB
+│   ├── admin/               # Panel de administración
+│   ├── post/[slug]/         # Posts individuales
+│   └── tag/[slug]/          # Posts por tag
+└── scripts/
+    └── init-db.ts           # Script CLI de inicialización
+```
+
+## 🔧 Tecnologías
+
+- **Frontend**: SvelteKit 2.x + TypeScript
+- **Base de datos**: SurrealDB Cloud
+- **Estilos**: CSS nativo con variables
+- **Deployment**: Vercel/Netlify ready

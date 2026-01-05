@@ -3,34 +3,33 @@
 	
 	export let data: PageData;
 	
-	$: ({ posts, tags, pagination, settings } = data);
+	$: ({ tag, posts, settings } = data);
 </script>
 
 <svelte:head>
-	<title>{settings.site_title}</title>
-	<meta name="description" content={settings.site_description} />
+	<title>{tag.name} - {settings.site_title}</title>
+	<meta name="description" content={tag.description || `Posts sobre ${tag.name}`} />
 </svelte:head>
 
 <div class="container">
-	<!-- Header -->
-	<header class="header">
-		<h1 class="site-title">{settings.site_title}</h1>
-		<p class="site-description">{settings.site_description}</p>
-	</header>
+	<!-- Navegación -->
+	<nav class="breadcrumb">
+		<a href="/">← Volver al inicio</a>
+	</nav>
 
-	<!-- Tags -->
-	{#if tags.length > 0}
-		<section class="tags-section">
-			<h2>Temas</h2>
-			<div class="tags">
-				{#each tags as tag}
-					<a href="/tag/{tag.slug}" class="tag" style="--tag-color: {tag.color || '#3b82f6'}">
-						{tag.name}
-					</a>
-				{/each}
-			</div>
-		</section>
-	{/if}
+	<!-- Header del tag -->
+	<header class="tag-header">
+		<div class="tag-info">
+			<span class="tag-badge" style="--tag-color: {tag.color || '#3b82f6'}">
+				{tag.name}
+			</span>
+			<h1 class="tag-title">Posts sobre {tag.name}</h1>
+			{#if tag.description}
+				<p class="tag-description">{tag.description}</p>
+			{/if}
+			<p class="posts-count">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+		</div>
+	</header>
 
 	<!-- Posts -->
 	<main class="posts">
@@ -68,12 +67,14 @@
 							<p class="post-excerpt">{post.excerpt}</p>
 						{/if}
 						
-						{#if post.tags.length > 0}
+						{#if post.tags.length > 1}
 							<div class="post-tags">
-								{#each post.tags as tag}
-									<a href="/tag/{tag.slug}" class="post-tag">
-										{tag.name}
-									</a>
+								{#each post.tags as postTag}
+									{#if postTag.slug !== tag.slug}
+										<a href="/tag/{postTag.slug}" class="post-tag">
+											{postTag.name}
+										</a>
+									{/if}
 								{/each}
 							</div>
 						{/if}
@@ -82,32 +83,12 @@
 			{/each}
 		{:else}
 			<div class="no-posts">
-				<h2>No hay posts publicados aún</h2>
-				<p>¡Pronto habrá contenido interesante aquí!</p>
+				<h2>No hay posts con este tag</h2>
+				<p>Aún no se han publicado posts sobre {tag.name}.</p>
+				<a href="/" class="back-link">Ver todos los posts</a>
 			</div>
 		{/if}
 	</main>
-
-	<!-- Paginación -->
-	{#if pagination.has_prev || pagination.has_next}
-		<nav class="pagination">
-			{#if pagination.has_prev}
-				<a href="?page={pagination.current_page - 1}" class="pagination-link">
-					← Anterior
-				</a>
-			{/if}
-			
-			<span class="pagination-current">
-				Página {pagination.current_page}
-			</span>
-			
-			{#if pagination.has_next}
-				<a href="?page={pagination.current_page + 1}" class="pagination-link">
-					Siguiente →
-				</a>
-			{/if}
-		</nav>
-	{/if}
 </div>
 
 <style>
@@ -117,54 +98,55 @@
 		padding: 2rem 1rem;
 	}
 
-	.header {
-		text-align: center;
-		margin-bottom: 3rem;
+	.breadcrumb {
+		margin-bottom: 2rem;
 	}
 
-	.site-title {
-		font-size: 2.5rem;
+	.breadcrumb a {
+		color: #3b82f6;
+		text-decoration: none;
+		font-size: 0.875rem;
+	}
+
+	.breadcrumb a:hover {
+		text-decoration: underline;
+	}
+
+	.tag-header {
+		text-align: center;
+		margin-bottom: 3rem;
+		padding-bottom: 2rem;
+		border-bottom: 1px solid #e5e5e5;
+	}
+
+	.tag-badge {
+		display: inline-block;
+		padding: 0.5rem 1rem;
+		background: var(--tag-color, #3b82f6);
+		color: white;
+		border-radius: 1.5rem;
+		font-size: 0.875rem;
+		font-weight: 600;
+		margin-bottom: 1rem;
+	}
+
+	.tag-title {
+		font-size: 2rem;
 		font-weight: bold;
 		margin-bottom: 0.5rem;
 		color: #1a1a1a;
 	}
 
-	.site-description {
+	.tag-description {
 		font-size: 1.1rem;
 		color: #666;
-		margin: 0;
+		margin-bottom: 0.5rem;
 	}
 
-	.tags-section {
-		margin-bottom: 3rem;
-	}
-
-	.tags-section h2 {
-		font-size: 1.2rem;
-		margin-bottom: 1rem;
-		color: #333;
-	}
-
-	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.tag {
-		display: inline-block;
-		padding: 0.25rem 0.75rem;
-		background: var(--tag-color, #3b82f6);
-		color: white;
-		text-decoration: none;
-		border-radius: 1rem;
+	.posts-count {
 		font-size: 0.875rem;
-		font-weight: 500;
-		transition: opacity 0.2s;
-	}
-
-	.tag:hover {
-		opacity: 0.8;
+		color: #888;
+		margin: 0;
 	}
 
 	.posts {
@@ -250,15 +232,14 @@
 		color: #666;
 	}
 
-	.pagination {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 1rem;
-		margin-top: 3rem;
+	.no-posts h2 {
+		color: #333;
+		margin-bottom: 1rem;
 	}
 
-	.pagination-link {
+	.back-link {
+		display: inline-block;
+		margin-top: 1rem;
 		padding: 0.5rem 1rem;
 		background: #3b82f6;
 		color: white;
@@ -267,13 +248,8 @@
 		transition: background-color 0.2s;
 	}
 
-	.pagination-link:hover {
+	.back-link:hover {
 		background: #2563eb;
-	}
-
-	.pagination-current {
-		color: #666;
-		font-weight: 500;
 	}
 
 	@media (max-width: 640px) {
@@ -281,8 +257,8 @@
 			padding: 1rem;
 		}
 
-		.site-title {
-			font-size: 2rem;
+		.tag-title {
+			font-size: 1.75rem;
 		}
 
 		.post-content {
