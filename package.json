@@ -12,6 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
+		"db:clean": "tsx scripts/clean-db.ts",
 		"db:init": "tsx scripts/init-db.ts",
 		"db:seed": "tsx -e \"import { seedDevelopmentData } from './src/lib/db/seed.js'; await seedDevelopmentData();\""
 	},

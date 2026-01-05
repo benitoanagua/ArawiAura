@@ -9,7 +9,7 @@ DEFINE FIELD slug ON user TYPE string;
 DEFINE FIELD email ON user TYPE string;
 DEFINE FIELD password_hash ON user TYPE string;
 DEFINE FIELD bio ON user TYPE string;
-DEFINE FIELD profile_image ON user TYPE option<record(asset)>;
+DEFINE FIELD profile_image ON user TYPE option<record<asset>>;
 DEFINE FIELD created_at ON user TYPE datetime DEFAULT time::now();
 
 -- Índices para users
@@ -23,13 +23,13 @@ DEFINE FIELD slug ON post TYPE string;
 DEFINE FIELD content ON post TYPE string;        -- Markdown
 DEFINE FIELD html ON post TYPE string;           -- Cache renderizado
 DEFINE FIELD excerpt ON post TYPE option<string>;
-DEFINE FIELD feature_image ON post TYPE option<record(asset)>;
+DEFINE FIELD feature_image ON post TYPE option<record<asset>>;
 DEFINE FIELD status ON post TYPE string ASSERT $value INSIDE ['draft','published'];
 DEFINE FIELD published_at ON post TYPE option<datetime>;
 DEFINE FIELD created_at ON post TYPE datetime DEFAULT time::now();
 DEFINE FIELD updated_at ON post TYPE datetime DEFAULT time::now();
-DEFINE FIELD author ON post TYPE record(user);
-DEFINE FIELD tags ON post TYPE array<record(tag)>;
+DEFINE FIELD author ON post TYPE record<user>;
+DEFINE FIELD tags ON post TYPE array<record<tag>>;
 
 -- Índices para posts
 DEFINE INDEX post_slug_idx ON post FIELDS slug UNIQUE;

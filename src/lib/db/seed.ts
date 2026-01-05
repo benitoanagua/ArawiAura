@@ -6,17 +6,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Surreal } from 'surrealdb';
-import { config } from 'dotenv';
-
-// Cargar variables de entorno
-config();
-
-// Configuración desde variables de entorno
-const DB_URL = process.env.SURREALDB_URL!;
-const DB_USERNAME = process.env.SURREALDB_USERNAME!;
-const DB_PASSWORD = process.env.SURREALDB_PASSWORD!;
-const DB_NAMESPACE = process.env.SURREALDB_NAMESPACE!;
-const DB_DATABASE = process.env.SURREALDB_DATABASE!;
+import { DB_CONFIG } from './config';
 
 /**
  * Conecta a la base de datos para operaciones de seed
@@ -24,15 +14,28 @@ const DB_DATABASE = process.env.SURREALDB_DATABASE!;
 async function connectForSeed(): Promise<Surreal> {
 	const db = new Surreal();
 	
-	await db.connect(DB_URL, {
-		namespace: DB_NAMESPACE,
-		database: DB_DATABASE
-	});
-	
-	await db.signin({
-		username: DB_USERNAME,
-		password: DB_PASSWORD
-	});
+	try {
+		// Add /rpc to the URL if not already present
+		const connectUrl = DB_CONFIG.URL.endsWith('/rpc') ? DB_CONFIG.URL : `${DB_CONFIG.URL}/rpc`;
+		await db.connect(connectUrl);
+		
+		// Use database-level authentication
+		await db.signin({
+			username: DB_CONFIG.USERNAME,
+			password: DB_CONFIG.PASSWORD,
+			namespace: DB_CONFIG.NAMESPACE,
+			database: DB_CONFIG.DATABASE
+		});
+	} catch (error) {
+		console.error('Error connecting to SurrealDB:', error);
+		console.log('Connection details:');
+		console.log('  URL:', DB_CONFIG.URL);
+		console.log('  Namespace:', DB_CONFIG.NAMESPACE);
+		console.log('  Database:', DB_CONFIG.DATABASE);
+		console.log('  Username:', DB_CONFIG.USERNAME ? 'Provided' : 'Missing');
+		console.log('  Password:', DB_CONFIG.PASSWORD ? 'Provided' : 'Missing');
+		throw error;
+	}
 	
 	return db;
 }
@@ -86,10 +89,10 @@ export async function seedDevelopmentData(): Promise<void> {
 	try {
 		console.log('🌱 Creando datos de desarrollo...');
 		
-		// Verificar si ya existen posts
-		const existingPosts = await db.query('SELECT * FROM post LIMIT 1;');
-		if ((existingPosts[0] as any)?.result?.length > 0) {
-			console.log('📊 Ya existen datos, omitiendo seed de desarrollo');
+		// Verificar si ya existe el post de ejemplo
+		const existingExamplePost = await db.query('SELECT * FROM post:ejemplo;');
+		if ((existingExamplePost[0] as any)?.result?.length > 0) {
+			console.log('📊 El post de ejemplo ya existe, omitiendo seed de desarrollo');
 			return;
 		}
 		

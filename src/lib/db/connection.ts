@@ -1,11 +1,5 @@
 import { Surreal } from 'surrealdb';
-
-// Configuración de la conexión a SurrealDB desde variables de entorno
-const DB_URL = process.env.SURREALDB_URL!;
-const DB_NAMESPACE = process.env.SURREALDB_NAMESPACE!;
-const DB_DATABASE = process.env.SURREALDB_DATABASE!;
-const DB_USERNAME = process.env.SURREALDB_USERNAME!;
-const DB_PASSWORD = process.env.SURREALDB_PASSWORD!;
+import { DB_CONFIG } from './config';
 
 let db: Surreal;
 
@@ -17,16 +11,16 @@ export async function initDB(): Promise<Surreal> {
 		db = new Surreal();
 		
 		try {
-			// Conectar a SurrealDB Cloud con namespace y database
-			await db.connect(DB_URL, {
-				namespace: DB_NAMESPACE,
-				database: DB_DATABASE
-			});
+			// Add /rpc to the URL if not already present
+			const connectUrl = DB_CONFIG.URL.endsWith('/rpc') ? DB_CONFIG.URL : `${DB_CONFIG.URL}/rpc`;
+			await db.connect(connectUrl);
 			
-			// Autenticar con credenciales de la nube
+			// Autenticar con credenciales de la nube usando autenticación a nivel de base de datos
 			await db.signin({
-				username: DB_USERNAME,
-				password: DB_PASSWORD
+				username: DB_CONFIG.USERNAME,
+				password: DB_CONFIG.PASSWORD,
+				namespace: DB_CONFIG.NAMESPACE,
+				database: DB_CONFIG.DATABASE
 			});
 			
 			console.log('✅ Conectado a SurrealDB Cloud');
