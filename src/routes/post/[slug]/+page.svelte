@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Sidenote from '$lib/components/Sidenote.svelte';
+	import Button from '$lib/components/Button.svelte';
 	
 	export let data: PageData;
 	
@@ -8,351 +10,426 @@
 
 <svelte:head>
 	<title>{post.title} - {settings.site_title}</title>
-	<meta name="description" content={post.excerpt || `Post de ${post.author.name}`} />
-	
-	<!-- Open Graph -->
-	<meta property="og:title" content={post.title} />
-	<meta property="og:description" content={post.excerpt || `Post de ${post.author.name}`} />
-	<meta property="og:type" content="article" />
-	{#if post.feature_image}
-		<meta property="og:image" content={post.feature_image.url} />
-	{/if}
-	
-	<!-- Twitter Card -->
-	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={post.title} />
-	<meta name="twitter:description" content={post.excerpt || `Post de ${post.author.name}`} />
-	{#if post.feature_image}
-		<meta name="twitter:image" content={post.feature_image.url} />
-	{/if}
+	<meta name="description" content={post.excerpt} />
 </svelte:head>
 
-<div class="container">
-	<!-- Navegación -->
-	<nav class="breadcrumb">
-		<a href="/">← Volver al inicio</a>
-	</nav>
-
-	<!-- Artículo -->
-	<article class="post">
-		<!-- Header del post -->
-		<header class="post-header">
-			{#if post.feature_image}
-				<div class="feature-image">
-					<img src={post.feature_image.url} alt={post.feature_image.alt || post.title} />
-				</div>
-			{/if}
-			
-			<div class="post-meta">
-				<h1 class="post-title">{post.title}</h1>
-				
-				<div class="post-info">
-					<div class="author-info">
-						{#if post.author.profile_image}
-							<img src={post.author.profile_image.url} alt={post.author.name} class="author-avatar" />
-						{/if}
-						<div>
-							<div class="author-name">{post.author.name}</div>
-							<div class="post-date">
-								<time datetime={post.published_at}>
-									{new Date(post.published_at || '').toLocaleDateString('es-ES', {
-										year: 'numeric',
-										month: 'long',
-										day: 'numeric'
-									})}
-								</time>
-								<span>•</span>
-								<span>{post.reading_time} min de lectura</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				{#if post.tags.length > 0}
-					<div class="post-tags">
-						{#each post.tags as tag}
-							<a href="/tag/{tag.slug}" class="tag" style="--tag-color: {tag.color || '#3b82f6'}">
-								{tag.name}
-							</a>
-						{/each}
-					</div>
-				{/if}
-			</div>
-		</header>
-
-		<!-- Contenido del post -->
-		<div class="post-content">
-			{@html post.html}
+<!-- Hero Visual Editorial -->
+<header class="article-hero">
+	{#if post.feature_image}
+		<div class="article-hero__image">
+			<img src={post.feature_image.url} alt={post.feature_image.alt || post.title} />
 		</div>
-	</article>
-
-	<!-- Autor -->
-	{#if post.author.bio}
-		<section class="author-section">
-			<div class="author-card">
-				{#if post.author.profile_image}
-					<img src={post.author.profile_image.url} alt={post.author.name} class="author-image" />
-				{/if}
-				<div class="author-details">
-					<h3>Sobre {post.author.name}</h3>
-					<p>{post.author.bio}</p>
-				</div>
-			</div>
-		</section>
 	{/if}
+	<div class="article-hero__overlay"></div>
+	<div class="article-hero__content">
+		<h1 class="article-hero__title">{post.title}</h1>
+		{#if post.excerpt}
+			<p class="article-hero__excerpt">{post.excerpt}</p>
+		{/if}
+	</div>
+</header>
 
-	<!-- Navegación de posts relacionados -->
-	<nav class="post-navigation">
-		<a href="/" class="nav-link">
-			← Ver todos los posts
-		</a>
-	</nav>
-</div>
+<!-- Separador Editorial -->
+<div class="editorial-separator article-separator"></div>
+
+<!-- Article Layout: Modo Lectura -->
+<article class="article-layout">
+	<!-- Article Header Metadata -->
+	<header class="article-header">
+		<div class="article-metadata">
+			{#if post.published_at}
+				<time datetime={post.published_at} class="article-metadata__date">
+					{new Date(post.published_at).toLocaleDateString('es-ES', {
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric'
+					})}
+				</time>
+			{/if}
+
+			{#if post.author?.name}
+				<span class="article-metadata__author">
+					Escrito por {post.author.name}
+				</span>
+			{/if}
+
+			{#if post.reading_time}
+				<span class="article-metadata__reading-time">
+					{post.reading_time} minutos de lectura
+				</span>
+			{/if}
+		</div>
+
+		<!-- Tags -->
+		{#if post.tags && post.tags.length > 0}
+			<nav class="article-tags">
+				{#each post.tags as tag}
+					<a href={`/tag/${tag.slug}`} class="article-tag">
+						{tag.name}
+					</a>
+				{/each}
+			</nav>
+		{/if}
+	</header>
+
+	<!-- Article Body -->
+	<div class="article-content">
+		{@html post.content_html || post.content}
+	</div>
+
+	<!-- Separador Final -->
+	<div class="article-footer-separator"></div>
+
+	<!-- Article Footer -->
+	<footer class="article-footer">
+		{#if post.author?.bio}
+			<div class="author-bio">
+				<h3 class="author-bio__title">Sobre el autor</h3>
+				<p class="author-bio__text">{post.author.bio}</p>
+			</div>
+		{/if}
+	</footer>
+</article>
+
+<!-- Separador Editorial -->
+<div class="editorial-separator"></div>
+
+<!-- Navigation -->
+<nav class="article-navigation">
+	<div class="article-navigation__container">
+		<Button 
+			href="/"
+			variant="ghost"
+			class="article-navigation__btn"
+		>
+			← Volver al blog
+		</Button>
+	</div>
+</nav>
 
 <style>
-	.container {
-		max-width: 800px;
-		margin: 0 auto;
-		padding: 2rem 1rem;
-	}
-
-	.breadcrumb {
-		margin-bottom: 2rem;
-	}
-
-	.breadcrumb a {
-		color: #3b82f6;
-		text-decoration: none;
-		font-size: 0.875rem;
-	}
-
-	.breadcrumb a:hover {
-		text-decoration: underline;
-	}
-
-	.post {
-		margin-bottom: 3rem;
-	}
-
-	.post-header {
-		margin-bottom: 2rem;
-	}
-
-	.feature-image {
-		margin-bottom: 2rem;
-		border-radius: 0.5rem;
+	/* Hero Editorial */
+	:global(.article-hero) {
+		position: relative;
+		height: clamp(400px, 60vh, 600px);
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
 		overflow: hidden;
+		background: var(--bg-cool);
 	}
 
-	.feature-image img {
+	:global(.article-hero__image) {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+	}
+
+	:global(.article-hero__image img) {
 		width: 100%;
-		height: 300px;
+		height: 100%;
 		object-fit: cover;
 	}
 
-	.post-title {
-		font-size: 2.5rem;
-		font-weight: bold;
-		line-height: 1.2;
-		margin-bottom: 1rem;
-		color: #1a1a1a;
+	:global(.article-hero__overlay) {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		background: linear-gradient(
+			to bottom,
+			rgba(0, 0, 0, 0) 0%,
+			rgba(0, 0, 0, 0.5) 100%
+		);
 	}
 
-	.post-info {
-		margin-bottom: 1.5rem;
+	:global(.article-hero__content) {
+		position: relative;
+		z-index: 3;
+		color: white;
+		text-align: center;
+		padding: var(--space-12);
+		max-width: 900px;
 	}
 
-	.author-info {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
+	:global(.article-hero__title) {
+		font-family: var(--font-serif);
+		font-size: clamp(32px, 6vw, 56px);
+		font-weight: 700;
+		line-height: var(--leading-tight);
+		margin-bottom: var(--space-6);
+		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 	}
 
-	.author-avatar {
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		object-fit: cover;
+	:global(.article-hero__excerpt) {
+		font-family: var(--font-sans);
+		font-size: clamp(18px, 2vw, 24px);
+		line-height: var(--leading-snug);
+		font-weight: 400;
+		opacity: 0.95;
 	}
 
-	.author-name {
-		font-weight: 600;
-		color: #1a1a1a;
+	/* Separador Editorial */
+	:global(.article-separator) {
+		margin: var(--space-16) auto;
 	}
 
-	.post-date {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.875rem;
-		color: #666;
+	/* Article Layout */
+	:global(.article-layout) {
+		max-width: var(--container-narrow);
+		margin: 0 auto;
+		padding: 0 var(--space-10);
 	}
 
-	.post-tags {
+	/* Article Header */
+	:global(.article-header) {
+		margin-bottom: var(--space-20);
+		padding-bottom: var(--space-12);
+		border-bottom: 1px solid var(--border-light);
+	}
+
+	/* Metadata */
+	:global(.article-metadata) {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: var(--space-6);
+		margin-bottom: var(--space-8);
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
 	}
 
-	.tag {
+	:global(.article-metadata__date) {
+		color: var(--text-secondary);
+	}
+
+	:global(.article-metadata__author),
+	:global(.article-metadata__reading-time) {
+		color: var(--accent-primary);
+	}
+
+	/* Tags */
+	:global(.article-tags) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+	}
+
+	:global(.article-tag) {
 		display: inline-block;
-		padding: 0.25rem 0.75rem;
-		background: var(--tag-color, #3b82f6);
-		color: white;
+		padding: var(--space-2) var(--space-3);
+		background: var(--bg-cool);
+		color: var(--text-secondary);
+		border: 1px solid var(--border-light);
+		border-radius: var(--border-radius-base);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
 		text-decoration: none;
-		border-radius: 1rem;
-		font-size: 0.875rem;
-		font-weight: 500;
-		transition: opacity 0.2s;
+		transition: all var(--duration-fast) var(--ease-out);
 	}
 
-	.tag:hover {
-		opacity: 0.8;
+	:global(.article-tag:hover) {
+		background: var(--accent-primary);
+		color: white;
+		border-color: var(--accent-primary);
 	}
 
-	.post-content {
-		line-height: 1.7;
-		color: #333;
-		font-size: 1.1rem;
+	/* Content */
+	:global(.article-content) {
+		font-family: var(--font-serif);
+		font-size: var(--text-md);
+		line-height: var(--leading-loose);
+		color: var(--text-primary);
+		margin-bottom: var(--space-20);
 	}
 
-	.post-content :global(h1),
-	.post-content :global(h2),
-	.post-content :global(h3),
-	.post-content :global(h4),
-	.post-content :global(h5),
-	.post-content :global(h6) {
-		margin-top: 2rem;
-		margin-bottom: 1rem;
-		color: #1a1a1a;
+	/* Headings dentro del contenido */
+	:global(.article-content h1) {
+		font-family: var(--font-serif);
+		font-size: var(--text-3xl);
+		font-weight: 700;
+		line-height: var(--leading-tight);
+		margin-top: var(--space-20);
+		margin-bottom: var(--space-8);
+		color: var(--text-primary);
+	}
+
+	:global(.article-content h2) {
+		font-family: var(--font-serif);
+		font-size: var(--text-2xl);
+		font-weight: 700;
+		line-height: var(--leading-tight);
+		margin-top: var(--space-16);
+		margin-bottom: var(--space-6);
+		color: var(--text-primary);
+	}
+
+	:global(.article-content h3) {
+		font-family: var(--font-serif);
+		font-size: var(--text-xl);
 		font-weight: 600;
+		line-height: var(--leading-snug);
+		margin-top: var(--space-12);
+		margin-bottom: var(--space-4);
+		color: var(--text-primary);
 	}
 
-	.post-content :global(h1) { font-size: 2rem; }
-	.post-content :global(h2) { font-size: 1.75rem; }
-	.post-content :global(h3) { font-size: 1.5rem; }
-
-	.post-content :global(p) {
-		margin-bottom: 1.5rem;
+	:global(.article-content p) {
+		margin-bottom: var(--space-6);
 	}
 
-	.post-content :global(ul),
-	.post-content :global(ol) {
-		margin-bottom: 1.5rem;
-		padding-left: 1.5rem;
-	}
-
-	.post-content :global(li) {
-		margin-bottom: 0.5rem;
-	}
-
-	.post-content :global(blockquote) {
-		border-left: 4px solid #3b82f6;
-		padding-left: 1rem;
-		margin: 1.5rem 0;
+	:global(.article-content blockquote) {
+		border-left: 4px solid var(--accent-primary);
+		padding-left: var(--space-6);
+		margin: var(--space-12) 0;
 		font-style: italic;
-		color: #555;
+		color: var(--text-secondary);
 	}
 
-	.post-content :global(code) {
-		background: #f3f4f6;
-		padding: 0.125rem 0.25rem;
-		border-radius: 0.25rem;
-		font-family: 'Courier New', monospace;
-		font-size: 0.875em;
+	:global(.article-content code) {
+		background: var(--bg-cool);
+		padding: var(--space-1) var(--space-2);
+		border-radius: var(--border-radius-sm);
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--text-primary);
 	}
 
-	.post-content :global(pre) {
-		background: #1a1a1a;
-		color: #f3f4f6;
-		padding: 1rem;
-		border-radius: 0.5rem;
+	:global(.article-content pre) {
+		background: var(--bg-dark);
+		color: var(--bg-white);
+		padding: var(--space-6);
+		border-radius: var(--border-radius-base);
 		overflow-x: auto;
-		margin: 1.5rem 0;
+		margin: var(--space-12) 0;
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		line-height: var(--leading-normal);
 	}
 
-	.post-content :global(pre code) {
-		background: none;
+	:global(.article-content pre code) {
+		background: transparent;
 		padding: 0;
 		color: inherit;
 	}
 
-	.author-section {
-		margin: 3rem 0;
-		padding: 2rem;
-		background: #f9fafb;
-		border-radius: 0.5rem;
+	:global(.article-content ul),
+	:global(.article-content ol) {
+		margin-left: var(--space-6);
+		margin-bottom: var(--space-6);
 	}
 
-	.author-card {
-		display: flex;
-		gap: 1rem;
-		align-items: flex-start;
+	:global(.article-content li) {
+		margin-bottom: var(--space-2);
 	}
 
-	.author-image {
-		width: 80px;
-		height: 80px;
-		border-radius: 50%;
-		object-fit: cover;
-		flex-shrink: 0;
+	:global(.article-content img) {
+		max-width: 100%;
+		height: auto;
+		margin: var(--space-12) 0;
+		border-radius: var(--border-radius-base);
 	}
 
-	.author-details h3 {
-		margin: 0 0 0.5rem 0;
-		color: #1a1a1a;
-	}
-
-	.author-details p {
-		margin: 0;
-		color: #555;
-		line-height: 1.6;
-	}
-
-	.post-navigation {
+	:global(.article-content figcaption) {
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--text-muted);
 		text-align: center;
-		padding-top: 2rem;
-		border-top: 1px solid #e5e5e5;
+		margin-top: var(--space-3);
 	}
 
-	.nav-link {
-		display: inline-block;
-		padding: 0.75rem 1.5rem;
-		background: #3b82f6;
-		color: white;
+	:global(.article-content a) {
+		color: var(--accent-primary);
+		text-decoration: underline;
+		transition: color var(--duration-fast) var(--ease-out);
+	}
+
+	:global(.article-content a:hover) {
+		color: var(--accent-primary-hover);
+	}
+
+	/* Footer Separator */
+	:global(.article-footer-separator) {
+		height: 1px;
+		background: var(--border-light);
+		margin: var(--space-20) 0;
+	}
+
+	/* Article Footer */
+	:global(.article-footer) {
+		margin-bottom: var(--space-20);
+	}
+
+	:global(.author-bio) {
+		background: var(--bg-warm);
+		padding: var(--space-8);
+		border-radius: var(--border-radius-base);
+		border-left: 4px solid var(--accent-primary);
+	}
+
+	:global(.author-bio__title) {
+		font-family: var(--font-sans);
+		font-size: var(--text-lg);
+		font-weight: 600;
+		color: var(--text-primary);
+		margin-bottom: var(--space-3);
+	}
+
+	:global(.author-bio__text) {
+		font-family: var(--font-serif);
+		font-size: var(--text-base);
+		line-height: var(--leading-relaxed);
+		color: var(--text-secondary);
+	}
+
+	/* Navigation */
+	:global(.article-navigation) {
+		background: var(--bg-cool);
+		padding: var(--space-12) var(--space-10);
+		border-top: 1px solid var(--border-light);
+		border-bottom: 1px solid var(--border-light);
+	}
+
+	:global(.article-navigation__container) {
+		max-width: var(--container-base);
+		margin: 0 auto;
+	}
+
+	:global(.article-navigation__btn) {
+		font-family: var(--font-sans);
+		font-size: var(--text-base);
+		font-weight: 500;
+		color: var(--accent-primary);
 		text-decoration: none;
-		border-radius: 0.5rem;
-		transition: background-color 0.2s;
+		transition: color var(--duration-fast) var(--ease-out);
 	}
 
-	.nav-link:hover {
-		background: #2563eb;
+	:global(.article-navigation__btn:hover) {
+		text-decoration: underline;
 	}
 
-	@media (max-width: 640px) {
-		.container {
-			padding: 1rem;
+	/* Responsive */
+	@media (max-width: 768px) {
+		:global(.article-layout) {
+			padding: 0 var(--space-6);
 		}
 
-		.post-title {
-			font-size: 2rem;
+		:global(.article-metadata) {
+			gap: var(--space-3);
+			font-size: var(--text-xs);
 		}
 
-		.feature-image img {
-			height: 200px;
+		:global(.article-content) {
+			font-size: var(--text-base);
 		}
 
-		.author-card {
-			flex-direction: column;
-			text-align: center;
+		:global(.article-content h1) {
+			font-size: var(--text-2xl);
 		}
 
-		.author-image {
-			align-self: center;
-		}
-
-		.post-content {
-			font-size: 1rem;
+		:global(.article-content h2) {
+			font-size: var(--text-xl);
 		}
 	}
 </style>

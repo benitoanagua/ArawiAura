@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Card from '$lib/components/Card.svelte';
+	import Button from '$lib/components/Button.svelte';
 	
 	export let data: PageData;
 	
@@ -8,265 +10,274 @@
 
 <svelte:head>
 	<title>{tag.name} - {settings.site_title}</title>
-	<meta name="description" content={tag.description || `Posts sobre ${tag.name}`} />
+	<meta name="description" content={tag.description || `Artículos sobre ${tag.name}`} />
 </svelte:head>
 
-<div class="container">
-	<!-- Navegación -->
-	<nav class="breadcrumb">
-		<a href="/">← Volver al inicio</a>
-	</nav>
+<!-- Breadcrumb Navigation -->
+<nav class="breadcrumb-nav">
+	<div class="breadcrumb-container">
+		<a href="/" class="breadcrumb-link">Blog</a>
+		<span class="breadcrumb-separator">/</span>
+		<span class="breadcrumb-current">{tag.name}</span>
+	</div>
+</nav>
 
-	<!-- Header del tag -->
-	<header class="tag-header">
-		<div class="tag-info">
-			<span class="tag-badge" style="--tag-color: {tag.color || '#3b82f6'}">
+<!-- Separador Editorial -->
+<div class="editorial-separator"></div>
+
+<!-- Tag Header: Modo Estructura Editorial -->
+<header class="tag-header">
+	<div class="tag-header__container">
+		<div class="tag-badge-wrapper">
+			<span class="tag-badge" style="--tag-color: {tag.color || '#2563eb'}">
 				{tag.name}
 			</span>
-			<h1 class="tag-title">Posts sobre {tag.name}</h1>
-			{#if tag.description}
-				<p class="tag-description">{tag.description}</p>
-			{/if}
-			<p class="posts-count">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
 		</div>
-	</header>
 
-	<!-- Posts -->
-	<main class="posts">
+		<h1 class="tag-title">Artículos sobre {tag.name}</h1>
+
+		{#if tag.description}
+			<p class="tag-description">{tag.description}</p>
+		{/if}
+
+		<div class="tag-stats">
+			<span class="tag-stat">
+				<span class="tag-stat__number">{posts.length}</span>
+				<span class="tag-stat__label">
+					{posts.length === 1 ? 'artículo' : 'artículos'}
+				</span>
+			</span>
+		</div>
+	</div>
+</header>
+
+<!-- Separador Editorial -->
+<div class="editorial-separator"></div>
+
+<!-- Posts: Modo Galería -->
+<section class="posts-section">
+	<div class="container container--wide">
 		{#if posts.length > 0}
-			{#each posts as post}
-				<article class="post-card">
-					{#if post.feature_image}
-						<div class="post-image">
-							<img src={post.feature_image.url} alt={post.feature_image.alt || post.title} />
-						</div>
-					{/if}
-					
-					<div class="post-content">
-						<header class="post-header">
-							<h2 class="post-title">
-								<a href="/post/{post.slug}">{post.title}</a>
-							</h2>
-							
-							<div class="post-meta">
-								<time datetime={post.published_at}>
-									{new Date(post.published_at || '').toLocaleDateString('es-ES', {
-										year: 'numeric',
-										month: 'long',
-										day: 'numeric'
-									})}
-								</time>
-								<span>•</span>
-								<span>{post.reading_time} min de lectura</span>
-								<span>•</span>
-								<span>Por {post.author.name}</span>
-							</div>
-						</header>
-						
-						{#if post.excerpt}
-							<p class="post-excerpt">{post.excerpt}</p>
-						{/if}
-						
-						{#if post.tags.length > 1}
-							<div class="post-tags">
-								{#each post.tags as postTag}
-									{#if postTag.slug !== tag.slug}
-										<a href="/tag/{postTag.slug}" class="post-tag">
-											{postTag.name}
-										</a>
-									{/if}
-								{/each}
-							</div>
-						{/if}
-					</div>
-				</article>
-			{/each}
+			<div class="gallery-grid gallery-grid--posts">
+				{#each posts as post (post.id)}
+					<Card
+						variant="post"
+						title={post.title || ''}
+						caption={post.excerpt || ''}
+						image={post.feature_image?.url || null}
+						imageAlt={post.title || ''}
+						date={post.published_at || ''}
+						author={post.author?.name || ''}
+						readingTime={post.reading_time || 0}
+						tags={post.tags || []}
+						href={`/post/${post.slug || ''}`}
+					/>
+				{/each}
+			</div>
 		{:else}
-			<div class="no-posts">
-				<h2>No hay posts con este tag</h2>
-				<p>Aún no se han publicado posts sobre {tag.name}.</p>
-				<a href="/" class="back-link">Ver todos los posts</a>
+			<div class="empty-state">
+				<div class="empty-state__content">
+					<h2 class="empty-state__title">Sin artículos</h2>
+					<p class="empty-state__description">
+						Aún no hay artículos publicados sobre {tag.name}. Vuelve pronto para ver más contenido.
+					</p>
+					<Button href="/" variant="ghost">
+						← Volver al blog
+					</Button>
+				</div>
 			</div>
 		{/if}
-	</main>
-</div>
+	</div>
+</section>
 
 <style>
-	.container {
-		max-width: 800px;
+	/* Breadcrumb */
+	:global(.breadcrumb-nav) {
+		background: var(--bg-white);
+		border-bottom: 1px solid var(--border-light);
+		padding: var(--space-6) 0;
+	}
+
+	:global(.breadcrumb-container) {
+		max-width: var(--container-base);
 		margin: 0 auto;
-		padding: 2rem 1rem;
+		padding: 0 var(--space-10);
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
 	}
 
-	.breadcrumb {
-		margin-bottom: 2rem;
-	}
-
-	.breadcrumb a {
-		color: #3b82f6;
+	:global(.breadcrumb-link) {
+		color: var(--accent-primary);
 		text-decoration: none;
-		font-size: 0.875rem;
+		transition: color var(--duration-fast) var(--ease-out);
 	}
 
-	.breadcrumb a:hover {
+	:global(.breadcrumb-link:hover) {
 		text-decoration: underline;
 	}
 
-	.tag-header {
+	:global(.breadcrumb-separator) {
+		color: var(--border-light);
+	}
+
+	:global(.breadcrumb-current) {
+		color: var(--text-primary);
+	}
+
+	/* Separador Editorial */
+	:global(.editorial-separator) {
+		height: 4px;
+		background: linear-gradient(to right, 
+			var(--border-light) 0%, 
+			var(--text-muted) 50%, 
+			var(--border-light) 100%);
+		margin: var(--space-16) 0;
+		max-width: 200px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	/* Tag Header */
+	:global(.tag-header) {
+		background: var(--bg-warm);
+		padding: var(--space-20) var(--space-10);
+	}
+
+	:global(.tag-header__container) {
+		max-width: var(--container-base);
+		margin: 0 auto;
 		text-align: center;
-		margin-bottom: 3rem;
-		padding-bottom: 2rem;
-		border-bottom: 1px solid #e5e5e5;
 	}
 
-	.tag-badge {
+	:global(.tag-badge-wrapper) {
+		margin-bottom: var(--space-6);
+	}
+
+	:global(.tag-badge) {
 		display: inline-block;
-		padding: 0.5rem 1rem;
-		background: var(--tag-color, #3b82f6);
+		padding: var(--space-2) var(--space-4);
+		background: var(--tag-color, #2563eb);
 		color: white;
-		border-radius: 1.5rem;
-		font-size: 0.875rem;
+		border-radius: 20px;
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
 		font-weight: 600;
-		margin-bottom: 1rem;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
 	}
 
-	.tag-title {
-		font-size: 2rem;
-		font-weight: bold;
-		margin-bottom: 0.5rem;
-		color: #1a1a1a;
+	:global(.tag-title) {
+		font-family: var(--font-serif);
+		font-size: clamp(32px, 5vw, 56px);
+		font-weight: 700;
+		line-height: var(--leading-tight);
+		color: var(--text-primary);
+		margin-bottom: var(--space-6);
 	}
 
-	.tag-description {
-		font-size: 1.1rem;
-		color: #666;
-		margin-bottom: 0.5rem;
+	:global(.tag-description) {
+		font-family: var(--font-sans);
+		font-size: var(--text-md);
+		line-height: var(--leading-relaxed);
+		color: var(--text-secondary);
+		max-width: 700px;
+		margin: 0 auto var(--space-12);
 	}
 
-	.posts-count {
-		font-size: 0.875rem;
-		color: #888;
-		margin: 0;
+	:global(.tag-stats) {
+		display: flex;
+		justify-content: center;
+		gap: var(--space-12);
+		flex-wrap: wrap;
 	}
 
-	.posts {
+	:global(.tag-stat) {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
-	}
-
-	.post-card {
-		border: 1px solid #e5e5e5;
-		border-radius: 0.5rem;
-		overflow: hidden;
-		transition: box-shadow 0.2s;
-	}
-
-	.post-card:hover {
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	}
-
-	.post-image img {
-		width: 100%;
-		height: 200px;
-		object-fit: cover;
-	}
-
-	.post-content {
-		padding: 1.5rem;
-	}
-
-	.post-title {
-		margin: 0 0 0.5rem 0;
-		font-size: 1.5rem;
-		line-height: 1.3;
-	}
-
-	.post-title a {
-		color: #1a1a1a;
-		text-decoration: none;
-	}
-
-	.post-title a:hover {
-		color: #3b82f6;
-	}
-
-	.post-meta {
-		display: flex;
 		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.875rem;
-		color: #666;
-		margin-bottom: 1rem;
+		gap: var(--space-2);
 	}
 
-	.post-excerpt {
-		color: #555;
-		line-height: 1.6;
-		margin-bottom: 1rem;
+	:global(.tag-stat__number) {
+		font-family: var(--font-mono);
+		font-size: var(--text-2xl);
+		font-weight: 700;
+		color: var(--accent-primary);
 	}
 
-	.post-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+	:global(.tag-stat__label) {
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wide);
 	}
 
-	.post-tag {
-		padding: 0.25rem 0.5rem;
-		background: #f3f4f6;
-		color: #374151;
-		text-decoration: none;
-		border-radius: 0.25rem;
-		font-size: 0.75rem;
-		transition: background-color 0.2s;
+	/* Posts Section */
+	:global(.posts-section) {
+		padding: var(--space-20) var(--space-10);
+		background: var(--bg-white);
 	}
 
-	.post-tag:hover {
-		background: #e5e7eb;
+	:global(.gallery-grid--posts) {
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: var(--space-12);
 	}
 
-	.no-posts {
+	/* Empty State */
+	:global(.empty-state) {
+		padding: var(--space-24) var(--space-10);
 		text-align: center;
-		padding: 3rem 1rem;
-		color: #666;
 	}
 
-	.no-posts h2 {
-		color: #333;
-		margin-bottom: 1rem;
+	:global(.empty-state__content) {
+		max-width: 500px;
+		margin: 0 auto;
 	}
 
-	.back-link {
-		display: inline-block;
-		margin-top: 1rem;
-		padding: 0.5rem 1rem;
-		background: #3b82f6;
-		color: white;
-		text-decoration: none;
-		border-radius: 0.25rem;
-		transition: background-color 0.2s;
+	:global(.empty-state__title) {
+		font-family: var(--font-serif);
+		font-size: var(--text-2xl);
+		font-weight: 700;
+		color: var(--text-primary);
+		margin-bottom: var(--space-4);
 	}
 
-	.back-link:hover {
-		background: #2563eb;
+	:global(.empty-state__description) {
+		font-family: var(--font-serif);
+		font-size: var(--text-md);
+		line-height: var(--leading-relaxed);
+		color: var(--text-secondary);
+		margin-bottom: var(--space-8);
 	}
 
-	@media (max-width: 640px) {
-		.container {
-			padding: 1rem;
+	/* Responsive */
+	@media (max-width: 768px) {
+		:global(.tag-header) {
+			padding: var(--space-16) var(--space-6);
 		}
 
-		.tag-title {
-			font-size: 1.75rem;
+		:global(.posts-section) {
+			padding: var(--space-16) var(--space-6);
 		}
 
-		.post-content {
-			padding: 1rem;
+		:global(.gallery-grid--posts) {
+			grid-template-columns: 1fr;
 		}
 
-		.post-title {
-			font-size: 1.25rem;
+		:global(.breadcrumb-container) {
+			padding: 0 var(--space-6);
+			flex-wrap: wrap;
+		}
+
+		:global(.tag-title) {
+			font-size: var(--text-2xl);
 		}
 	}
 </style>
