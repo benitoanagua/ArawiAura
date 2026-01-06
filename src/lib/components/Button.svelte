@@ -60,7 +60,7 @@
 {/if}
 
 <style>
-	/* Button Editorial Base */
+	/* Button Editorial Base - Refinado y elegante */
 	:global(.btn) {
 		display: inline-flex;
 		align-items: center;
@@ -71,14 +71,15 @@
 		border-radius: var(--border-radius-base);
 		font-family: var(--font-sans);
 		font-size: var(--text-sm);
-		font-weight: 500;
+		font-weight: 400;
 		text-decoration: none;
 		cursor: pointer;
-		transition: all var(--duration-fast) var(--ease-out);
+		transition: all var(--duration-base) var(--ease-out);
 		white-space: nowrap;
+		letter-spacing: 0.5px;
 	}
 
-	/* Button Variants */
+	/* Button Variants - Minimalista */
 	:global(.btn--primary) {
 		background: var(--accent-primary);
 		color: white;
@@ -86,13 +87,15 @@
 	}
 
 	:global(.btn--primary:hover:not(:disabled)) {
-		background: var(--accent-primary-hover);
-		border-color: var(--accent-primary-hover);
+		background: var(--accent-primary);
+		border-color: var(--accent-primary);
 		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(26, 26, 26, 0.15);
 	}
 
 	:global(.btn--primary:active:not(:disabled)) {
 		transform: translateY(0);
+		box-shadow: none;
 	}
 
 	:global(.btn--secondary) {
@@ -104,38 +107,45 @@
 	:global(.btn--secondary:hover:not(:disabled)) {
 		background: var(--text-primary);
 		border-color: var(--text-primary);
+		transform: translateY(-1px);
 	}
 
 	:global(.btn--outline) {
 		background: transparent;
-		color: var(--accent-primary);
-		border-color: var(--accent-primary);
+		color: var(--text-primary);
+		border-color: var(--border-base);
 	}
 
 	:global(.btn--outline:hover:not(:disabled)) {
-		background: var(--accent-primary);
+		background: var(--text-primary);
 		color: white;
+		border-color: var(--text-primary);
+		transform: translateY(-1px);
 	}
 
 	:global(.btn--ghost) {
 		background: transparent;
-		color: var(--accent-primary);
+		color: var(--text-primary);
 		border-color: transparent;
 	}
 
 	:global(.btn--ghost:hover:not(:disabled)) {
 		background: var(--bg-cool);
+		border-color: transparent;
+		transform: translateY(-1px);
 	}
 
-	/* Button Sizes */
+	/* Button Sizes - Proporcionado */
 	:global(.btn--sm) {
 		padding: var(--space-2) var(--space-3);
 		font-size: var(--text-xs);
+		letter-spacing: 0.3px;
 	}
 
 	:global(.btn--lg) {
 		padding: var(--space-4) var(--space-6);
 		font-size: var(--text-md);
+		letter-spacing: 0.6px;
 	}
 
 	/* Button States */
@@ -146,7 +156,7 @@
 	}
 
 	:global(.btn:focus-visible) {
-		outline: 2px solid var(--accent-primary);
+		outline: 1px solid var(--accent-primary);
 		outline-offset: 2px;
 	}
 

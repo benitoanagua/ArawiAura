@@ -1,22 +1,17 @@
 <script lang="ts">
-	export let title: string = '';
-	export let caption: string = '';
-	export let image: string | null = null;
-	export let imageAlt: string = '';
-	export let category: string = '';
-	export let date: string = '';
-	export let author: string = '';
-	export let readingTime: number = 0;
-	export let tags: Array<{ name: string; slug: string; color?: string; post_count?: number }> = [];
-	export let href: string = '#';
 	export let variant: 'gallery' | 'post' | 'tag' = 'gallery';
+	export let title: string = '';
+	export let subtitle: string = '';
+	export let caption: string = ''; // Alias para subtitle, para compatibilidad
+	export let date: string = '';
+	export let readingTime: number = 0;
+	export let tags: string[] = [];
+	export let href: string = '#'; // Para hacer el card clickable
 
-	// Variantes específicas
-	$: isGallery = variant === 'gallery';
-	$: isPost = variant === 'post';
-	$: isTag = variant === 'tag';
+	// Usar caption como fallback para subtitle
+	$: displaySubtitle = subtitle || caption;
 
-	// Formatear fecha para display
+	// Formateadores
 	$: formattedDate = date
 		? new Date(date).toLocaleDateString('es-ES', {
 				year: 'numeric',
@@ -26,200 +21,144 @@
 		: '';
 </script>
 
-<a {href} class="editorial-card" data-variant={variant}>
-	{#if image}
-		<div class="editorial-card__image">
-			<img src={image} alt={imageAlt} loading="lazy" />
+<a {href} class="editorial-card-link">
+	<article class="editorial-card" data-variant={variant}>
+		<!-- Cabecera con línea estructural -->
+		<div class="editorial-card__header">
+			<div class="editorial-card__meta-line"></div>
 		</div>
-	{/if}
 
-	<div class="editorial-card__content">
-		<!-- Capa Terciaria: Metadata Estructural -->
-		{#if category && isGallery}
-			<div class="editorial-card__hierarchy-tertiary">
-				<span class="editorial-card__category">{category}</span>
-			</div>
-		{/if}
+		<!-- Contenido -->
+		<div class="editorial-card__content">
+			<h3 class="editorial-card__title">
+				{title}
+			</h3>
 
-		<!-- Capa Primaria: Título -->
-		<h3 class="editorial-card__title">
-			{title}
-		</h3>
+			{#if displaySubtitle}
+				<p class="editorial-card__subtitle">
+					{displaySubtitle}
+				</p>
+			{/if}
 
-		<!-- Capa Secundaria: Caption/Descripción -->
-		{#if caption && (isGallery || isTag)}
-			<p class="editorial-card__caption">{caption}</p>
-		{/if}
-
-		<!-- Metadata según variante -->
-		{#if isPost}
-			<div class="editorial-card__hierarchy-tertiary">
+			<div class="editorial-card__metadata">
 				{#if date}
-					<time datetime={date} class="editorial-card__meta-item">{formattedDate}</time>
+					<time datetime={date} class="metadata-item">
+						{formattedDate}
+					</time>
 				{/if}
+
 				{#if readingTime}
-					<span class="editorial-card__meta-item">{readingTime} min</span>
-				{/if}
-				{#if author}
-					<span class="editorial-card__meta-item">Por {author}</span>
+					<span class="metadata-divider">•</span>
+					<span class="metadata-item">
+						{readingTime} min
+					</span>
 				{/if}
 			</div>
 
 			{#if tags && tags.length > 0}
 				<div class="editorial-card__tags">
 					{#each tags as tag}
-						<span
-							class="editorial-card__tag-label"
-							style="--tag-color: {tag.color || 'var(--text-muted)'}"
-						>
-							{tag.name}
-						</span>
+						<span class="editorial-tag">{tag}</span>
 					{/each}
 				</div>
 			{/if}
-		{/if}
+		</div>
 
-		{#if isTag && date}
-			<div class="editorial-card__hierarchy-tertiary">
-				<time datetime={date} class="editorial-card__meta-item">{formattedDate}</time>
-			</div>
-		{/if}
-	</div>
+		<!-- Pie con línea estructural -->
+		<div class="editorial-card__footer">
+			<div class="editorial-card__footer-line"></div>
+		</div>
+	</article>
 </a>
 
 <style>
-	/* Editorial Card Base */
-	:global(.editorial-card) {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		background: var(--bg-white);
-		border: 1px solid var(--border-light);
-		border-radius: var(--border-radius-base);
+	.editorial-card-link {
 		text-decoration: none;
 		color: inherit;
-		transition: all var(--duration-fast) var(--ease-out);
-		overflow: hidden;
+		display: block;
 	}
 
-	:global(.editorial-card:hover) {
-		transform: translateY(-4px);
-		box-shadow: var(--shadow-base);
-		border-color: var(--accent-primary);
-	}
-
-	:global(.editorial-card:focus-visible) {
-		outline: 2px solid var(--accent-primary);
-		outline-offset: 2px;
-	}
-
-	/* Image Container */
-	:global(.editorial-card__image) {
-		aspect-ratio: 4 / 3;
-		overflow: hidden;
-		background: var(--bg-cool);
-	}
-
-	:global(.editorial-card__image img) {
-		width: 100%;
+	.editorial-card {
+		background: var(--bg-white);
+		border: var(--line-thin) solid var(--border-light);
+		transition: all var(--duration-base) var(--ease-out);
+		text-decoration: none;
+		display: block;
+		color: inherit;
 		height: 100%;
-		object-fit: cover;
-		transition: transform var(--duration-slow) var(--ease-out);
 	}
 
-	:global(.editorial-card:hover .editorial-card__image img) {
-		transform: scale(1.08);
+	.editorial-card:hover {
+		border-color: var(--text-primary);
+		transform: translateY(-2px);
 	}
 
-	/* Content Container */
-	:global(.editorial-card__content) {
-		padding: var(--space-5);
-		flex: 1;
+	.editorial-card__header {
+		padding: var(--space-4) var(--space-6);
+	}
+
+	.editorial-card__meta-line {
+		height: var(--line-thin);
+		background: var(--border-light);
+	}
+
+	.editorial-card__content {
+		padding: 0 var(--space-6) var(--space-6);
+	}
+
+	.editorial-card__title {
+		font-family: var(--font-sans);
+		font-size: var(--text-lg);
+		font-weight: 600;
+		line-height: var(--leading-tight);
+		margin-bottom: var(--space-3);
+		color: var(--text-primary);
+	}
+
+	.editorial-card__subtitle {
+		font-family: var(--font-serif);
+		font-size: var(--text-sm);
+		line-height: var(--leading-relaxed);
+		color: var(--text-secondary);
+		margin-bottom: var(--space-4);
+	}
+
+	.editorial-card__metadata {
 		display: flex;
-		flex-direction: column;
-	}
-
-	/* Hierarchical Layers */
-	:global(.editorial-card__hierarchy-tertiary) {
-		display: flex;
-		gap: var(--space-3);
-		flex-wrap: wrap;
+		gap: var(--space-2);
+		align-items: center;
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
 		color: var(--text-muted);
 		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
-		margin-bottom: var(--space-3);
+		letter-spacing: 0.05em;
+		margin-bottom: var(--space-4);
 	}
 
-	:global(.editorial-card__category) {
-		color: var(--accent-primary);
-		font-weight: 600;
+	.metadata-divider {
+		color: var(--border-medium);
 	}
 
-	:global(.editorial-card__meta-item) {
-		color: var(--text-secondary);
-	}
-
-	/* Title (Layer Primary) */
-	:global(.editorial-card__title) {
-		font-family: var(--font-sans);
-		font-size: var(--text-lg);
-		font-weight: 600;
-		line-height: var(--leading-snug);
-		color: var(--text-primary);
-		margin: 0 0 var(--space-2) 0;
-		flex-grow: 0;
-	}
-
-	:global(.editorial-card:hover .editorial-card__title) {
-		color: var(--accent-primary);
-	}
-
-	/* Caption (Layer Secondary) */
-	:global(.editorial-card__caption) {
-		font-family: var(--font-sans);
-		font-size: var(--text-sm);
-		line-height: var(--leading-normal);
-		color: var(--text-secondary);
-		margin: 0 0 var(--space-3) 0;
-		flex-grow: 1;
-	}
-
-	/* Tags */
-	:global(.editorial-card__tags) {
+	.editorial-card__tags {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-2);
-		margin-top: auto;
 	}
 
-	:global(.editorial-card__tag-label) {
-		display: inline-block;
-		padding: var(--space-1) var(--space-2);
-		background: rgba(var(--tag-color), 0.1);
-		color: var(--tag-color);
-		border: 1px solid rgba(var(--tag-color), 0.2);
-		border-radius: var(--border-radius-sm);
+	.editorial-tag {
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
-		font-weight: 500;
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
+		color: var(--text-muted);
+		padding: var(--space-1) var(--space-2);
+		border: var(--line-thin) solid var(--border-light);
 	}
 
-	/* Responsive */
-	@media (max-width: 768px) {
-		:global(.editorial-card__content) {
-			padding: var(--space-4);
-		}
+	.editorial-card__footer {
+		padding: var(--space-4) var(--space-6);
+	}
 
-		:global(.editorial-card__title) {
-			font-size: var(--text-base);
-		}
-
-		:global(.editorial-card__caption) {
-			font-size: var(--text-xs);
-		}
+	.editorial-card__footer-line {
+		height: var(--line-thin);
+		background: var(--border-light);
 	}
 </style>
