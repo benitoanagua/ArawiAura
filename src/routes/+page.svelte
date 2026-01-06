@@ -60,7 +60,7 @@
 								<span>•</span>
 								<span>{post.reading_time} min de lectura</span>
 								<span>•</span>
-								<span>Por {post.author.name}</span>
+								<span>Por {post.author?.name || 'Autor desconocido'}</span>
 							</div>
 						</header>
 						
@@ -68,12 +68,14 @@
 							<p class="post-excerpt">{post.excerpt}</p>
 						{/if}
 						
-						{#if post.tags.length > 0}
+						{#if post.tags && post.tags.length > 0}
 							<div class="post-tags">
 								{#each post.tags as tag}
-									<a href="/tag/{tag.slug}" class="post-tag">
-										{tag.name}
-									</a>
+									{#if tag && tag.slug && tag.name}
+										<a href="/tag/{tag.slug}" class="post-tag">
+											{tag.name}
+										</a>
+									{/if}
 								{/each}
 							</div>
 						{/if}

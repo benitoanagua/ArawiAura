@@ -42,6 +42,9 @@ export function generateExcerpt(content: string, maxLength = 160): string {
  * Calcula el tiempo de lectura estimado
  */
 export function calculateReadingTime(content: string): number {
+	if (!content || typeof content !== 'string') {
+		return 0;
+	}
 	const wordsPerMinute = 200;
 	const words = content.trim().split(/\s+/).length;
 	const minutes = Math.ceil(words / wordsPerMinute);
@@ -52,6 +55,9 @@ export function calculateReadingTime(content: string): number {
  * Cuenta las palabras en el contenido
  */
 export function countWords(content: string): number {
+	if (!content || typeof content !== 'string') {
+		return 0;
+	}
 	return content.trim().split(/\s+/).length;
 }
 

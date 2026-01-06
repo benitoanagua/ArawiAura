@@ -16,8 +16,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		// Agregar metadatos a los posts
 		const postsWithMeta = posts.map(post => ({
 			...post,
-			reading_time: calculateReadingTime(post.content),
-			word_count: countWords(post.content)
+			reading_time: calculateReadingTime(post.content || ''),
+			word_count: countWords(post.content || '')
 		}));
 		
 		return {

@@ -90,13 +90,32 @@ export async function seedDevelopmentData(): Promise<void> {
 		console.log('🌱 Creando datos de desarrollo...');
 		
 		// Verificar si ya existe el post de ejemplo
-		const existingExamplePost = await db.query('SELECT * FROM post:ejemplo;');
-		if ((existingExamplePost[0] as any)?.result?.length > 0) {
-			console.log('📊 El post de ejemplo ya existe, omitiendo seed de desarrollo');
-			return;
+		try {
+			const existingExamplePost = await db.query('SELECT * FROM post:ejemplo;');
+			if ((existingExamplePost[0] as any)?.result?.length > 0) {
+				console.log('📊 El post de ejemplo ya existe, omitiendo seed de desarrollo');
+				return;
+			}
+		} catch (error) {
+			// If the query fails, it might mean the record doesn't exist, so we continue
+			console.log('🔍 El post de ejemplo no existe, creando...');
 		}
 		
 		// Crear post de ejemplo
+		try {
+			await db.query(`
+				CREATE user:admin SET
+					name = "Arawi Aura",
+					slug = "arawi-aura",
+					email = "admin@arawiaura.com",
+					password_hash = "",
+					bio = "Creador de contenido y desarrollador",
+					created_at = time::now();
+			`);
+		} catch (error) {
+			console.log("⚠️  Usuario admin ya existe, continuando...");
+		}
+
 		await db.query(`
 			CREATE post:ejemplo SET
 				title = "¡Bienvenido a Arawi Aura!",
