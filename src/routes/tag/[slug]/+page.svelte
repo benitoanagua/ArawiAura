@@ -61,13 +61,18 @@
 			<div class="gallery-grid gallery-grid--posts">
 				{#each posts as post (post.id)}
 					<Card
-						variant="post"
 						title={post.title || ''}
-						caption={post.excerpt || ''}
-						date={post.published_at || ''}
-						readingTime={post.reading_time || 0}
-						tags={post.tags?.map((t) => t.name) || []}
-						href={`/post/${post.slug || ''}`}
+						url={`/post/${post.slug || ''}`}
+						excerpt={post.excerpt || ''}
+						featureImage={post.feature_image?.url || ''}
+						authorName={post.author?.name || ''}
+						authorUrl={post.author ? `/author/${post.author.slug || ''}` : ''}
+						authorProfileImage={post.author?.profile_image?.url || ''}
+						tagName={post.tags && post.tags.length > 0 ? post.tags[0].name || '' : ''}
+						tagUrl={post.tags && post.tags.length > 0 ? `/tag/${post.tags[0].slug || ''}` : ''}
+						readingTime={`${post.reading_time || 0} min`}
+						publishedAt={post.published_at || ''}
+						density="normal"
 					/>
 				{/each}
 			</div>

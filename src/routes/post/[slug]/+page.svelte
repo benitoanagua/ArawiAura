@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Sidenote from '$lib/components/Sidenote.svelte';
+	
 	import Button from '$lib/components/Button.svelte';
+	import Card from '$lib/components/Card.svelte';
 
 	export let data: PageData;
 
@@ -15,6 +16,30 @@
 				day: 'numeric'
 			})
 		: '';
+
+	// Simulate related posts (in a real app, this would come from the server)
+	const relatedPosts = [
+		{
+			title: "Understanding Typography in Web Design",
+			slug: "typography-in-web-design",
+			excerpt: "A deep dive into the principles of typography and how they apply to modern web design.",
+			feature_image: { url: "https://picsum.photos/400/300?random=6" },
+			author: { name: "Elena Pérez", slug: "elena" },
+			tags: [{ name: "Design", slug: "design" }],
+			reading_time: 7,
+			published_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+		},
+		{
+			title: "The Future of SvelteKit",
+			slug: "future-of-sveltekit",
+			excerpt: "Exploring upcoming features and improvements in the SvelteKit framework.",
+			feature_image: { url: "https://picsum.photos/400/300?random=7" },
+			author: { name: "José García", slug: "jose" },
+			tags: [{ name: "Development", slug: "development" }],
+			reading_time: 10,
+			published_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
+		}
+	];
 </script>
 
 <svelte:head>
@@ -69,6 +94,32 @@
 	<!-- Separador final -->
 	<div class="linear-separator"></div>
 </article>
+
+<!-- Related posts section -->
+{#if relatedPosts && relatedPosts.length > 0}
+	<section class="related-posts">
+		<h2>Artículos Relacionados</h2>
+		<div class="related-posts-grid">
+			{#each relatedPosts as relatedPost}
+				<Card
+					title={relatedPost.title}
+					url={`/post/${relatedPost.slug}`}
+					excerpt={relatedPost.excerpt}
+					featureImage={relatedPost.feature_image?.url || ''}
+					authorName={relatedPost.author?.name || ''}
+					authorUrl={relatedPost.author ? `/author/${relatedPost.author.slug}` : ''}
+					tagName={relatedPost.tags && relatedPost.tags.length > 0 ? relatedPost.tags[0].name : ''}
+					tagUrl={relatedPost.tags && relatedPost.tags.length > 0 ? `/tag/${relatedPost.tags[0].slug}` : ''}
+					readingTime={`${relatedPost.reading_time || 0} min`}
+					publishedAt={relatedPost.published_at}
+					density="compact"
+					elevation={1}
+					headingLevel={4}
+				/>
+			{/each}
+		</div>
+	</section>
+{/if}
 
 <style>
 	.linear-article {
@@ -130,5 +181,31 @@
 		font-size: var(--text-md);
 		line-height: var(--leading-loose);
 		color: var(--text-primary);
+	}
+
+	.related-posts {
+		margin-top: var(--space-20);
+		padding-top: var(--space-12);
+		border-top: var(--line-thin) solid var(--border-light);
+	}
+
+	.related-posts h2 {
+		font-family: var(--font-sans);
+		font-size: var(--text-2xl);
+		font-weight: 600;
+		margin-bottom: var(--space-8);
+		color: var(--text-primary);
+	}
+
+	.related-posts-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: var(--space-8);
+	}
+
+	@media (max-width: 768px) {
+		.related-posts-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

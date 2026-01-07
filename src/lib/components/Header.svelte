@@ -1,121 +1,195 @@
 <script lang="ts">
 	export let siteTitle: string = '';
-	export let currentPath: string = '/';
-
-	let mobileMenuOpen = false;
-
-	const navigation = [
-		{ name: 'Inicio', href: '/' },
-		{ name: 'Blog', href: '/blog' },
-		{ name: 'Sobre', href: '/about' },
-		{ name: 'Contacto', href: '/contact' }
+	export let logoUrl: string = '';
+	export let navItems: { label: string; href: string }[] = [
+		{ label: 'Home', href: '/' },
+		{ label: 'About', href: '/about' },
+		{ label: 'Contact', href: '/contact' }
 	];
-
-	const toggleMobileMenu = () => {
-		mobileMenuOpen = !mobileMenuOpen;
-	};
-
-	const closeMobileMenu = () => {
-		mobileMenuOpen = false;
-	};
+	export let showLogo: boolean = true;
+	export let showNav: boolean = true;
+	export let sticky: boolean = false;
+	export let currentPath: string = '/';
+	
+	let menuOpen = false;
+	
+	function toggleMenu() {
+		menuOpen = !menuOpen;
+	}
 </script>
 
-<header class="editorial-header">
-	<div class="editorial-header__container">
-		<a href="/" class="editorial-header__logo">
-			<span class="logo-text">{siteTitle}</span>
-		</a>
-
-		<!-- Línea estructural -->
-		<div class="editorial-header__divider"></div>
-
-		<nav class="editorial-header__nav">
-			{#each navigation as item}
-				<a
-					href={item.href}
-					class="editorial-header__nav-link {currentPath === item.href ? 'active' : ''}"
-				>
-					<span class="nav-link__text">{item.name}</span>
-					<span class="nav-link__line"></span>
+<header class="site-header {sticky ? 'site-header--sticky' : ''}">
+	<div class="header-container">
+		<div class="header-branding">
+			{#if showLogo && logoUrl}
+				<a href="/" class="logo">
+					<img src={logoUrl} alt={siteTitle} class="logo-img" />
 				</a>
-			{/each}
-		</nav>
+			{:else if showLogo}
+				<a href="/" class="logo-text">{siteTitle}</a>
+			{/if}
+		</div>
+		
+		{#if showNav}
+			<nav class="header-nav {menuOpen ? 'nav-open' : ''}">
+				<ul class="nav-list">
+					{#each navItems as item}
+						<li class="nav-item">
+							<a 
+								href={item.href} 
+								class="nav-link {currentPath === item.href ? 'nav-link--active' : ''}"
+							>
+								{item.label}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</nav>
+			
+			<button 
+				class="menu-toggle" 
+				aria-label="Toggle navigation menu"
+				on:click={toggleMenu}
+			>
+				<span class="menu-icon"></span>
+				<span class="menu-icon"></span>
+				<span class="menu-icon"></span>
+			</button>
+		{/if}
 	</div>
 </header>
 
 <style>
-	/* Header al estilo Linear Editorial */
-	.editorial-header {
+	.site-header {
+		background: var(--bg-white);
+		border-bottom: var(--line-thin) solid var(--border-light);
+	}
+	
+	.site-header--sticky {
 		position: sticky;
 		top: 0;
-		z-index: 1000;
-		background: rgba(255, 255, 255, 0.98);
-		backdrop-filter: blur(10px);
-		border-bottom: var(--line-thin) solid var(--border-light);
-		padding: var(--space-6) 0;
+		z-index: 100;
 	}
-
-	.editorial-header__container {
-		max-width: var(--container-narrow);
+	
+	.header-container {
+		max-width: var(--container-base);
 		margin: 0 auto;
-		padding: 0 var(--space-6);
+		padding: var(--space-4) var(--space-8);
 		display: flex;
-		align-items: center;
 		justify-content: space-between;
-		gap: var(--space-8);
+		align-items: center;
 	}
-
-	.editorial-header__logo {
-		font-family: var(--font-sans);
-		font-size: var(--text-lg);
+	
+	.header-branding {
+		flex-shrink: 0;
+	}
+	
+	.logo {
+		display: block;
+	}
+	
+	.logo-img {
+		height: 2rem;
+		width: auto;
+	}
+	
+	.logo-text {
+		font-family: var(--font-serif);
+		font-size: var(--text-xl);
 		font-weight: 600;
 		color: var(--text-primary);
 		text-decoration: none;
-		letter-spacing: -0.01em;
 	}
-
-	.editorial-header__divider {
-		flex: 1;
-		height: var(--line-thin);
-		background: var(--border-light);
-		margin: 0 var(--space-4);
-	}
-
-	.editorial-header__nav {
+	
+	.header-nav {
 		display: flex;
-		gap: var(--space-8);
+		align-items: center;
 	}
-
-	.editorial-header__nav-link {
+	
+	.nav-list {
+		display: flex;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		gap: var(--space-6);
+	}
+	
+	.nav-item {
+		margin: 0;
+	}
+	
+	.nav-link {
 		font-family: var(--font-sans);
 		font-size: var(--text-sm);
 		font-weight: 500;
-		color: var(--text-secondary);
+		color: var(--text-primary);
 		text-decoration: none;
-		position: relative;
-		padding: var(--space-2) 0;
+		padding: var(--space-2) var(--space-3);
+		border-radius: var(--space-1);
+		transition: all var(--duration-fast) ease-out;
 	}
-
-	.editorial-header__nav-link:hover {
-		color: var(--text-primary);
+	
+	.nav-link:hover {
+		background: var(--bg-cool);
+		color: var(--accent-primary);
 	}
-
-	.editorial-header__nav-link.active {
-		color: var(--text-primary);
+	
+	.nav-link--active {
+		color: var(--accent-primary);
+		font-weight: 600;
+		background: var(--bg-cool);
 	}
-
-	.nav-link__line {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		width: 0;
-		height: var(--line-base);
+	
+	.menu-toggle {
+		display: none;
+		flex-direction: column;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: var(--space-2);
+	}
+	
+	.menu-icon {
+		width: 1.5rem;
+		height: 2px;
 		background: var(--text-primary);
-		transition: width var(--duration-base) var(--ease-out);
+		margin: 0.2rem 0;
+		transition: all var(--duration-fast) ease-out;
 	}
-
-	.editorial-header__nav-link:hover .nav-link__line,
-	.editorial-header__nav-link.active .nav-link__line {
-		width: 100%;
+	
+	@media (max-width: 768px) {
+		.header-nav {
+			position: fixed;
+			top: 0;
+			right: -100%;
+			height: 100vh;
+			width: 80%;
+			max-width: 300px;
+			background: var(--bg-white);
+			flex-direction: column;
+			justify-content: center;
+			transition: right var(--duration-base) ease-out;
+			z-index: 200;
+		}
+		
+		.nav-open {
+			right: 0;
+		}
+		
+		.nav-list {
+			flex-direction: column;
+			gap: 0;
+			text-align: center;
+		}
+		
+		.nav-link {
+			display: block;
+			padding: var(--space-4);
+			border-bottom: var(--line-thin) solid var(--border-light);
+		}
+		
+		.menu-toggle {
+			display: flex;
+		}
 	}
 </style>
