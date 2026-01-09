@@ -7,7 +7,6 @@
 	const grille = getContext<GrilleContext & { getItemIndex: (id: number) => number }>('grille');
 
 	let myId = -1;
-	let innerWidth = $state(0);
 
 	onMount(() => {
 		if (grille) {
@@ -22,8 +21,7 @@
 	});
 
 	// Grid math logic
-	const isMobile = $derived(innerWidth < 768);
-	const columns = $derived(isMobile ? grille.mobile : grille.desktop);
+	const columns = $derived(grille.columns);
 	const index = $derived(grille.getItemIndex(myId));
 
 	const gridState = $derived.by(() => {
@@ -44,12 +42,10 @@
 	const width = $derived.by(() => {
 		if (!gridState || grille.containerWidth === 0) return 'auto';
 
-		// Subtract 1px to account for the container's border-left
-		// And add a small sub-pixel buffer (0.5px) to prevent resize loops
-		const effectiveAvailableWidth = grille.containerWidth - 1.5;
-
-		const availableWidth = effectiveAvailableWidth - 2 * padding * (columns - 1);
-		const widthBase = Math.floor(availableWidth / columns);
+		// Subtract 1px for container border and a small rounding buffer
+		const availableSpace = grille.containerWidth - 1.1;
+		const netSpace = availableSpace - 2 * padding * (columns - 1);
+		const widthBase = Math.floor(netSpace / columns);
 		const borderCorrection = gridState.col < columns - 1 ? 1 : 0;
 
 		return `${widthBase - borderCorrection}px`;
@@ -63,7 +59,7 @@
 	const itemStyles = $derived.by(() => {
 		if (!gridState) return '';
 
-		let styles = `width: ${width}; box-sizing: content-box;`;
+		let styles = `width: ${width}; box-sizing: content-box; transition: none !important;`;
 
 		if (hasRightBorder) {
 			styles += ` padding-right: ${padding}px; margin-right: ${padding}px; border-right: 1px solid ${borderColor};`;
@@ -81,8 +77,6 @@
 		return styles;
 	});
 </script>
-
-<svelte:window bind:innerWidth />
 
 <div class="ax-grille-item" style={itemStyles}>
 	<div class="ax-grille-item__content">

@@ -17,9 +17,11 @@ export interface GrilleItemProps {
 export interface GrilleContext {
   registerItem: () => number;
   unregisterItem: (id: number) => void;
+  // Live reactive properties
   containerWidth: number;
-  desktop: number;
-  mobile: number;
-  gap: GapValue;
+  columns: number;
   itemCount: number;
+  // Static configuration
+  gap: GapValue;
+  getItemIndex: (id: number) => number;
 }

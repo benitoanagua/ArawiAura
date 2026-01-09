@@ -24,19 +24,20 @@
 		return items.indexOf(id);
 	}
 
+	let innerWidth = $state(0);
+	const isMobile = $derived(innerWidth < 768);
+	const columnsCount = $derived(isMobile ? mobile : desktop);
+
 	// Provide context for GrilleItems
-	setContext<GrilleContext & { getItemIndex: (id: number) => number }>('grille', {
+	setContext<GrilleContext>('grille', {
 		registerItem,
 		unregisterItem,
 		getItemIndex,
 		get containerWidth() {
 			return containerWidth;
 		},
-		get desktop() {
-			return desktop;
-		},
-		get mobile() {
-			return mobile;
+		get columns() {
+			return columnsCount;
 		},
 		get gap() {
 			return gap;
@@ -46,6 +47,8 @@
 		}
 	});
 </script>
+
+<svelte:window bind:innerWidth />
 
 <div class="ax-grille" bind:clientWidth={containerWidth}>
 	<div class="ax-grille__container">
