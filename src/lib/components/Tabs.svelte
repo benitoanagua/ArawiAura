@@ -1,46 +1,56 @@
 <script lang="ts">
-	import Tab from './Tab.svelte';
-	import type { TabVariant, TabsProps } from '$lib/types/tabs.js';
+	import { setContext } from 'svelte';
+	import type { TabsProps, TabsContext } from '$lib/types/tabs.js';
 
-	export let activeTab: number = 0;
-	export let variant: TabVariant = 'line';
+	let { activeTab = 0, variant = 'line', children, class: className }: TabsProps = $props();
 
-	let tabs: any[] = [];
+	// Use a single reactive object for context
+	const tabsState = $state({
+		activeIndex: (() => activeTab)(),
+		variant: (() => variant)()
+	});
 
-	function registerTab(tab: any) {
-		tabs = [...tabs, tab];
-		return tabs.length - 1;
+	// Sync with external prop updates
+	$effect(() => {
+		if (activeTab !== tabsState.activeIndex) {
+			tabsState.activeIndex = activeTab;
+		}
+	});
+
+	$effect(() => {
+		if (variant !== tabsState.variant) {
+			tabsState.variant = variant;
+		}
+	});
+
+	function setActiveIndex(index: number) {
+		tabsState.activeIndex = index;
 	}
 
-	function activateTab(index: number) {
-		activeTab = index;
-	}
-
-	$: activeIndex = Math.min(Math.max(0, activeTab), tabs.length - 1);
+	setContext('tabs', {
+		state: tabsState,
+		setActiveIndex
+	});
 </script>
 
-<div class="tabs tabs--{variant}">
-	<div class="tabs-list" role="tablist">
-		<slot name="tabs" {registerTab} {activateTab} {activeIndex} />
-	</div>
-	<div class="tabs-panels">
-		<slot name="panels" {activeIndex} />
-	</div>
+<div class="ax-tabs ax-tabs--{variant} {className || ''}">
+	{@render children?.()}
 </div>
 
 <style>
-	.tabs {
+	.ax-tabs {
 		display: flex;
 		flex-direction: column;
 		background-color: var(--color-surface);
+		width: 100%;
 	}
 
-	.tabs-list {
+	:global(.ax-tabs__list) {
 		display: flex;
 		border-bottom: var(--line-thin) solid var(--color-outline-variant);
 	}
 
-	.tabs--boxed .tabs-list {
+	:global(.ax-tabs--boxed .ax-tabs__list) {
 		border: var(--line-thin) solid var(--color-outline-variant);
 		border-radius: var(--space-1);
 		padding: var(--space-1);
@@ -48,7 +58,7 @@
 		background-color: var(--color-surface-container-low);
 	}
 
-	.tabs-panels {
+	:global(.ax-tabs__panels) {
 		padding-top: var(--space-4);
 	}
 </style>

@@ -1,27 +1,36 @@
 <script lang="ts">
-	let { label, index, activeIndex, activateTab } = $props<{
-		label: string;
-		index: number;
-		activeIndex: number;
-		activateTab: (index: number) => void;
-	}>();
+	import { getContext } from 'svelte';
+	import type { TabProps, TabsContext } from '$lib/types/tabs.js';
 
-	let isActive = $derived(index === activeIndex);
+	let { index, label, children, class: className }: TabProps = $props();
+
+	const tabs = getContext<TabsContext>('tabs');
+
+	const isActive = $derived(index === tabs?.state.activeIndex);
+
+	function handleClick() {
+		tabs?.setActiveIndex(index);
+	}
 </script>
 
 <button
-	class="tab"
-	class:is-active={isActive}
+	class="ax-tab {className || ''}"
+	class:ax-tab--is-active={isActive}
 	role="tab"
 	aria-selected={isActive}
 	aria-controls="tab-panel-{index}"
-	onclick={() => activateTab(index)}
+	id="tab-{index}"
+	onclick={handleClick}
 >
-	{label}
+	{#if label}
+		{label}
+	{:else}
+		{@render children?.()}
+	{/if}
 </button>
 
 <style>
-	.tab {
+	.ax-tab {
 		background: none;
 		border: none;
 		padding: var(--space-3) var(--space-6);
@@ -29,41 +38,47 @@
 		font-size: var(--text-xs);
 		font-weight: 600;
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		letter-spacing: 0.1em;
 		color: var(--color-on-surface-variant);
 		cursor: pointer;
-		transition: all var(--duration-fast) cubic-bezier(0.4, 0, 0.2, 1);
 		position: relative;
 		outline: none;
-		border-bottom: var(--line-thin) solid transparent;
+		/* Zero Displacement: Bottom border as inset box-shadow */
+		box-shadow: inset 0 -1px 0 0 transparent;
+		transition:
+			color var(--duration-fast) var(--ease-out),
+			background-color var(--duration-fast) var(--ease-out),
+			box-shadow var(--duration-fast) var(--ease-out);
 	}
 
-	.tab:hover {
-		color: var(--color-primary);
+	.ax-tab:hover {
+		color: var(--color-on-surface);
 		background-color: var(--color-surface-container-lowest);
 	}
 
-	.tab:focus-visible {
+	.ax-tab:focus-visible {
 		box-shadow:
-			0 0 0 2px var(--color-surface),
-			0 0 0 4px var(--color-primary);
-		z-index: 10;
+			inset 0 0 0 2px var(--color-primary),
+			0 0 0 4px var(--color-surface);
+		z-index: 2;
 	}
 
-	.tab.is-active {
+	.ax-tab--is-active {
 		color: var(--color-primary);
-		border-bottom: var(--line-base) solid var(--color-primary);
+		font-weight: 700;
+		/* Zero Displacement: Thick indicator without moving the element */
+		box-shadow: inset 0 -2px 0 0 var(--color-primary);
 	}
 
-	:global(.tabs--boxed) .tab {
-		border: var(--line-thin) solid transparent;
+	/* Boxed Variant Support */
+	:global(.ax-tabs--boxed) .ax-tab {
 		border-radius: var(--space-1);
+		box-shadow: none;
 	}
 
-	:global(.tabs--boxed) .tab.is-active {
+	:global(.ax-tabs--boxed) .ax-tab--is-active {
 		background: var(--color-surface);
 		color: var(--color-primary);
-		border-color: var(--color-outline-variant);
-		font-weight: 700;
+		box-shadow: var(--shadow-1);
 	}
 </style>
