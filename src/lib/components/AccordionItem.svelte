@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import Icon from '@iconify/svelte';
 
 	let {
 		title = '',
 		index,
-		isOpen = () => false,
-		toggle = () => {},
+		isOpen: propIsOpen,
+		toggle: propToggle,
 		children
 	} = $props<{
 		title?: string;
@@ -15,14 +16,21 @@
 		children?: import('svelte').Snippet;
 	}>();
 
-	// Use $derived instead of $: reactive statement
-	let isExpanded = $derived(isOpen(index));
+	// Consume context from parent Accordion
+	const accordion = getContext<{
+		toggle: (index: number) => void;
+		isOpen: (index: number) => boolean;
+	}>('accordion');
+
+	// Use prop if provided (manual), otherwise use context (automatic)
+	const effectiveToggle = $derived(propToggle || accordion?.toggle);
+	const isExpanded = $derived(propIsOpen ? propIsOpen(index) : accordion?.isOpen(index));
 </script>
 
 <div class="accordion-item" class:is-expanded={isExpanded}>
 	<button
 		class="accordion-header"
-		onclick={() => toggle(index)}
+		onclick={() => effectiveToggle?.(index)}
 		aria-expanded={isExpanded}
 		aria-controls="accordion-content-{index}"
 	>
@@ -32,16 +40,13 @@
 		</div>
 	</button>
 
-	<div
-		id="accordion-content-{index}"
-		class="accordion-content"
-		aria-hidden={!isExpanded}
-		style:display={isExpanded ? 'block' : 'none'}
-	>
-		<div class="accordion-body">
-			{@render children?.()}
+	{#if isExpanded}
+		<div id="accordion-content-{index}" class="accordion-content" aria-hidden={!isExpanded}>
+			<div class="accordion-body">
+				{@render children?.()}
+			</div>
 		</div>
-	</div>
+	{/if}
 </div>
 
 <style>
@@ -82,7 +87,7 @@
 		z-index: 10;
 	}
 
-	/* Industrial Switch Feel: 2px border on hover/active */
+	/* Industrial Switch Feel */
 	.accordion-header:hover {
 		background-color: var(--color-surface-container-low);
 	}
@@ -94,6 +99,7 @@
 
 	.accordion-title {
 		margin: 0;
+		font-weight: 600;
 	}
 
 	.accordion-icon {
@@ -119,7 +125,6 @@
 		border-top: var(--line-thin) solid var(--color-outline-variant);
 	}
 
-	/* Metadata Technical Look */
 	:global(.accordion-body p) {
 		margin-bottom: var(--space-4);
 	}

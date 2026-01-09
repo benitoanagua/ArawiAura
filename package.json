@@ -30,6 +30,7 @@
     "@eslint/compat": "^2.0.0",
     "@eslint/js": "^9.39.2",
     "@iconify/svelte": "^5.2.1",
+    "@ngneat/falso": "^8.0.2",
     "@storybook/addon-svelte-csf": "^5.0.10",
     "@storybook/sveltekit": "^10.1.11",
     "@sveltejs/adapter-auto": "^7.0.0",

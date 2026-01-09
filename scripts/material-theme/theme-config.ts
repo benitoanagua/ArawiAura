@@ -31,4 +31,4 @@ export const SCHEMES: { name: string; variant: SchemeConstructor }[] = [
     { name: "rainbow", variant: SchemeRainbow },
 ];
 
-export const SELECTED_SCHEME = "content";
+export const SELECTED_SCHEME = "monochrome";

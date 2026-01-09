@@ -1,12 +1,11 @@
 <script lang="ts">
-	import AccordionItem from './AccordionItem.svelte';
-	import type { AccordionProps } from '$lib/types/accordion.js';
+	import { setContext } from 'svelte';
 
-	// Get all props in one $props() call
 	let { multiple = false, children } = $props<{
 		multiple?: boolean;
-		children?: import('svelte').Snippet<[any]>;
+		children?: import('svelte').Snippet;
 	}>();
+
 	let openIndexes = $state<number[]>([]);
 
 	function toggle(index: number) {
@@ -24,10 +23,16 @@
 	function isOpen(index: number) {
 		return openIndexes.includes(index);
 	}
+
+	// Provide state to children via Context API (Idiomatic Svelte 5)
+	setContext('accordion', {
+		toggle,
+		isOpen
+	});
 </script>
 
 <div class="accordion">
-	{@render children?.({ toggle, isOpen })}
+	{@render children?.()}
 </div>
 
 <style>
