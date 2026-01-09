@@ -19,11 +19,33 @@
 
 		theme = savedTheme || systemTheme;
 		applyTheme(theme);
+
+		// Listen for storage changes (sync across tabs/instances)
+		const handleStorage = (e: StorageEvent) => {
+			if (e.key === 'ax-theme' && e.newValue) {
+				theme = e.newValue as Theme;
+			}
+		};
+
+		// Listen for theme changes via custom event (sync within same page)
+		const handleThemeChange = (e: CustomEvent<Theme>) => {
+			theme = e.detail;
+		};
+
+		window.addEventListener('storage', handleStorage);
+		window.addEventListener('ax-theme-change', handleThemeChange as EventListener);
+
+		return () => {
+			window.removeEventListener('storage', handleStorage);
+			window.removeEventListener('ax-theme-change', handleThemeChange as EventListener);
+		};
 	});
 
 	function applyTheme(newTheme: Theme) {
 		document.documentElement.setAttribute('data-theme', newTheme);
 		localStorage.setItem('ax-theme', newTheme);
+		// Dispatch custom event to sync other instances on same page
+		window.dispatchEvent(new CustomEvent('ax-theme-change', { detail: newTheme }));
 	}
 
 	function toggleTheme() {
