@@ -12,15 +12,11 @@
 
 	// Sync with external prop updates
 	$effect(() => {
-		if (activeTab !== tabsState.activeIndex) {
-			tabsState.activeIndex = activeTab;
-		}
+		tabsState.activeIndex = activeTab;
 	});
 
 	$effect(() => {
-		if (variant !== tabsState.variant) {
-			tabsState.variant = variant;
-		}
+		tabsState.variant = variant;
 	});
 
 	function setActiveIndex(index: number) {
