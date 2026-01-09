@@ -1,216 +1,340 @@
 <script lang="ts">
-	import { setContext, onDestroy } from 'svelte';
+	import { setContext, onMount, onDestroy } from 'svelte';
 	import Icon from '@iconify/svelte';
-	import type { CarouselProps, CarouselContext } from '$lib/types/carousel.js';
+	import type { CarouselProps, CarouselContext, CarouselGap } from '$lib/types/carousel.js';
 
 	let {
-		autoPlay = false,
+		desktop = 3,
+		mobile = 1,
+		gap = 'medium',
 		interval = 5000,
+		autoPlay = false,
 		showArrows = true,
-		showIndicators = true,
-		children
+		showDots = true,
+		children,
+		class: className
 	}: CarouselProps = $props();
 
-	let currentIndex = $state(0);
-	let items = $state<any[]>([]);
-	let timer: ReturnType<typeof setInterval> | undefined;
+	// Gap values in pixels
+	const GAP_VALUES: Record<CarouselGap, number> = {
+		none: 0,
+		small: 4,
+		medium: 8,
+		large: 12
+	} as const;
 
-	function registerItem(item: any) {
-		const index = items.length;
-		items = [...items, item];
-		return index;
-	}
+	// State
+	let containerElement = $state<HTMLElement>();
+	let isMobile = $state(false);
+	let activeIndex = $state(0);
+	let totalItems = $state(0);
+	let autoPlayTimer: number | null = null;
+	let isUserInteracting = $state(false);
 
-	function goToSlide(index: number) {
-		currentIndex = index;
-		resetTimer();
-	}
+	// Derived values
+	const itemsPerView = $derived(isMobile ? mobile : desktop);
+	const gapValue = $derived(GAP_VALUES[gap]);
+	const maxIndex = $derived(Math.max(0, totalItems - itemsPerView));
+	const canGoPrev = $derived(activeIndex > 0 || autoPlay);
+	const canGoNext = $derived(activeIndex < maxIndex || autoPlay);
 
-	function nextSlide() {
-		if (items.length === 0) return;
-		currentIndex = (currentIndex + 1) % items.length;
-	}
-
-	function prevSlide() {
-		if (items.length === 0) return;
-		currentIndex = (currentIndex - 1 + items.length) % items.length;
-	}
-
-	function resetTimer() {
-		if (autoPlay) {
-			clearInterval(timer);
-			timer = setInterval(nextSlide, interval);
-		}
-	}
-
-	// Provide context for CarouselItems
+	// Context for child items
 	setContext<CarouselContext>('carousel', {
-		registerItem,
-		get currentIndex() {
-			return currentIndex;
+		get currentIndex() { return activeIndex; },
+		get itemsPerView() { return itemsPerView; },
+		get gapValue() { return gapValue; },
+		get itemWidth() { return 0; },
+		get isDragging() { return false; },
+		registerItem: () => {
+			const newIndex = totalItems;
+			totalItems++;
+			return newIndex;
+		},
+		unregisterItem: () => {
+			totalItems = Math.max(0, totalItems - 1);
 		}
 	});
 
-	$effect(() => {
+	// Navigation functions
+	function scrollToIndex(targetIndex: number): void {
+		if (!containerElement) return;
+
+		let finalIndex = targetIndex;
+		
+		// Handle boundaries
 		if (autoPlay) {
-			resetTimer();
+			if (targetIndex < 0) finalIndex = maxIndex;
+			if (targetIndex > maxIndex) finalIndex = 0;
+		} else {
+			finalIndex = Math.max(0, Math.min(targetIndex, maxIndex));
 		}
-		return () => clearInterval(timer);
+
+		activeIndex = finalIndex;
+	}
+
+	function goPrevious(): void {
+		scrollToIndex(activeIndex - 1);
+		restartAutoPlay();
+	}
+
+	function goNext(): void {
+		scrollToIndex(activeIndex + 1);
+		restartAutoPlay();
+	}
+
+	function goToSlide(index: number): void {
+		scrollToIndex(index);
+		restartAutoPlay();
+	}
+
+	// AutoPlay management
+	function startAutoPlay(): void {
+		if (!autoPlay || autoPlayTimer !== null) return;
+		
+		autoPlayTimer = window.setInterval(() => {
+			if (!isUserInteracting) {
+				goNext();
+			}
+		}, interval);
+	}
+
+	function stopAutoPlay(): void {
+		if (autoPlayTimer !== null) {
+			clearInterval(autoPlayTimer);
+			autoPlayTimer = null;
+		}
+	}
+
+	function restartAutoPlay(): void {
+		stopAutoPlay();
+		if (autoPlay && !isUserInteracting) {
+			startAutoPlay();
+		}
+	}
+
+	// User interaction handlers
+	function handleMouseEnter(): void {
+		isUserInteracting = true;
+		stopAutoPlay();
+	}
+
+	function handleMouseLeave(): void {
+		isUserInteracting = false;
+		if (autoPlay) {
+			startAutoPlay();
+		}
+	}
+
+	// Lifecycle
+	onMount(() => {
+		// Media query setup
+		const mediaQuery = window.matchMedia('(max-width: 768px)');
+		isMobile = mediaQuery.matches;
+
+		const handleMediaChange = (e: MediaQueryListEvent) => {
+			isMobile = e.matches;
+		};
+
+		mediaQuery.addEventListener('change', handleMediaChange);
+
+		// Start autoPlay if enabled
+		if (autoPlay) {
+			startAutoPlay();
+		}
+
+		return () => {
+			mediaQuery.removeEventListener('change', handleMediaChange);
+			stopAutoPlay();
+		};
+	});
+
+	onDestroy(() => {
+		stopAutoPlay();
 	});
 </script>
 
-<div class="ax-carousel">
-	<div class="ax-carousel__viewport">
-		<div class="ax-carousel__track" style:transform={`translateX(-${currentIndex * 100}%)`}>
+<div class="carousel {className || ''}" role="region" aria-label="Carousel">
+	<!-- Controls -->
+	<div class="carousel__header">
+		{#if showArrows}
+			<div class="carousel__arrows">
+				<button
+					class="carousel__arrow"
+					class:carousel__arrow--disabled={!canGoPrev}
+					disabled={!canGoPrev}
+					onclick={goPrevious}
+					aria-label="Previous slide"
+				>
+					<div class="carousel__arrow-icon">
+						<Icon icon="carbon:chevron-left" width="1.2em" height="1.2em" />
+					</div>
+				</button>
+				<button
+					class="carousel__arrow"
+					class:carousel__arrow--disabled={!canGoNext}
+					disabled={!canGoNext}
+					onclick={goNext}
+					aria-label="Next slide"
+				>
+					<div class="carousel__arrow-icon">
+						<Icon icon="carbon:chevron-right" width="1.2em" height="1.2em" />
+					</div>
+				</button>
+			</div>
+		{/if}
+
+		{#if showDots && maxIndex > 0}
+			<div class="carousel__dots">
+				{#each Array(maxIndex + 1) as _, i}
+					<button
+						class="carousel__dot"
+						class:carousel__dot--active={activeIndex === i}
+						onclick={() => goToSlide(i)}
+						aria-label="Go to slide {i + 1}"
+					></button>
+				{/each}
+			</div>
+		{/if}
+	</div>
+
+	<!-- Viewport -->
+	<div
+		class="carousel__viewport"
+		bind:this={containerElement}
+		onmouseenter={handleMouseEnter}
+		onmouseleave={handleMouseLeave}
+		style="--items-per-view: {itemsPerView}; --gap: {gapValue}px; --active-index: {activeIndex};"
+		role="presentation"
+	>
+		<div class="carousel__track">
 			{@render children?.()}
 		</div>
 	</div>
-
-	{#if showArrows && items.length > 1}
-		<button
-			class="ax-carousel__arrow ax-carousel__arrow--prev"
-			onclick={() => {
-				prevSlide();
-				resetTimer();
-			}}
-			aria-label="Previous slide"
-		>
-			<Icon icon="carbon:chevron-left" />
-		</button>
-
-		<button
-			class="ax-carousel__arrow ax-carousel__arrow--next"
-			onclick={() => {
-				nextSlide();
-				resetTimer();
-			}}
-			aria-label="Next slide"
-		>
-			<Icon icon="carbon:chevron-right" />
-		</button>
-	{/if}
-
-	{#if showIndicators && items.length > 1}
-		<nav class="ax-carousel__indicators" aria-label="Carousel navigation">
-			{#each items as _, i}
-				<button
-					class="ax-carousel__indicator"
-					class:is-active={i === currentIndex}
-					onclick={() => goToSlide(i)}
-					aria-label={`Go to slide ${i + 1}`}
-					aria-current={i === currentIndex ? 'step' : undefined}
-				></button>
-			{/each}
-		</nav>
-	{/if}
 </div>
 
 <style>
-	.ax-carousel {
-		position: relative;
+	.carousel {
 		width: 100%;
-		background-color: var(--color-surface-container-lowest);
-		/* Zero Displacement: Reserve space for border */
-		border: var(--line-base) solid var(--color-outline-variant);
-		overflow: hidden;
-		transition: border-color var(--duration-base);
-	}
-
-	.ax-carousel:hover {
-		border-color: var(--color-outline);
-	}
-
-	.ax-carousel__viewport {
-		overflow: hidden;
-		width: 100%;
-	}
-
-	.ax-carousel__track {
 		display: flex;
-		transition: transform var(--duration-base) cubic-bezier(0.4, 0, 0.2, 1);
+		flex-direction: column;
+		
+		/* Minimal Architectural Outline styling */
+		border: 1px solid var(--color-outline-variant, rgba(0, 0, 0, 0.12));
+		border-radius: 6px;
+		background: var(--color-surface, rgba(255, 255, 255, 0.02));
 	}
 
-	/* Arrows with Zero Displacement */
-	.ax-carousel__arrow {
-		position: absolute;
-		top: 50%;
-		transform: translateY(-50%);
-		background: var(--color-surface);
-		/* Use border for structural space */
-		border: var(--line-base) solid var(--color-outline);
-		width: 3rem;
-		height: 3rem;
+	.carousel__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.75rem;
+		border-bottom: 1px solid var(--color-outline-variant, rgba(0, 0, 0, 0.08));
+	}
+
+	.carousel__arrows {
+		display: flex;
+		gap: 4px;
+	}
+
+	.carousel__arrow {
+		width: 36px;
+		height: 36px;
+		border: 1px solid var(--color-outline, rgba(0, 0, 0, 0.2));
+		border-radius: 4px;
+		background: var(--color-surface-container, rgba(0, 0, 0, 0.04));
+		color: var(--color-on-surface, #1a1a1a);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		z-index: 10;
-		transition: all var(--duration-fast) cubic-bezier(0.4, 0, 0.2, 1);
-		color: var(--color-on-surface);
+		transition: all 200ms ease;
 		outline: none;
-		padding: 0;
 	}
 
-	.ax-carousel__arrow:hover {
-		background: var(--color-primary-container);
-		color: var(--color-on-primary-container);
-		border-color: var(--color-primary);
-	}
-
-	.ax-carousel__arrow:focus-visible {
+	.carousel__arrow:focus-visible {
 		box-shadow:
-			0 0 0 2px var(--color-surface),
-			0 0 0 4px var(--color-primary);
+			0 0 0 2px var(--color-surface, #fff),
+			0 0 0 4px var(--color-primary, #0066cc);
+		z-index: 10;
 	}
 
-	.ax-carousel__arrow:active {
-		transform: translateY(-50%) scale(0.95);
+	.carousel__arrow:hover:not(.carousel__arrow--disabled) {
+		border-color: var(--color-outline, rgba(0, 0, 0, 0.3));
+		background: var(--color-surface-container-high, rgba(0, 0, 0, 0.08));
+		color: var(--color-on-surface, #000);
 	}
 
-	.ax-carousel__arrow--prev {
-		left: var(--space-4);
-	}
-	.ax-carousel__arrow--next {
-		right: var(--space-4);
+	.carousel__arrow:active:not(.carousel__arrow--disabled) {
+		transform: scale(0.95);
+		border-color: var(--color-primary, #0066cc);
 	}
 
-	/* Indicators with Zero Displacement */
-	.ax-carousel__indicators {
-		position: absolute;
-		bottom: var(--space-4);
-		left: 50%;
-		transform: translateX(-50%);
+	.carousel__arrow--disabled {
+		opacity: 0.3;
+		cursor: not-allowed;
+	}
+
+	.carousel__arrow-icon {
 		display: flex;
-		gap: var(--space-2);
-		z-index: 10;
+		align-items: center;
+		justify-content: center;
 	}
 
-	.ax-carousel__indicator {
-		width: var(--space-6);
-		height: var(--line-base);
-		border: none;
-		background: var(--color-outline-variant);
+	.carousel__dots {
+		display: flex;
+		gap: 6px;
+		align-items: center;
+	}
+
+	.carousel__dot {
+		width: 8px;
+		height: 8px;
+		border: 1px solid var(--color-outline, rgba(0, 0, 0, 0.3));
+		border-radius: 50%;
+		background: transparent;
 		cursor: pointer;
-		transition: all var(--duration-fast) ease-out;
+		transition: all 200ms ease;
 		padding: 0;
-		outline: none;
-		/* Reserve vertical space for active state to avoid displacement */
-		margin: var(--line-thin) 0;
 	}
 
-	.ax-carousel__indicator.is-active {
-		background: var(--color-primary);
-		height: var(--line-thick);
-		margin: 0; /* Compensation for increased thickness */
+	.carousel__dot:hover {
+		border-color: var(--color-outline, rgba(0, 0, 0, 0.5));
+		background: var(--color-surface-container, rgba(0, 0, 0, 0.1));
 	}
 
-	.ax-carousel__indicator:hover:not(.is-active) {
-		background: var(--color-outline);
+	.carousel__dot--active {
+		background: var(--color-primary, #0066cc);
+		border-color: var(--color-primary, #0066cc);
+		transform: scale(1.3);
 	}
 
-	.ax-carousel__indicator:focus-visible {
-		box-shadow:
-			0 0 0 2px var(--color-surface),
-			0 0 0 4px var(--color-primary);
+	.carousel__viewport {
+		overflow: hidden;
+	}
+
+	.carousel__track {
+		display: flex;
+		gap: var(--gap, 8px);
+		padding: 0.75rem 0;
+		transition: transform 300ms ease;
+		transform: translateX(calc(-1 * var(--active-index, 0) * (100% / var(--items-per-view))));
+	}
+
+	/* Responsive */
+	@media (max-width: 768px) {
+		.carousel__header {
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+		
+		.carousel__arrows {
+			order: 2;
+		}
+		
+		.carousel__dots {
+			order: 1;
+		}
 	}
 </style>

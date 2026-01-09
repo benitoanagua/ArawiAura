@@ -2,133 +2,133 @@
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Carousel from '$lib/components/Carousel.svelte';
 	import CarouselItem from '$lib/components/CarouselItem.svelte';
+	import type { CarouselGap } from '$lib/types/carousel.js';
+	import * as falso from '@ngneat/falso';
 
 	const { Story } = defineMeta({
 		title: 'Components/Carousel',
 		tags: ['autodocs']
 	});
+
+	// Generators
+	const createSlideData = (count: number) => {
+		return Array.from({ length: count }, (_, i) => ({
+			id: i,
+			title: `${i + 1}`,
+			phrase: falso.randCatchPhrase()
+		}));
+	};
+
+	const slides = createSlideData(6);
+	const gaps: CarouselGap[] = ['none', 'small', 'medium', 'large'];
 </script>
 
 <Story name="Variants Overview">
-	<div class="story-grid">
+	<div class="story-container">
 		<section>
-			<h3>Standard Carousel</h3>
-			<div class="carousel-wrapper">
-				<Carousel showArrows={true} showIndicators={true}>
+			<h3>3 Columns, Medium Gap</h3>
+			<Carousel desktop={3} mobile={1} gap="medium">
+				{#each slides as slide}
 					<CarouselItem>
-						<div class="slide slide--1">
-							<h3>Slide 1</h3>
-							<p>Standard configuration with arrows and indicators.</p>
-						</div>
+						<div class="slide-number">{slide.title}</div>
+						<p class="slide-text">{slide.phrase}</p>
 					</CarouselItem>
-					<CarouselItem>
-						<div class="slide slide--2">
-							<h3>Slide 2</h3>
-							<p>Abstract landscapes and technical aesthetics.</p>
-						</div>
-					</CarouselItem>
-				</Carousel>
-			</div>
+				{/each}
+			</Carousel>
 		</section>
 
 		<section>
-			<h3>AutoPlay (3s)</h3>
-			<div class="carousel-wrapper">
-				<Carousel autoPlay={true} interval={3000}>
-					<CarouselItem>
-						<div class="slide slide--3">
-							<h3>AutoPlay 1</h3>
-							<p>Automatically advances every 3 seconds.</p>
-						</div>
-					</CarouselItem>
-					<CarouselItem>
-						<div class="slide slide--1">
-							<h3>AutoPlay 2</h3>
-							<p>Smooth transitions and Zero Displacement.</p>
-						</div>
-					</CarouselItem>
-				</Carousel>
-			</div>
+			<h3>Gap Variations</h3>
+			{#each gaps as gap}
+				<div class="gap-demo">
+					<span class="label">Gap: {gap}</span>
+					<Carousel desktop={4} mobile={2} {gap} showDots={false}>
+						{#each createSlideData(5) as slide}
+							<CarouselItem>
+								<div class="slide-number small">{slide.id + 1}</div>
+							</CarouselItem>
+						{/each}
+					</Carousel>
+				</div>
+			{/each}
 		</section>
 
 		<section>
-			<h3>Minimal (Hidden controls)</h3>
-			<div class="carousel-wrapper">
-				<Carousel showArrows={false} showIndicators={false} autoPlay={true}>
+			<h3>AutoPlay (2 Columns)</h3>
+			<Carousel desktop={2} mobile={1} autoPlay={true} interval={3000}>
+				{#each createSlideData(5) as slide}
 					<CarouselItem>
-						<div class="slide slide--2">
-							<h3>Minimal Slide</h3>
-							<p>Clean look without manual controls.</p>
-						</div>
+						<div class="slide-number">{slide.title}</div>
+						<p class="slide-text">Auto-playing...</p>
 					</CarouselItem>
+				{/each}
+			</Carousel>
+		</section>
+
+		<section>
+			<h3>4 Columns</h3>
+			<Carousel desktop={4} mobile={2} gap="small">
+				{#each createSlideData(8) as slide}
 					<CarouselItem>
-						<div class="slide slide--3">
-							<h3>Pure Content</h3>
-							<p>Focusing on the visual impact.</p>
-						</div>
+						<div class="slide-number">{slide.title}</div>
 					</CarouselItem>
-				</Carousel>
-			</div>
+				{/each}
+			</Carousel>
 		</section>
 	</div>
 </Story>
 
 <style>
-	.story-grid {
-		padding: 2rem;
+	.story-container {
 		display: flex;
 		flex-direction: column;
-		gap: 3rem;
-		background: var(--color-background);
-		min-height: 100vh;
+		gap: 2rem;
+		padding: 1rem;
 	}
 
-	.carousel-wrapper {
-		max-width: 800px;
-		margin: 0 auto;
-	}
-
-	.slide {
-		width: 100%;
-		height: 400px;
+	section {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-		padding: 3rem;
-		color: white;
-	}
-
-	.slide h3 {
-		font-family: var(--font-sans);
-		font-size: var(--text-2xl);
-		margin-bottom: 1rem;
-	}
-
-	.slide p {
-		font-family: var(--font-serif);
-		font-size: var(--text-lg);
-		max-width: 400px;
-	}
-
-	.slide--1 {
-		background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-	}
-	.slide--2 {
-		background: linear-gradient(135deg, #111827 0%, #374151 100%);
-	}
-	.slide--3 {
-		background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
+		gap: 0.75rem;
 	}
 
 	section h3 {
 		font-family: var(--font-mono);
-		font-size: 0.85rem;
+		font-size: 0.75rem;
 		text-transform: uppercase;
 		color: var(--color-on-surface-variant);
-		margin-bottom: 1.5rem;
 		border-bottom: 1px solid var(--color-outline-variant);
 		padding-bottom: 0.5rem;
+		margin: 0;
+	}
+
+	.gap-demo {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.label {
+		font-family: var(--font-mono);
+		font-size: 0.7rem;
+		color: var(--color-on-surface-variant);
+	}
+
+	.slide-number {
+		font-size: 2rem;
+		font-weight: 800;
+		color: var(--color-primary);
+	}
+
+	.slide-number.small {
+		font-size: 1.25rem;
+	}
+
+	.slide-text {
+		color: var(--color-on-surface-variant);
+		font-size: 0.8rem;
+		text-align: center;
+		margin: 0;
 	}
 </style>
