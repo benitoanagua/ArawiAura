@@ -1,149 +1,192 @@
-<script module>
-  import { defineMeta } from '@storybook/addon-svelte-csf';
-  import Card from '$lib/components/Card.svelte';
-  import { fn } from 'storybook/test';
+<script module lang="ts">
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import Card from '$lib/components/Card.svelte';
+	import type { CardDensity, CardMediaAlign, CardElevation } from '$lib/types/card.js';
+	import * as falso from '@ngneat/falso';
 
-  const { Story } = defineMeta({
-    title: 'Components/Card',
-    component: Card,
-    tags: ['autodocs'],
-    argTypes: {
-      title: { control: 'text' },
-      url: { control: 'text' },
-      excerpt: { control: 'text' },
-      featureImage: { control: 'text' },
-      authorName: { control: 'text' },
-      authorUrl: { control: 'text' },
-      authorProfileImage: { control: 'text' },
-      tagName: { control: 'text' },
-      tagUrl: { control: 'text' },
-      readingTime: { control: 'text' },
-      publishedAt: { control: 'text' },
-      mediaAlign: {
-        control: { type: 'select' },
-        options: ['left', 'right', 'top', 'bottom'],
-      },
-      mediaWidth: {
-        control: { type: 'select' },
-        options: ['is-one-fifth', 'is-one-quarter', 'is-one-third', 'is-two-fifths', 'is-half'],
-      },
-      density: {
-        control: { type: 'radio' },
-        options: ['normal', 'compact', 'minimal'],
-      },
-      aspectRatio: {
-        control: { type: 'radio' },
-        options: ['monitor', 'square', 'video'],
-      },
-      elevation: {
-        control: { type: 'range', min: 0, max: 3, step: 1 },
-      },
-      headingLevel: {
-        control: { type: 'range', min: 1, max: 6, step: 1 },
-      },
-    },
-    args: {
-      onclick: fn(),
-    }
-  });
+	const { Story } = defineMeta({
+		title: 'Components/Card',
+		component: Card,
+		tags: ['autodocs']
+	});
+
+	// Mock data generators with strict typing
+	const createCardData = () => ({
+		title: falso.randSentence(),
+		url: '#',
+		excerpt: falso.randParagraph(),
+		featureImage: `https://picsum.photos/800/600?random=${falso.randNumber()}`,
+		authorName: falso.randFullName(),
+		authorUrl: '#',
+		tagName: falso.randWord(),
+		tagUrl: '#',
+		readingTime: `${falso.randNumber({ min: 2, max: 15 })} min`,
+		publishedAt: falso.randRecentDate().toISOString()
+	});
+
+	const cardData = createCardData();
+	const densities: CardDensity[] = ['normal', 'compact', 'minimal'];
+	const elevations: CardElevation[] = [0, 1, 2, 3];
 </script>
 
-<Story 
-  name="Default" 
-  args={{
-    title: 'Sample Card Title',
-    url: '/sample-post',
-    excerpt: 'This is a sample excerpt for the card component demonstrating its basic functionality.',
-    featureImage: 'https://picsum.photos/400/300',
-    authorName: 'John Doe',
-    authorUrl: '/author/john-doe',
-    tagName: 'Technology',
-    tagUrl: '/tag/technology',
-    readingTime: '5 min read',
-    publishedAt: new Date().toISOString(),
-    mediaAlign: 'left',
-    density: 'normal',
-    aspectRatio: 'monitor',
-    elevation: 2,
-    headingLevel: 4
-  }} 
-/>
+<Story name="Variants Overview">
+	<div class="story-grid">
+		<section>
+			<h3>By Density</h3>
+			<div class="row row--scroll">
+				{#each densities as density}
+					<div class="col col--300">
+						<Card {...cardData} {density} />
+						<div class="label">{density}</div>
+					</div>
+				{/each}
+			</div>
+		</section>
 
-<Story 
-  name="With Author Profile" 
-  args={{
-    title: 'Card with Author Profile',
-    url: '/post-with-author',
-    excerpt: 'This card demonstrates the author profile image feature.',
-    featureImage: 'https://picsum.photos/400/300?random=1',
-    authorName: 'Jane Smith',
-    authorUrl: '/author/jane-smith',
-    authorProfileImage: 'https://i.pravatar.cc/150?img=12',
-    tagName: 'Design',
-    tagUrl: '/tag/design',
-    readingTime: '8 min read',
-    publishedAt: new Date(Date.now() - 86400000).toISOString(),
-    mediaAlign: 'top',
-    density: 'normal',
-    aspectRatio: 'square',
-    elevation: 3,
-    headingLevel: 3
-  }} 
-/>
+		<section>
+			<h3>By Elevation</h3>
+			<div class="row row--scroll">
+				{#each elevations as elevation}
+					<div class="col col--300">
+						<Card {...cardData} {elevation} />
+						<div class="label">Elevation {elevation}</div>
+					</div>
+				{/each}
+			</div>
+		</section>
 
-<Story 
-  name="Compact Density" 
-  args={{
-    title: 'Compact Card',
-    url: '/compact-post',
-    excerpt: 'A more compact version of the card with less spacing.',
-    featureImage: 'https://picsum.photos/300/200?random=2',
-    authorName: 'Bob Johnson',
-    authorUrl: '/author/bob-johnson',
-    tagName: 'Development',
-    tagUrl: '/tag/development',
-    readingTime: '12 min read',
-    publishedAt: new Date(Date.now() - 172800000).toISOString(),
-    mediaAlign: 'right',
-    density: 'compact',
-    aspectRatio: 'video',
-    elevation: 1,
-    headingLevel: 5
-  }} 
-/>
+		<section>
+			<h3>By Alignment (Vertical)</h3>
+			<div class="row row--scroll">
+				<div class="col col--300">
+					<Card {...cardData} mediaAlign="top" />
+					<div class="label">Top (Default)</div>
+				</div>
+				<div class="col col--300">
+					<Card {...cardData} mediaAlign="bottom" />
+					<div class="label">Bottom</div>
+				</div>
+			</div>
+		</section>
 
-<Story 
-  name="Minimal Density" 
-  args={{
-    title: 'Minimal Card',
-    url: '/minimal-post',
-    authorName: 'Alice Brown',
-    authorUrl: '/author/alice-brown',
-    tagName: 'Tutorial',
-    tagUrl: '/tag/tutorial',
-    readingTime: '3 min read',
-    publishedAt: new Date(Date.now() - 259200000).toISOString(),
-    density: 'minimal',
-    elevation: 2,
-    headingLevel: 4
-  }} 
-/>
+		<section>
+			<h3>By Alignment (Horizontal)</h3>
+			<div class="column column--gap-4">
+				<div class="col-full">
+					<Card {...cardData} mediaAlign="left" density="compact" />
+					<div class="label">Aligned Left (Compact)</div>
+				</div>
+				<div class="col-full">
+					<Card {...cardData} mediaAlign="right" density="compact" />
+					<div class="label">Aligned Right (Compact)</div>
+				</div>
+			</div>
+		</section>
 
-<Story 
-  name="Elevation Levels" 
-  args={{
-    title: 'Different Elevations',
-    url: '/elevation-demo',
-    excerpt: 'Showcasing different elevation levels from 0 to 3.',
-    featureImage: 'https://picsum.photos/400/300?random=3',
-    authorName: 'Charlie Wilson',
-    authorUrl: '/author/charlie-wilson',
-    tagName: 'Demo',
-    tagUrl: '/tag/demo',
-    readingTime: '6 min read',
-    publishedAt: new Date().toISOString(),
-    density: 'compact',
-    elevation: 0,
-    headingLevel: 4
-  }} 
-/>
+		<section>
+			<h3>Mixed Grid (Simulation)</h3>
+			<div class="grid-layout">
+				<div class="grid-main">
+					<Card {...createCardData()} mediaAlign="top" elevation={2} />
+				</div>
+				<div class="grid-side">
+					<Card
+						{...createCardData()}
+						density="compact"
+						mediaAlign="left"
+						mediaWidth="is-one-third"
+						elevation={1}
+					/>
+					<Card
+						{...createCardData()}
+						density="compact"
+						mediaAlign="left"
+						mediaWidth="is-one-third"
+						elevation={1}
+					/>
+				</div>
+			</div>
+		</section>
+	</div>
+</Story>
+
+<style>
+	.story-grid {
+		padding: 2rem;
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+		background: var(--color-background);
+		min-height: 100vh;
+	}
+
+	.row {
+		display: flex;
+		gap: 1.5rem;
+		flex-wrap: wrap;
+	}
+
+	.row--scroll {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		padding-bottom: 1rem;
+	}
+
+	.column {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.column--gap-4 {
+		gap: 1.5rem;
+	}
+
+	.col {
+		flex-shrink: 0;
+	}
+
+	.col--300 {
+		width: 320px;
+	}
+
+	.col-full {
+		width: 100%;
+	}
+
+	.grid-layout {
+		display: grid;
+		grid-template-columns: 2fr 1.5fr;
+		gap: 1.5rem;
+	}
+
+	.grid-side {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.label {
+		margin-top: 0.75rem;
+		font-family: var(--font-mono);
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		color: var(--color-on-surface-variant);
+		text-align: center;
+	}
+
+	section h3 {
+		font-family: var(--font-mono);
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		color: var(--color-on-surface-variant);
+		margin-bottom: 1.5rem;
+		border-bottom: 1px solid var(--color-outline-variant);
+		padding-bottom: 0.5rem;
+	}
+
+	@media (max-width: 1024px) {
+		.grid-layout {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

@@ -1,32 +1,34 @@
-// Tipos para el componente Card
+import type { Snippet } from 'svelte';
 
 export type CardHeading = 1 | 2 | 3 | 4 | 5 | 6;
 export type CardDensity = 'normal' | 'compact' | 'minimal';
 export type CardMediaAlign = 'left' | 'right' | 'top' | 'bottom';
-export type CardMediaWidth = 
-  | 'is-one-fifth' 
-  | 'is-one-quarter' 
-  | 'is-one-third' 
-  | 'is-two-fifths' 
+export type CardMediaWidth =
+  | 'is-one-fifth'
+  | 'is-one-quarter'
+  | 'is-one-third'
+  | 'is-two-fifths'
   | 'is-half';
 export type CardAspectRatio = 'monitor' | 'square' | 'video';
 export type CardElevation = 0 | 1 | 2 | 3;
-export type CardProps = {
+
+export interface CardProps {
   title: string;
   url: string;
-  excerpt: string;
-  feature_image?: string;
-  tag_name?: string;
-  tag_url?: string;
-  author_name?: string;
-  author_url?: string;
-  author_profile_image?: string;
-  media_align?: CardMediaAlign;
-  media_width?: CardMediaWidth;
-  heading?: CardHeading;
+  excerpt?: string;
+  featureImage?: string;
+  tagName?: string;
+  tagUrl?: string;
+  authorName?: string;
+  authorUrl?: string;
+  authorProfileImage?: string;
+  mediaAlign?: CardMediaAlign;
+  mediaWidth?: CardMediaWidth;
+  headingLevel?: CardHeading;
   density?: CardDensity;
-  aspect_ratio?: CardAspectRatio;
-  reading_time?: string;
-  published_at?: string;
+  aspectRatio?: CardAspectRatio;
+  readingTime?: string;
+  publishedAt?: string;
   elevation?: CardElevation;
-};
+  children?: Snippet;
+}

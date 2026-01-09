@@ -8,11 +8,10 @@ export function renderTitle(title: string, headingLevel: number = 4): string {
   return `<h${level}>${escapeHtml(title)}</h${level}>`;
 }
 
-/**
- * Escapa HTML para prevenir XSS
- */
-function escapeHtml(unsafe: string): string {
-  return unsafe
+function escapeHtml(unsafe: string | undefined | null): string {
+  if (unsafe === undefined || unsafe === null) return '';
+
+  return String(unsafe)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
