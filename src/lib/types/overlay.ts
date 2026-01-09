@@ -1,9 +1,23 @@
-// Tipos para el componente Overlay
+import type { CardAspectRatio, CardHeading } from './card.js';
+
+export type OverlayAlign = 'start' | 'center' | 'end';
+export type OverlayPosition = 'top' | 'center' | 'bottom';
+export type OverlayBox = 'background' | 'frame' | 'none';
+export type OverlayFill = 'full' | 'none' | 'gradient';
 
 export interface OverlayProps {
-  open?: boolean;
-  backdrop?: boolean;
-  closable?: boolean;
-  zIndex?: number;
-  children?: any;
+  title: string;
+  url: string;
+  featureImage?: string;
+  tagName?: string;
+  authorName?: string;
+  publishedAt?: string;
+  readingTime?: string;
+  aspectRatio?: CardAspectRatio;
+  headingLevel?: CardHeading;
+  align?: OverlayAlign;
+  position?: OverlayPosition;
+  box?: OverlayBox;
+  fill?: OverlayFill;
+  compact?: boolean;
 }

@@ -8,7 +8,7 @@ export function renderTitle(title: string, headingLevel: number = 4): string {
   return `<h${level}>${escapeHtml(title)}</h${level}>`;
 }
 
-function escapeHtml(unsafe: string | undefined | null): string {
+export function escapeHtml(unsafe: string | undefined | null): string {
   if (unsafe === undefined || unsafe === null) return '';
 
   return String(unsafe)
