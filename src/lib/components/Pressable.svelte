@@ -18,9 +18,9 @@
 {#if href}
 	<a
 		{href}
-		class="pressable pressable--{variant} pressable--{size} {fullWidth
-			? 'pressable--full-width'
-			: ''} {icon ? 'pressable--icon' : ''} {disabled ? 'pressable--disabled' : ''} {className ||
+		class="ax-pressable ax-pressable--{variant} ax-pressable--{size} {fullWidth
+			? 'ax-pressable--full-width'
+			: ''} {icon ? 'ax-pressable--icon' : ''} {disabled ? 'ax-pressable--disabled' : ''} {className ||
 			''}"
 		role="button"
 		aria-disabled={disabled}
@@ -30,9 +30,9 @@
 {:else}
 	<button
 		{type}
-		class="pressable pressable--{variant} pressable--{size} {fullWidth
-			? 'pressable--full-width'
-			: ''} {icon ? 'pressable--icon' : ''} {disabled ? 'pressable--disabled' : ''} {className ||
+		class="ax-pressable ax-pressable--{variant} ax-pressable--{size} {fullWidth
+			? 'ax-pressable--full-width'
+			: ''} {icon ? 'ax-pressable--icon' : ''} {disabled ? 'ax-pressable--disabled' : ''} {className ||
 			''}"
 		{disabled}
 		{onclick}
@@ -42,7 +42,7 @@
 {/if}
 
 <style>
-	.pressable {
+	.ax-pressable {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -61,7 +61,7 @@
 	}
 
 	/* Architectural Outline: Focus Ring */
-	.pressable:focus-visible {
+	.ax-pressable:focus-visible {
 		box-shadow:
 			0 0 0 2px var(--color-surface),
 			0 0 0 4px var(--color-primary);
@@ -69,62 +69,62 @@
 	}
 
 	/* Micro-física: Industrial Switch */
-	.pressable:active:not(.pressable--disabled) {
+	.ax-pressable:active:not(.ax-pressable--disabled) {
 		transform: scale(0.98);
 	}
 
 	/* Size variants */
-	.pressable--sm {
+	.ax-pressable--sm {
 		padding: calc(var(--space-1) - 1px) var(--space-3);
 		font-size: var(--text-sm);
 	}
 
-	.pressable--md {
+	.ax-pressable--md {
 		padding: calc(var(--space-2) - 1px) var(--space-4);
 		font-size: var(--text-base);
 	}
 
-	.pressable--lg {
+	.ax-pressable--lg {
 		padding: calc(var(--space-3) - 1px) var(--space-6);
 		font-size: var(--text-lg);
 	}
 
 	/* Full width */
-	.pressable--full-width {
+	.ax-pressable--full-width {
 		width: 100%;
 	}
 
 	/* Icon only */
-	.pressable--icon {
+	.ax-pressable--icon {
 		padding: var(--space-2);
 	}
 
 	/* Variant styles */
-	.pressable--primary {
+	.ax-pressable--primary {
 		background: var(--color-primary);
 		color: var(--color-on-primary);
 		border-color: var(--color-primary);
 	}
 
-	.pressable--primary:hover:not(.pressable--disabled) {
+	.ax-pressable--primary:hover:not(.ax-pressable--disabled) {
 		background: var(--color-primary-container);
 		color: var(--color-on-primary-container);
 		border-color: var(--color-primary-container);
 	}
 
-	.pressable--secondary {
+	.ax-pressable--secondary {
 		background: var(--color-secondary);
 		color: var(--color-on-secondary);
 		border-color: var(--color-secondary);
 	}
 
-	.pressable--secondary:hover:not(.pressable--disabled) {
+	.ax-pressable--secondary:hover:not(.ax-pressable--disabled) {
 		background: var(--color-secondary-container);
 		color: var(--color-on-secondary-container);
 		border-color: var(--color-secondary-container);
 	}
 
-	.pressable--outline {
+	.ax-pressable--outline {
 		background: transparent;
 		color: var(--color-on-surface);
 		/* Use box-shadow inset for the "thin" line while border remains base weight */
@@ -132,24 +132,24 @@
 		border-color: transparent;
 	}
 
-	.pressable--outline:hover:not(.pressable--disabled) {
+	.ax-pressable--outline:hover:not(.ax-pressable--disabled) {
 		box-shadow: inset 0 0 0 var(--line-base) var(--color-primary);
 		color: var(--color-primary);
 		background: var(--color-surface-container-low);
 	}
 
-	.pressable--ghost {
+	.ax-pressable--ghost {
 		background: transparent;
 		color: var(--color-on-surface);
 		border-color: transparent;
 	}
 
-	.pressable--ghost:hover:not(.pressable--disabled) {
+	.ax-pressable--ghost:hover:not(.ax-pressable--disabled) {
 		background: var(--color-surface-container-low);
 		box-shadow: inset 0 0 0 var(--line-thin) var(--color-outline-variant);
 	}
 
-	.pressable--link {
+	.ax-pressable--link {
 		background: transparent;
 		color: var(--color-primary);
 		border: none;
@@ -161,13 +161,13 @@
 		border-bottom: var(--line-thin) solid transparent;
 	}
 
-	.pressable--link:hover:not(.pressable--disabled) {
+	.ax-pressable--link:hover:not(.ax-pressable--disabled) {
 		border-bottom-color: var(--color-primary);
 		background: transparent;
 	}
 
 	/* Disabled state */
-	.pressable--disabled {
+	.ax-pressable--disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
 		filter: grayscale(1);

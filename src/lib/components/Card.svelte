@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CardProps } from '$lib/types/card.js';
-	import { renderTitleHtml } from '$lib/utils/title-renderer.js';
+	import Heading from './Heading.svelte';
 
 	let {
 		title,
@@ -68,9 +68,9 @@
 
 			<div class="ax-card__content">
 				<a href={url} class="ax-card__title-link">
-					<div class="ax-card__title">
-						{@html renderTitleHtml(title, headingLevel)}
-					</div>
+					<Heading level={headingLevel} class="ax-card__title">
+						{title}
+					</Heading>
 				</a>
 
 				{#if excerpt && density === 'normal'}
@@ -273,15 +273,11 @@
 		color: var(--color-on-surface);
 	}
 
-	.ax-card__title :global(.title-renderer__title) {
-		margin: 0;
-		font-family: var(--font-sans);
-		font-weight: 700;
-		line-height: var(--leading-tight);
+	.ax-card__title-link :global(.ax-card__title) {
 		transition: color var(--duration-fast);
 	}
 
-	.ax-card__title-link:hover .ax-card__title :global(.title-renderer__title) {
+	.ax-card__title-link:hover :global(.ax-card__title) {
 		color: var(--color-primary);
 	}
 

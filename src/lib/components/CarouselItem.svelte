@@ -20,14 +20,14 @@
 	});
 </script>
 
-<div class="carousel-item {className || ''}">
-	<div class="carousel-item__content">
+<div class="ax-carousel-item {className || ''}">
+	<div class="ax-carousel-item__content">
 		{@render children?.()}
 	</div>
 </div>
 
 <style>
-	.carousel-item {
+	.ax-carousel-item {
 		/* Simple width calculation: (100% - total gaps) / items */
 		flex: 0 0 calc((100% - (var(--items-per-view, 1) - 1) * var(--gap, 8px)) / var(--items-per-view, 1));
 		min-width: 0;
@@ -41,7 +41,7 @@
 		box-sizing: border-box;
 	}
 
-	.carousel-item__content {
+	.ax-carousel-item__content {
 		width: 100%;
 		height: 100%;
 		min-height: 140px;
@@ -53,7 +53,7 @@
 		box-sizing: border-box;
 	}
 
-	.carousel-item:hover {
+	.ax-carousel-item:hover {
 		border-color: var(--color-outline, rgba(0, 0, 0, 0.15));
 		background: var(--color-surface-container-high, rgba(0, 0, 0, 0.04));
 		transition: all 200ms ease;

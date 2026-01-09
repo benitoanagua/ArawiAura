@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderTitleHtml } from '$lib/utils/title-renderer.js';
+	import Heading from './Heading.svelte';
 	import type { OverlayProps } from '$lib/types/overlay.js';
 
 	let {
@@ -39,7 +39,9 @@
 			{/if}
 
 			<a href={url} class="ax-overlay__title-link">
-				{@html renderTitleHtml(title, headingLevel)}
+				<Heading level={headingLevel} class="ax-overlay__title">
+					{title}
+				</Heading>
 			</a>
 
 			{#if hasMeta}
@@ -235,11 +237,9 @@
 		text-decoration: none;
 	}
 
-	.ax-overlay__title-link :global(.title-renderer__title) {
+	.ax-overlay__title-link :global(.ax-overlay__title) {
 		color: white;
-		margin: 0;
 		transition: all 0.2s ease;
-		position: relative;
 	}
 
 	/* Title Underline animation from reference */
@@ -316,20 +316,20 @@
 		}
 	}
 
-	/* Global Title Sizes overrides for this white-text context */
-	.ax-overlay__title-link :global(h1.title-renderer__title) {
+	/* Title Sizes for Overlay context */
+	.ax-overlay__title-link :global(.ax-overlay__title.ax-heading--1) {
 		font-size: var(--text-4xl);
 		font-weight: 800;
 	}
-	.ax-overlay__title-link :global(h2.title-renderer__title) {
+	.ax-overlay__title-link :global(.ax-overlay__title.ax-heading--2) {
 		font-size: var(--text-3xl);
 		font-weight: 700;
 	}
-	.ax-overlay__title-link :global(h3.title-renderer__title) {
+	.ax-overlay__title-link :global(.ax-overlay__title.ax-heading--3) {
 		font-size: var(--text-2xl);
 		font-weight: 600;
 	}
-	.ax-overlay__title-link :global(h4.title-renderer__title) {
+	.ax-overlay__title-link :global(.ax-overlay__title.ax-heading--4) {
 		font-size: var(--text-xl);
 		font-weight: 600;
 	}

@@ -29,12 +29,12 @@
 	});
 </script>
 
-<div class="accordion">
+<div class="ax-accordion">
 	{@render children?.()}
 </div>
 
 <style>
-	.accordion {
+	.ax-accordion {
 		border: var(--line-thin) solid var(--color-outline-variant);
 		border-radius: var(--space-2);
 		overflow: hidden;

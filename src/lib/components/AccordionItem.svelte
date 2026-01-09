@@ -19,22 +19,22 @@
 	const isExpanded = $derived(propIsOpen ? propIsOpen(index) : accordion?.isOpen(index));
 </script>
 
-<div class="accordion-item" class:is-expanded={isExpanded}>
+<div class="ax-accordion-item" class:ax-accordion-item--expanded={isExpanded}>
 	<button
-		class="accordion-header"
+		class="ax-accordion-item__header"
 		onclick={() => effectiveToggle?.(index)}
 		aria-expanded={isExpanded}
 		aria-controls="accordion-content-{index}"
 	>
-		<span class="accordion-title">{title}</span>
-		<div class="accordion-icon" class:rotate={isExpanded}>
+		<span class="ax-accordion-item__title">{title}</span>
+		<div class="ax-accordion-item__icon" class:ax-accordion-item__icon--rotated={isExpanded}>
 			<Icon icon="carbon:chevron-down" width="1.2em" height="1.2em" />
 		</div>
 	</button>
 
 	{#if isExpanded}
-		<div id="accordion-content-{index}" class="accordion-content" aria-hidden={!isExpanded}>
-			<div class="accordion-body">
+		<div id="accordion-content-{index}" class="ax-accordion-item__content" aria-hidden={!isExpanded}>
+			<div class="ax-accordion-item__body">
 				{@render children?.()}
 			</div>
 		</div>
@@ -42,17 +42,17 @@
 </div>
 
 <style>
-	.accordion-item {
+	.ax-accordion-item {
 		border-bottom: var(--line-thin) solid var(--color-outline-variant);
 		background-color: var(--color-surface);
 		transition: background-color var(--duration-base) var(--duration-base);
 	}
 
-	.accordion-item:last-child {
+	.ax-accordion-item:last-child {
 		border-bottom: none;
 	}
 
-	.accordion-header {
+	.ax-accordion-item__header {
 		width: 100%;
 		padding: var(--space-4);
 		text-align: left;
@@ -72,7 +72,7 @@
 	}
 
 	/* Architectural Outline: Focus Ring */
-	.accordion-header:focus-visible {
+	.ax-accordion-item__header:focus-visible {
 		box-shadow:
 			0 0 0 2px var(--color-surface),
 			0 0 0 4px var(--color-primary);
@@ -80,36 +80,36 @@
 	}
 
 	/* Industrial Switch Feel */
-	.accordion-header:hover {
+	.ax-accordion-item__header:hover {
 		background-color: var(--color-surface-container-low);
 	}
 
-	.is-expanded .accordion-header {
+	.ax-accordion-item--expanded .ax-accordion-item__header {
 		border-bottom: var(--line-base) solid var(--color-primary);
 		color: var(--color-primary);
 	}
 
-	.accordion-title {
+	.ax-accordion-item__title {
 		margin: 0;
 		font-weight: 600;
 	}
 
-	.accordion-icon {
+	.ax-accordion-item__icon {
 		display: flex;
 		align-items: center;
 		transition: transform var(--duration-base) cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
-	.accordion-icon.rotate {
+	.ax-accordion-item__icon--rotated {
 		transform: rotate(180deg);
 		color: var(--color-primary);
 	}
 
-	.accordion-content {
+	.ax-accordion-item__content {
 		overflow: hidden;
 	}
 
-	.accordion-body {
+	.ax-accordion-item__body {
 		padding: var(--space-4);
 		font-family: var(--font-sans);
 		color: var(--color-on-surface-variant);
@@ -117,7 +117,7 @@
 		border-top: var(--line-thin) solid var(--color-outline-variant);
 	}
 
-	:global(.accordion-body p) {
+	:global(.ax-accordion-item__body p) {
 		margin-bottom: var(--space-4);
 	}
 </style>

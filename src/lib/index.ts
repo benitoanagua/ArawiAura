@@ -9,6 +9,7 @@ export { default as Carousel } from './components/Carousel.svelte';
 export { default as CarouselItem } from './components/CarouselItem.svelte';
 export { default as Grille } from './components/Grille.svelte';
 export { default as GrilleItem } from './components/GrilleItem.svelte';
+export { default as Heading } from './components/Heading.svelte';
 export { default as TopBar } from './components/TopBar.svelte';
 export { default as Logo } from './components/Logo.svelte';
 export { default as Modal } from './components/Modal.svelte';
@@ -37,5 +38,5 @@ export type * from './types/pressable';
 export type * from './types/tabs';
 export type * from './types/theme-switcher';
 
-// Utilities
-export * from './utils/title-renderer';
+// Utilities (deprecated - use Heading component instead)
+export { escapeHtml } from './utils/title-renderer';
