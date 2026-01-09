@@ -1,14 +1,13 @@
 <script module>
 	import { defineMeta } from '@storybook/addon-svelte-csf';
-	import Header from '$lib/components/Header.svelte';
+	import TopBar from '$lib/components/TopBar.svelte';
 	import { fn } from 'storybook/test';
 
 	const { Story } = defineMeta({
-		title: 'Components/Header',
+		title: 'Components/TopBar',
 		tags: ['autodocs'],
 		argTypes: {
 			siteTitle: { control: 'text' },
-			siteDescription: { control: 'text' },
 			logoUrl: { control: 'text' },
 			showLogo: { control: 'boolean' },
 			showNav: { control: 'boolean' },

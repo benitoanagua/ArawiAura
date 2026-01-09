@@ -1,130 +1,79 @@
 <script lang="ts">
-	let {
-		title = '',
-		subtitle = '',
-		image = '',
-		children
-	} = $props<{
-		title?: string;
-		subtitle?: string;
-		image?: string;
-		children?: import('svelte').Snippet;
-	}>();
+	import type { HeroProps } from '$lib/types/hero.js';
+
+	let { title = '', subtitle = '', children, class: className }: HeroProps = $props();
 </script>
 
-<section class="hero" class:has-image={!!image}>
-	<div class="hero-container">
-		<div class="hero-content">
-			{#if title}
-				<h1 class="hero-title">{title}</h1>
-			{/if}
-			{#if subtitle}
-				<p class="hero-subtitle">{subtitle}</p>
-			{/if}
-			<div class="hero-actions">
-				{@render children?.()}
-			</div>
-		</div>
-		{#if image}
-			<div class="hero-image-container">
-				<img src={image} alt={title} class="hero-image" />
-				<div class="hero-image-overlay"></div>
+<section class="ax-hero {className || ''}">
+	<div class="ax-hero__container">
+		{#if title}
+			<h1 class="ax-hero__title">{title}</h1>
+		{/if}
+
+		{#if subtitle}
+			<p class="ax-hero__subtitle">{subtitle}</p>
+		{/if}
+
+		{#if children}
+			<div class="ax-hero__actions">
+				{@render children()}
 			</div>
 		{/if}
 	</div>
 </section>
 
 <style>
-	.hero {
-		padding: var(--space-16) 0;
+	.ax-hero {
+		padding: var(--space-20) 0;
 		background-color: var(--color-surface);
-		border-bottom: var(--line-thin) solid var(--color-outline-variant);
-		position: relative;
-		overflow: hidden;
+		/* Minimalist: No borders, pure typography focus */
 	}
 
-	.hero-container {
+	.ax-hero__container {
 		max-width: var(--container-base);
 		margin: 0 auto;
 		padding: 0 var(--space-8);
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--space-12);
-		align-items: center;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-6);
 	}
 
-	@media (min-width: 1024px) {
-		.hero-container {
-			grid-template-columns: 1fr 1fr;
-		}
-	}
-
-	.hero-content {
-		z-index: 2;
-	}
-
-	.hero-title {
+	.ax-hero__title {
 		font-family: var(--font-sans);
-		font-size: var(--text-5xl);
+		font-size: var(--text-6xl); /* Larger, bolder */
 		font-weight: 800;
-		line-height: var(--leading-tight);
+		line-height: 1.1;
 		color: var(--color-on-surface);
-		margin-bottom: var(--space-6);
+		margin: 0;
 		letter-spacing: -0.04em;
+		max-width: 15ch;
 	}
 
-	.hero-subtitle {
-		font-family: var(--font-serif);
+	.ax-hero__subtitle {
+		font-family: var(--font-serif); /* Serif for contrast */
 		font-size: var(--text-xl);
 		line-height: var(--leading-relaxed);
 		color: var(--color-on-surface-variant);
-		margin-bottom: var(--space-8);
-		max-width: 600px;
+		margin: 0;
+		max-width: 45ch;
+		opacity: 0.8;
 	}
 
-	.hero-actions {
+	.ax-hero__actions {
 		display: flex;
-		gap: var(--space-4);
 		flex-wrap: wrap;
+		gap: var(--space-4);
+		margin-top: var(--space-4);
 	}
 
-	.hero-image-container {
-		position: relative;
-		border: var(--line-thick) solid var(--color-primary);
-		padding: var(--space-2);
-		background-color: var(--color-surface-container-high);
-	}
+	@media (max-width: 768px) {
+		.ax-hero {
+			padding: var(--space-12) 0;
+		}
 
-	.hero-image {
-		width: 100%;
-		height: auto;
-		display: block;
-		filter: saturate(0.8) contrast(1.1);
-	}
-
-	.hero-image-overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		pointer-events: none;
-	}
-
-	/* Architectural Grid background */
-	.hero::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-image:
-			linear-gradient(var(--color-outline-variant) 1px, transparent 1px),
-			linear-gradient(90deg, var(--color-outline-variant) 1px, transparent 1px);
-		background-size: 100px 100px;
-		opacity: 0.1;
-		pointer-events: none;
+		.ax-hero__title {
+			font-size: var(--text-4xl);
+		}
 	}
 </style>

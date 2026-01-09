@@ -1,19 +1,38 @@
 <script lang="ts">
-	import Header from '$lib/components/Header.svelte';
+	import TopBar from '$lib/components/TopBar.svelte';
+	import PageMeta from '$lib/components/PageMeta.svelte';
 	import { page } from '$app/stores';
-	
-	let { children, data } = $props();
-	
-	// Subscribe to page changes to get current path
-	let currentPath = $page.url.pathname;
+	import '../app.css';
+
+	let { children } = $props();
+	let currentPath = $derived($page.url.pathname);
 </script>
 
-<svelte:head>
-	<link rel="icon" href="/favicon.svg" />
-</svelte:head>
+<div class="app">
+	<TopBar siteTitle="Arawi Aura" showLogo={true} showNav={true} sticky={true} {currentPath} />
 
-<Header siteTitle="Arawi Aura" {currentPath} />
+	<main class="main-content">
+		{@render children()}
+	</main>
 
-<main class="main-content">
-	{@render children()}
-</main>
+	<PageMeta
+		showLogo={true}
+		copyright="© 2026 Benito Anagua"
+		links={[
+			{ label: 'Privacy', href: '/privacy' },
+			{ label: 'Terms', href: '/terms' }
+		]}
+	/>
+</div>
+
+<style>
+	.app {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
+
+	.main-content {
+		flex: 1;
+	}
+</style>
