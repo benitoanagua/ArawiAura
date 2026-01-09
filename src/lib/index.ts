@@ -3,7 +3,7 @@
 // Components
 export { default as Accordion } from './components/Accordion.svelte';
 export { default as AccordionItem } from './components/AccordionItem.svelte';
-export { default as Button } from './components/Button.svelte';
+export { default as Pressable } from './components/Pressable.svelte';
 export { default as Card } from './components/Card.svelte';
 export { default as Carousel } from './components/Carousel.svelte';
 export { default as CarouselItem } from './components/CarouselItem.svelte';
@@ -21,7 +21,7 @@ export { default as ThemeToggle } from './components/ThemeToggle.svelte';
 
 // Types
 export type * from './types/accordion';
-export type * from './types/button';
+export type * from './types/pressable';
 export type * from './types/card';
 export type * from './types/carousel';
 export type * from './types/grille';

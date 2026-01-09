@@ -1,5 +1,10 @@
 <script lang="ts">
-	import type { ButtonVariant, ButtonSize, ButtonType, ButtonProps } from '$lib/types/button.js';
+	import type {
+		PressableVariant,
+		PressableSize,
+		PressableType,
+		PressableProps
+	} from '$lib/types/pressable.js';
 
 	// Use Svelte 5 $props() syntax
 	let {
@@ -11,7 +16,7 @@
 		fullWidth = false,
 		icon = false,
 		children
-	}: ButtonProps & { children?: any } = $props();
+	}: PressableProps & { children?: any } = $props();
 
 	// Event handlers
 	let _onclick: (e: Event) => void = () => {};
@@ -26,9 +31,9 @@
 {#if href}
 	<a
 		{href}
-		class="button button--{variant} button--{size} {fullWidth ? 'button--full-width' : ''} {icon
-			? 'button--icon'
-			: ''} {disabled ? 'button--disabled' : ''}"
+		class="pressable pressable--{variant} pressable--{size} {fullWidth
+			? 'pressable--full-width'
+			: ''} {icon ? 'pressable--icon' : ''} {disabled ? 'pressable--disabled' : ''}"
 		role="button"
 		aria-disabled={disabled}
 	>
@@ -37,9 +42,9 @@
 {:else}
 	<button
 		{type}
-		class="button button--{variant} button--{size} {fullWidth ? 'button--full-width' : ''} {icon
-			? 'button--icon'
-			: ''} {disabled ? 'button--disabled' : ''}"
+		class="pressable pressable--{variant} pressable--{size} {fullWidth
+			? 'pressable--full-width'
+			: ''} {icon ? 'pressable--icon' : ''} {disabled ? 'pressable--disabled' : ''}"
 		{disabled}
 		onclick={clickHandler}
 	>
@@ -48,12 +53,13 @@
 {/if}
 
 <style>
-	.button {
+	.pressable {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		gap: var(--space-2);
-		border: var(--line-thin) solid transparent;
+		/* Zero Displacement: Reserve space for maximum border thickness */
+		border: var(--line-base) solid transparent;
 		border-radius: var(--space-1);
 		font-family: var(--font-sans);
 		font-weight: 500;
@@ -66,7 +72,7 @@
 	}
 
 	/* Architectural Outline: Focus Ring */
-	.button:focus-visible {
+	.pressable:focus-visible {
 		box-shadow:
 			0 0 0 2px var(--color-surface),
 			0 0 0 4px var(--color-primary);
@@ -74,86 +80,105 @@
 	}
 
 	/* Micro-física: Industrial Switch */
-	.button:active:not(.button--disabled) {
+	.pressable:active:not(.pressable--disabled) {
 		transform: scale(0.98);
 	}
 
 	/* Size variants */
-	.button--sm {
-		padding: var(--space-1) var(--space-3);
+	.pressable--sm {
+		padding: calc(var(--space-1) - 1px) var(--space-3);
 		font-size: var(--text-sm);
 	}
 
-	.button--md {
-		padding: var(--space-2) var(--space-4);
+	.pressable--md {
+		padding: calc(var(--space-2) - 1px) var(--space-4);
 		font-size: var(--text-base);
 	}
 
-	.button--lg {
-		padding: var(--space-3) var(--space-6);
+	.pressable--lg {
+		padding: calc(var(--space-3) - 1px) var(--space-6);
 		font-size: var(--text-lg);
 	}
 
 	/* Full width */
-	.button--full-width {
+	.pressable--full-width {
 		width: 100%;
 	}
 
 	/* Icon only */
-	.button--icon {
+	.pressable--icon {
 		padding: var(--space-2);
 	}
 
 	/* Variant styles */
-	.button--primary {
+	.pressable--primary {
 		background: var(--color-primary);
 		color: var(--color-on-primary);
-		border: var(--line-base) solid var(--color-primary);
+		border-color: var(--color-primary);
 	}
 
-	.button--primary:hover:not(.button--disabled) {
+	.pressable--primary:hover:not(.pressable--disabled) {
 		background: var(--color-primary-container);
 		color: var(--color-on-primary-container);
 		border-color: var(--color-primary-container);
 	}
 
-	.button--secondary {
+	.pressable--secondary {
 		background: var(--color-secondary);
 		color: var(--color-on-secondary);
-		border: var(--line-thin) solid var(--color-secondary);
+		border-color: var(--color-secondary);
 	}
 
-	.button--secondary:hover:not(.button--disabled) {
+	.pressable--secondary:hover:not(.pressable--disabled) {
 		background: var(--color-secondary-container);
 		color: var(--color-on-secondary-container);
 		border-color: var(--color-secondary-container);
 	}
 
-	.button--outline {
+	.pressable--outline {
 		background: transparent;
 		color: var(--color-on-surface);
-		border: var(--line-thin) solid var(--color-outline);
+		/* Use box-shadow inset for the "thin" line while border remains base weight */
+		box-shadow: inset 0 0 0 var(--line-thin) var(--color-outline);
+		border-color: transparent;
 	}
 
-	.button--outline:hover:not(.button--disabled) {
-		border: var(--line-base) solid var(--color-primary);
+	.pressable--outline:hover:not(.pressable--disabled) {
+		box-shadow: inset 0 0 0 var(--line-base) var(--color-primary);
 		color: var(--color-primary);
 		background: var(--color-surface-container-low);
 	}
 
-	.button--ghost {
+	.pressable--ghost {
 		background: transparent;
 		color: var(--color-on-surface);
-		border: var(--line-thin) solid transparent;
+		border-color: transparent;
 	}
 
-	.button--ghost:hover:not(.button--disabled) {
+	.pressable--ghost:hover:not(.pressable--disabled) {
 		background: var(--color-surface-container-low);
-		border-color: var(--color-outline-variant);
+		box-shadow: inset 0 0 0 var(--line-thin) var(--color-outline-variant);
+	}
+
+	.pressable--link {
+		background: transparent;
+		color: var(--color-primary);
+		border: none;
+		border-radius: 0;
+		padding: 0 var(--space-1);
+		min-height: auto;
+		height: auto;
+		line-height: inherit;
+		border-bottom: var(--line-thin) solid transparent;
+	}
+
+	.pressable--link:hover:not(.pressable--disabled) {
+		border-bottom-color: var(--color-primary);
+		background: transparent;
 	}
 
 	/* Disabled state */
-	.button--disabled {
+	.pressable--disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
 		filter: grayscale(1);

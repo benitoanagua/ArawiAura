@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	
-	import Button from '$lib/components/Button.svelte';
+
+	import Pressable from '$lib/components/Pressable.svelte';
 	import Card from '$lib/components/Card.svelte';
 
 	export let data: PageData;
@@ -20,22 +20,23 @@
 	// Simulate related posts (in a real app, this would come from the server)
 	const relatedPosts = [
 		{
-			title: "Understanding Typography in Web Design",
-			slug: "typography-in-web-design",
-			excerpt: "A deep dive into the principles of typography and how they apply to modern web design.",
-			feature_image: { url: "https://picsum.photos/400/300?random=6" },
-			author: { name: "Elena Pérez", slug: "elena" },
-			tags: [{ name: "Design", slug: "design" }],
+			title: 'Understanding Typography in Web Design',
+			slug: 'typography-in-web-design',
+			excerpt:
+				'A deep dive into the principles of typography and how they apply to modern web design.',
+			feature_image: { url: 'https://picsum.photos/400/300?random=6' },
+			author: { name: 'Elena Pérez', slug: 'elena' },
+			tags: [{ name: 'Design', slug: 'design' }],
 			reading_time: 7,
 			published_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 		},
 		{
-			title: "The Future of SvelteKit",
-			slug: "future-of-sveltekit",
-			excerpt: "Exploring upcoming features and improvements in the SvelteKit framework.",
-			feature_image: { url: "https://picsum.photos/400/300?random=7" },
-			author: { name: "José García", slug: "jose" },
-			tags: [{ name: "Development", slug: "development" }],
+			title: 'The Future of SvelteKit',
+			slug: 'future-of-sveltekit',
+			excerpt: 'Exploring upcoming features and improvements in the SvelteKit framework.',
+			feature_image: { url: 'https://picsum.photos/400/300?random=7' },
+			author: { name: 'José García', slug: 'jose' },
+			tags: [{ name: 'Development', slug: 'development' }],
 			reading_time: 10,
 			published_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
 		}
@@ -109,7 +110,9 @@
 					authorName={relatedPost.author?.name || ''}
 					authorUrl={relatedPost.author ? `/author/${relatedPost.author.slug}` : ''}
 					tagName={relatedPost.tags && relatedPost.tags.length > 0 ? relatedPost.tags[0].name : ''}
-					tagUrl={relatedPost.tags && relatedPost.tags.length > 0 ? `/tag/${relatedPost.tags[0].slug}` : ''}
+					tagUrl={relatedPost.tags && relatedPost.tags.length > 0
+						? `/tag/${relatedPost.tags[0].slug}`
+						: ''}
 					readingTime={`${relatedPost.reading_time || 0} min`}
 					publishedAt={relatedPost.published_at}
 					density="compact"

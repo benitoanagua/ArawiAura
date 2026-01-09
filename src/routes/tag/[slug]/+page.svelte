@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Card from '$lib/components/Card.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import Pressable from '$lib/components/Pressable.svelte';
 
 	export let data: PageData;
 
@@ -83,7 +83,7 @@
 					<p class="empty-state__description">
 						Aún no hay artículos publicados sobre {tag.name}. Vuelve pronto para ver más contenido.
 					</p>
-					<Button href="/" variant="ghost">← Volver al blog</Button>
+					<Pressable href="/" variant="ghost">← Volver al blog</Pressable>
 				</div>
 			</div>
 		{/if}

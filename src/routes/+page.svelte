@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Button from '$lib/components/Button.svelte';
+	import Pressable from '$lib/components/Pressable.svelte';
 	import Card from '$lib/components/Card.svelte';
 
 	export let data: PageData;
