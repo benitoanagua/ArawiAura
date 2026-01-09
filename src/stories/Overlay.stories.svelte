@@ -11,7 +11,6 @@
 
 	const { Story } = defineMeta({
 		title: 'Components/Overlay',
-		component: Overlay,
 		tags: ['autodocs']
 	});
 

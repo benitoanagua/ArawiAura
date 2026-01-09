@@ -6,7 +6,6 @@
 
 	const { Story } = defineMeta({
 		title: 'Components/Accordion',
-		component: Accordion,
 		tags: ['autodocs']
 	});
 

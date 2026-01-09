@@ -5,7 +5,6 @@
 
 	const { Story } = defineMeta({
 		title: 'Components/Carousel',
-		component: Carousel,
 		tags: ['autodocs']
 	});
 </script>

@@ -5,7 +5,6 @@
 
 	const { Story } = defineMeta({
 		title: 'Components/Grille',
-		component: Grille,
 		tags: ['autodocs'],
 		argTypes: {
 			desktop: { control: { type: 'number', min: 1, max: 6 } },
