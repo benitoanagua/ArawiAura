@@ -1,17 +1,25 @@
-// Tipos para el componente Grille
+import type { Snippet } from 'svelte';
 
-export type GapSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-
-export interface GrilleItemProps {
-  colSpan?: number;
-  rowSpan?: number;
-  alignSelf?: 'start' | 'end' | 'center' | 'stretch';
-  justifySelf?: 'start' | 'end' | 'center' | 'stretch';
-}
+export type GapSize = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type GapValue = 'small' | 'medium' | 'large';
 
 export interface GrilleProps {
-  columns?: number;
-  gap?: GapSize;
-  responsive?: boolean;
-  children?: any;
+  desktop?: number;
+  mobile?: number;
+  gap?: GapValue;
+  children?: Snippet;
+}
+
+export interface GrilleItemProps {
+  children?: Snippet;
+}
+
+export interface GrilleContext {
+  registerItem: () => number;
+  unregisterItem: (id: number) => void;
+  containerWidth: number;
+  desktop: number;
+  mobile: number;
+  gap: GapValue;
+  itemCount: number;
 }

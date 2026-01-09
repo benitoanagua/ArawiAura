@@ -1,86 +1,72 @@
 <script lang="ts">
-	import type { GapSize, GrilleProps } from '$lib/types/grille.js';
-	
-	export let columns: number = 1;
-	export let gap: GapSize = 'md';
-	export let responsive: boolean = true;
-	
-	let columnClass = responsive 
-		? `grille--cols-${columns}` 
-		: `grille--cols-${columns}-fixed`;
+	import { setContext } from 'svelte';
+	import type { GrilleProps, GrilleContext } from '$lib/types/grille.js';
+
+	let { desktop = 3, mobile = 2, gap = 'medium', children }: GrilleProps = $props();
+
+	let containerWidth = $state(0);
+	let items = $state<number[]>([]);
+	let nextId = 0;
+
+	function registerItem() {
+		const id = nextId++;
+		items.push(id);
+		return id;
+	}
+
+	function unregisterItem(id: number) {
+		items = items.filter((i) => i !== id);
+	}
+
+	// Helper to calculate position in grid
+	// Note: We use the index in the 'items' array as the sequence index
+	function getItemIndex(id: number) {
+		return items.indexOf(id);
+	}
+
+	// Provide context for GrilleItems
+	setContext<GrilleContext & { getItemIndex: (id: number) => number }>('grille', {
+		registerItem,
+		unregisterItem,
+		getItemIndex,
+		get containerWidth() {
+			return containerWidth;
+		},
+		get desktop() {
+			return desktop;
+		},
+		get mobile() {
+			return mobile;
+		},
+		get gap() {
+			return gap;
+		},
+		get itemCount() {
+			return items.length;
+		}
+	});
 </script>
 
-<div class={`grille ${columnClass} grille--gap-${gap}`}>
-	<slot />
+<div class="ax-grille" bind:clientWidth={containerWidth}>
+	<div class="ax-grille__container">
+		{@render children?.()}
+	</div>
 </div>
 
 <style>
-	.grille {
-		display: grid;
-		gap: var(--space-4);
+	.ax-grille {
+		width: 100%;
+		overflow: hidden;
+		display: block;
+		box-sizing: border-box;
 	}
-	
-	/* Gap sizes */
-	.grille--gap-xs { gap: var(--space-1); }
-	.grille--gap-sm { gap: var(--space-2); }
-	.grille--gap-md { gap: var(--space-4); }
-	.grille--gap-lg { gap: var(--space-6); }
-	.grille--gap-xl { gap: var(--space-8); }
-	
-	/* Responsive columns */
-	.grille--cols-1 { grid-template-columns: 1fr; }
-	.grille--cols-2 { grid-template-columns: repeat(2, 1fr); }
-	.grille--cols-3 { grid-template-columns: repeat(3, 1fr); }
-	.grille--cols-4 { grid-template-columns: repeat(4, 1fr); }
-	.grille--cols-5 { grid-template-columns: repeat(5, 1fr); }
-	.grille--cols-6 { grid-template-columns: repeat(6, 1fr); }
-	
-	/* Fixed columns (non-responsive) */
-	.grille--cols-1-fixed { grid-template-columns: 1fr; }
-	.grille--cols-2-fixed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-	.grille--cols-3-fixed { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-	.grille--cols-4-fixed { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-	.grille--cols-5-fixed { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-	.grille--cols-6-fixed { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-	
-	/* Responsive behavior */
-	@media (max-width: 768px) {
-		.grille--cols-2,
-		.grille--cols-3,
-		.grille--cols-4,
-		.grille--cols-5,
-		.grille--cols-6 {
-			grid-template-columns: 1fr;
-		}
-		
-		.grille--cols-2-fixed { grid-template-columns: 1fr; }
-		.grille--cols-3-fixed { grid-template-columns: 1fr; }
-		.grille--cols-4-fixed { grid-template-columns: 1fr; }
-		.grille--cols-5-fixed { grid-template-columns: 1fr; }
-		.grille--cols-6-fixed { grid-template-columns: 1fr; }
-	}
-	
-	@media (min-width: 769px) and (max-width: 1024px) {
-		.grille--cols-3,
-		.grille--cols-4,
-		.grille--cols-5,
-		.grille--cols-6 {
-			grid-template-columns: repeat(2, 1fr);
-		}
-		
-		.grille--cols-4-fixed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-		.grille--cols-5-fixed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-		.grille--cols-6-fixed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-	}
-	
-	@media (min-width: 1025px) and (max-width: 1440px) {
-		.grille--cols-4,
-		.grille--cols-5,
-		.grille--cols-6 {
-			grid-template-columns: repeat(3, 1fr);
-		}
-		
-		.grille--cols-5-fixed { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-		.grille--cols-6-fixed { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+	.ax-grille__container {
+		display: flex;
+		flex-wrap: wrap;
+		width: 100%;
+		box-sizing: border-box;
+		border-top: 1px solid var(--color-outline-variant);
+		border-left: 1px solid var(--color-outline-variant);
 	}
 </style>
