@@ -1,3 +1,5 @@
+import type { Snippet } from 'svelte';
+
 // Tipos para el componente Modal
 
 export type ModalMaxWidth = 'sm' | 'md' | 'lg' | 'xl';
@@ -8,5 +10,6 @@ export interface ModalProps {
   closable?: boolean;
   backdrop?: boolean;
   maxWidth?: ModalMaxWidth;
-  children?: any;
+  children: Snippet;
+  class?: string;
 }

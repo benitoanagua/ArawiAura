@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PressableProps } from '$lib/types/pressable.js';
 
-	// Use Svelte 5 $props() syntax
 	let {
 		variant = 'primary',
 		size = 'md',
@@ -10,17 +9,10 @@
 		type = 'button',
 		fullWidth = false,
 		icon = false,
+		onclick,
+		class: className,
 		children
-	}: PressableProps & { children?: any } = $props();
-
-	// Event handlers
-	let _onclick: (e: Event) => void = () => {};
-
-	function clickHandler(e: Event) {
-		if (!disabled && _onclick) {
-			_onclick(e);
-		}
-	}
+	}: PressableProps = $props();
 </script>
 
 {#if href}
@@ -28,7 +20,8 @@
 		{href}
 		class="pressable pressable--{variant} pressable--{size} {fullWidth
 			? 'pressable--full-width'
-			: ''} {icon ? 'pressable--icon' : ''} {disabled ? 'pressable--disabled' : ''}"
+			: ''} {icon ? 'pressable--icon' : ''} {disabled ? 'pressable--disabled' : ''} {className ||
+			''}"
 		role="button"
 		aria-disabled={disabled}
 	>
@@ -39,9 +32,10 @@
 		{type}
 		class="pressable pressable--{variant} pressable--{size} {fullWidth
 			? 'pressable--full-width'
-			: ''} {icon ? 'pressable--icon' : ''} {disabled ? 'pressable--disabled' : ''}"
+			: ''} {icon ? 'pressable--icon' : ''} {disabled ? 'pressable--disabled' : ''} {className ||
+			''}"
 		{disabled}
-		onclick={clickHandler}
+		{onclick}
 	>
 		{@render children?.()}
 	</button>

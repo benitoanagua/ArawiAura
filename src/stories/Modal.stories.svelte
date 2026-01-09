@@ -1,173 +1,158 @@
-<script module>
-  import { defineMeta } from '@storybook/addon-svelte-csf';
-  import Modal from '$lib/components/Modal.svelte';
-  import { fn } from 'storybook/test';
-  import { tick } from 'svelte';
+<script module lang="ts">
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import Modal from '$lib/components/Modal.svelte';
+	import Pressable from '$lib/components/Pressable.svelte';
+	import * as falso from '@ngneat/falso';
 
-  const { Story } = defineMeta({
-    title: 'Components/Modal',
-    component: Modal,
-    tags: ['autodocs'],
-    argTypes: {
-      open: { control: 'boolean' },
-      title: { control: 'text' },
-      closable: { control: 'boolean' },
-      backdrop: { control: 'boolean' },
-      maxWidth: {
-        control: { type: 'radio' },
-        options: ['sm', 'md', 'lg', 'xl'],
-      },
-    },
-    args: {
-      onclick: fn(),
-    }
-  });
+	const { Story } = defineMeta({
+		title: 'Components/Modal',
+		tags: ['autodocs']
+	});
+
+	const createModalData = () => ({
+		title: falso.randSentence(),
+		content: Array.from({ length: 2 }, () => falso.randParagraph())
+	});
+
+	const modalData = createModalData();
 </script>
 
-<Story 
-  name="Basic Modal" 
-  args={{
-    open: true,
-    title: 'Basic Modal',
-    closable: true,
-    backdrop: true,
-    maxWidth: 'md'
-  }}
->
-  <p>This is a basic modal with a title and some content.</p>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-  <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-    <button style="padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-      Confirm
-    </button>
-    <button style="padding: 0.5rem 1rem; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-      Cancel
-    </button>
-  </div>
+<script lang="ts">
+	let smOpen = $state(false);
+	let mdOpen = $state(false);
+	let lgOpen = $state(false);
+	let xlOpen = $state(false);
+	let customOpen = $state(false);
+</script>
+
+<Story name="Variants Overview">
+	<div class="story-grid">
+		<section>
+			<h3>Sizing Variants</h3>
+			<p>Click the buttons below to trigger modals of different widths.</p>
+			<div class="demo-grid">
+				<Pressable variant="outline" onclick={() => (smOpen = true)}>Open Small (sm)</Pressable>
+				<Pressable variant="outline" onclick={() => (mdOpen = true)}>Open Medium (md)</Pressable>
+				<Pressable variant="outline" onclick={() => (lgOpen = true)}>Open Large (lg)</Pressable>
+				<Pressable variant="outline" onclick={() => (xlOpen = true)}
+					>Open Extra Large (xl)</Pressable
+				>
+			</div>
+		</section>
+
+		<section>
+			<h3>Content Variations</h3>
+			<div class="demo-grid">
+				<Pressable variant="primary" onclick={() => (customOpen = true)}
+					>Open Custom Content</Pressable
+				>
+			</div>
+		</section>
+
+		<!-- Modal Instances -->
+		<Modal bind:open={smOpen} title="Small Modal" maxWidth="sm">
+			<p>{modalData.content[0]}</p>
+		</Modal>
+
+		<Modal bind:open={mdOpen} title="Medium Modal (Default)" maxWidth="md">
+			<p>{modalData.content[0]}</p>
+			<p>{modalData.content[1]}</p>
+		</Modal>
+
+		<Modal bind:open={lgOpen} title="Large Modal" maxWidth="lg">
+			<p>{modalData.content[0]}</p>
+			<div class="placeholder-box"></div>
+			<p>{modalData.content[1]}</p>
+		</Modal>
+
+		<Modal bind:open={xlOpen} title="Extra Large Modal" maxWidth="xl">
+			<div class="xl-content">
+				<div class="placeholder-box wide"></div>
+				<div class="text-columns">
+					<p>{modalData.content[0]}</p>
+					<p>{modalData.content[1]}</p>
+				</div>
+			</div>
+		</Modal>
+
+		<Modal bind:open={customOpen} closable={false} backdrop={true}>
+			<div class="custom-modal">
+				<h3>Action Required</h3>
+				<p>
+					This modal is not closable via the standard X button. You must take an action or press
+					ESC.
+				</p>
+				<div class="actions">
+					<Pressable variant="outline" onclick={() => (customOpen = false)}>Cancel</Pressable>
+					<Pressable variant="primary" onclick={() => (customOpen = false)}>Proceed</Pressable>
+				</div>
+			</div>
+		</Modal>
+	</div>
 </Story>
 
-<Story 
-  name="Without Title" 
-  args={{
-    open: true,
-    closable: true,
-    backdrop: true,
-    maxWidth: 'sm'
-  }}
->
-  <div style="text-align: center; padding: 2rem;">
-    <h3>Confirmation Required</h3>
-    <p>Are you sure you want to proceed with this action?</p>
-    <div style="margin-top: 1rem; display: flex; justify-content: center; gap: 0.5rem;">
-      <button style="padding: 0.5rem 1rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        Yes
-      </button>
-      <button style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        No
-      </button>
-    </div>
-  </div>
-</Story>
+<style>
+	.story-grid {
+		padding: 2rem;
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+		background: var(--color-background);
+		min-height: 100vh;
+	}
 
-<Story 
-  name="Large Content" 
-  args={{
-    open: true,
-    title: 'Large Content Modal',
-    closable: true,
-    backdrop: true,
-    maxWidth: 'lg'
-  }}
->
-  <h4>Article Content</h4>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-  
-  <h5>Section 1</h5>
-  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-  
-  <h5>Section 2</h5>
-  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-  
-  <ul>
-    <li>Point one with detailed explanation</li>
-    <li>Point two covering important aspects</li>
-    <li>Point three with additional information</li>
-  </ul>
-</Story>
+	section h3 {
+		font-family: var(--font-mono);
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		color: var(--color-on-surface-variant);
+		margin-bottom: 1rem;
+		border-bottom: 1px solid var(--color-outline-variant);
+		padding-bottom: 0.5rem;
+	}
 
-<Story 
-  name="Form Modal" 
-  args={{
-    open: true,
-    title: 'Contact Form',
-    closable: true,
-    backdrop: true,
-    maxWidth: 'md'
-  }}
->
-  <form style="display: flex; flex-direction: column; gap: 1rem;">
-    <div>
-      <label for="name" style="display: block; margin-bottom: 0.25rem; font-weight: 500;">Name</label>
-      <input 
-        type="text" 
-        id="name" 
-        placeholder="Enter your name" 
-        style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
-      />
-    </div>
-    
-    <div>
-      <label for="email" style="display: block; margin-bottom: 0.25rem; font-weight: 500;">Email</label>
-      <input 
-        type="email" 
-        id="email" 
-        placeholder="Enter your email" 
-        style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
-      />
-    </div>
-    
-    <div>
-      <label for="message" style="display: block; margin-bottom: 0.25rem; font-weight: 500;">Message</label>
-      <textarea 
-        id="message" 
-        placeholder="Enter your message" 
-        rows="4"
-        style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; resize: vertical;"
-      ></textarea>
-    </div>
-    
-    <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
-      <button 
-        type="button"
-        style="padding: 0.5rem 1rem; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;"
-      >
-        Cancel
-      </button>
-      <button 
-        type="submit"
-        style="padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
-      >
-        Send Message
-      </button>
-    </div>
-  </form>
-</Story>
+	.demo-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin-top: 1rem;
+	}
 
-<Story 
-  name="Without Backdrop Close" 
-  args={{
-    open: true,
-    title: 'Important Notice',
-    closable: true,
-    backdrop: false,
-    maxWidth: 'sm'
-  }}
->
-  <div style="text-align: center;">
-    <p style="margin-bottom: 1rem;">This modal cannot be closed by clicking the backdrop.</p>
-    <p style="margin-bottom: 1rem;">You must use the close button or press Escape.</p>
-    <button style="padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-      I Understand
-    </button>
-  </div>
-</Story>
+	.placeholder-box {
+		height: 200px;
+		background: var(--color-surface-container-high);
+		border: 1px dashed var(--color-outline);
+		margin: 1rem 0;
+	}
+
+	.placeholder-box.wide {
+		height: 300px;
+	}
+
+	.text-columns {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+	}
+
+	.custom-modal {
+		text-align: center;
+	}
+
+	.custom-modal h3 {
+		color: var(--color-primary);
+		margin-bottom: 1rem;
+	}
+
+	.actions {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		margin-top: 2rem;
+	}
+
+	p {
+		margin-bottom: 1rem;
+		color: var(--color-on-surface);
+	}
+</style>

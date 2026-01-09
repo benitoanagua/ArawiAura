@@ -1,232 +1,177 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import type { ModalMaxWidth, ModalProps } from '$lib/types/modal.js';
+	import { onMount } from 'svelte';
+	import type { ModalProps } from '$lib/types/modal.js';
 
-	export let open: boolean = false;
-	export let title: string = '';
-	export let closable: boolean = true;
-	export let backdrop: boolean = true;
-	export let maxWidth: ModalMaxWidth = 'md';
+	let {
+		open = $bindable(false),
+		title = '',
+		closable = true,
+		backdrop = true,
+		maxWidth = 'md',
+		children,
+		class: className
+	}: ModalProps = $props();
 
-	let modalRef: HTMLElement | null = null;
-	let show = false;
+	let dialogRef = $state<HTMLDialogElement | null>(null);
 
-	// Prevent scrolling when modal is open
-	let originalOverflow: string;
-
-	onMount(() => {
+	$effect(() => {
 		if (open) {
-			showModal();
+			dialogRef?.showModal();
+			document.body.style.overflow = 'hidden';
+		} else {
+			dialogRef?.close();
+			document.body.style.overflow = '';
 		}
 	});
 
-	onDestroy(() => {
-		if (show) {
-			document.body.style.overflow = originalOverflow;
-		}
-	});
-
-	$: if (open && !show) {
-		showModal();
-	} else if (!open && show) {
-		closeModal();
+	function handleClose() {
+		open = false;
 	}
 
-	function showModal() {
-		show = true;
-		originalOverflow = document.body.style.overflow;
-		document.body.style.overflow = 'hidden';
-	}
-
-	function closeModal() {
-		show = false;
-		document.body.style.overflow = originalOverflow;
-
-		// Trigger close event
-		dispatchEvent(new CustomEvent('close', { bubbles: true }));
-	}
-
-	function handleBackdropClick(e: Event) {
-		if (backdrop && e.target === e.currentTarget && closable) {
-			closeModal();
+	function handleBackdropClick(e: MouseEvent) {
+		if (e.target === dialogRef && backdrop && closable) {
+			handleClose();
 		}
 	}
 
-	function handleEscapeKey(e: KeyboardEvent) {
-		if (e.key === 'Escape' && closable) {
-			closeModal();
-		}
-	}
-
-	function handleOutsideClick(e: MouseEvent) {
-		if (closable && modalRef && !modalRef.contains(e.target as Node)) {
-			closeModal();
-		}
-	}
-
-	// Add keyboard event listener
 	onMount(() => {
-		window.addEventListener('keydown', handleEscapeKey);
-		return () => window.removeEventListener('keydown', handleEscapeKey);
+		return () => {
+			document.body.style.overflow = '';
+		};
 	});
 </script>
 
-{#if show}
-	<div
-		class="modal-backdrop {backdrop ? '' : 'modal-backdrop--transparent'}"
-		on:click={handleBackdropClick}
-		role="button"
-		tabindex="-1"
-		on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && handleBackdropClick(e)}
-	>
-		<div
-			class="modal-content modal-content--{maxWidth}"
-			bind:this={modalRef}
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="modal-title"
-			tabindex="-1"
-		>
-			{#if title}
-				<div class="modal-header">
-					<h2 id="modal-title" class="modal-title">{title}</h2>
-					{#if closable}
-						<button class="modal-close-button" aria-label="Close modal" on:click={closeModal}>
-							×
-						</button>
-					{/if}
-				</div>
-			{/if}
-
-			<div class="modal-body">
-				<slot />
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<dialog
+	bind:this={dialogRef}
+	class="ax-modal ax-modal--{maxWidth} {className || ''}"
+	onclose={handleClose}
+	onclick={handleBackdropClick}
+>
+	<div class="ax-modal__inner">
+		{#if title || closable}
+			<div class="ax-modal__header">
+				{#if title}
+					<h2 class="ax-modal__title">{title}</h2>
+				{/if}
+				{#if closable}
+					<button class="ax-modal__close" onclick={handleClose} aria-label="Close modal">
+						<svg viewBox="0 0 24 24" width="24" height="24">
+							<path
+								fill="currentColor"
+								d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+							/>
+						</svg>
+					</button>
+				{/if}
 			</div>
+		{/if}
 
-			{#if closable && !title}
-				<button
-					class="modal-close-button modal-close-button--floating"
-					aria-label="Close modal"
-					on:click={closeModal}
-				>
-					×
-				</button>
-			{/if}
+		<div class="ax-modal__body">
+			{@render children?.()}
 		</div>
 	</div>
-{/if}
+</dialog>
 
 <style>
-	.modal-backdrop {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(var(--color-scrim), 0.6);
-		backdrop-filter: blur(2px);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		z-index: 1000;
-		animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	.ax-modal {
+		padding: 0;
+		border: none;
+		background: none;
+		max-width: none;
+		max-height: none;
+		outline: none;
+		color: var(--color-on-surface);
 	}
 
-	.modal-backdrop--transparent {
-		background: transparent;
-		backdrop-filter: none;
+	.ax-modal::backdrop {
+		background: rgba(var(--color-scrim), 0.5);
+		backdrop-filter: blur(4px);
+		animation: ax-fade-in var(--duration-base) var(--ease-out);
 	}
 
-	.modal-content {
+	.ax-modal__inner {
 		background: var(--color-surface);
-		border: var(--line-thin) solid var(--color-outline);
+		border: var(--line-thin) solid var(--color-outline-variant);
 		border-radius: var(--space-1);
-		max-height: 90vh;
-		overflow: hidden;
 		display: flex;
 		flex-direction: column;
-		animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-		outline: none;
+		overflow: hidden;
+		box-shadow: var(--shadow-4);
+		margin: auto;
+		animation: ax-modal-in var(--duration-base) var(--ease-out);
 		position: relative;
 	}
 
-	.modal-content--sm {
-		width: 20rem;
+	/* Sizes */
+	.ax-modal--sm .ax-modal__inner {
+		width: 320px;
 	}
-	.modal-content--md {
-		width: 32rem;
+	.ax-modal--md .ax-modal__inner {
+		width: 560px;
 	}
-	.modal-content--lg {
-		width: 44rem;
+	.ax-modal--lg .ax-modal__inner {
+		width: 800px;
 	}
-	.modal-content--xl {
-		width: 60rem;
+	.ax-modal--xl .ax-modal__inner {
+		width: 1140px;
 	}
 
-	.modal-header {
+	.ax-modal__header {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
+		justify-content: space-between;
 		padding: var(--space-4) var(--space-6);
-		border-bottom: var(--line-thin) solid var(--color-outline-variant);
 		background-color: var(--color-surface-container-low);
+		border-bottom: var(--line-thin) solid var(--color-outline-variant);
 	}
 
-	.modal-title {
+	.ax-modal__title {
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
 		font-weight: 700;
-		margin: 0;
-		color: var(--color-primary);
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
+		color: var(--color-primary);
+		margin: 0;
 	}
 
-	.modal-close-button {
+	.ax-modal__close {
 		background: none;
-		border: 1px solid var(--color-outline-variant);
-		font-size: var(--text-2xl);
+		border: var(--line-thin) solid var(--color-outline-variant);
 		color: var(--color-on-surface-variant);
 		cursor: pointer;
-		width: 2.5rem;
-		height: 2.5rem;
+		width: 32px;
+		height: 32px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		transition: all var(--duration-fast) ease-out;
 		padding: 0;
+		transition: all var(--duration-fast) var(--ease-out);
+		/* Zero Displacement: Focus ring as inset shadow */
+		box-shadow: inset 0 0 0 0 var(--color-primary);
 	}
 
-	.modal-close-button:hover {
-		background: var(--color-error-container);
+	.ax-modal__close:hover {
+		background-color: var(--color-error-container);
 		color: var(--color-on-error-container);
 		border-color: var(--color-error);
 	}
 
-	.modal-close-button:focus-visible {
-		box-shadow:
-			0 0 0 2px var(--color-surface),
-			0 0 0 4px var(--color-primary);
-		outline: none;
+	.ax-modal__close:focus-visible {
+		box-shadow: inset 0 0 0 2px var(--color-primary);
 	}
 
-	.modal-close-button--floating {
-		position: absolute;
-		top: var(--space-4);
-		right: var(--space-4);
-		background: var(--color-surface);
-		z-index: 20;
-	}
-
-	.modal-body {
+	.ax-modal__body {
 		padding: var(--space-6);
 		overflow-y: auto;
-		flex: 1;
+		max-height: 80vh;
 		font-family: var(--font-sans);
 		line-height: var(--leading-relaxed);
-		color: var(--color-on-surface);
 	}
 
-	@keyframes fadeIn {
+	@keyframes ax-fade-in {
 		from {
 			opacity: 0;
 		}
@@ -235,14 +180,14 @@
 		}
 	}
 
-	@keyframes slideIn {
+	@keyframes ax-modal-in {
 		from {
-			transform: scale(0.98) translateY(10px);
 			opacity: 0;
+			transform: scale(0.95) translateY(10px);
 		}
 		to {
+			opacity: 1;
 			transform: scale(1) translateY(0);
-			opacity: 1;
 		}
 	}
 </style>

@@ -1,4 +1,4 @@
-// Tipos para el componente Pressable
+import type { Snippet } from 'svelte';
 
 export type PressableVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
 export type PressableSize = 'sm' | 'md' | 'lg';
@@ -12,5 +12,7 @@ export interface PressableProps {
     type?: PressableType;
     fullWidth?: boolean;
     icon?: boolean;
-    children?: any;
+    children?: Snippet;
+    onclick?: (e: MouseEvent) => void;
+    class?: string;
 }
