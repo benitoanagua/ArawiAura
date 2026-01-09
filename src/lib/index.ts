@@ -12,6 +12,7 @@ export { default as GrilleItem } from './components/GrilleItem.svelte';
 export { default as TopBar } from './components/TopBar.svelte';
 export { default as Logo } from './components/Logo.svelte';
 export { default as Modal } from './components/Modal.svelte';
+export { default as Offcanvas } from './components/Offcanvas.svelte';
 export { default as Overlay } from './components/Overlay.svelte';
 
 export { default as Tab } from './components/Tab.svelte';
@@ -29,6 +30,7 @@ export type * from './types/grille';
 export type * from './types/top-bar';
 export type * from './types/logo';
 export type * from './types/modal';
+export type * from './types/offcanvas';
 export type * from './types/overlay';
 export type * from './types/page-meta';
 export type * from './types/pressable';

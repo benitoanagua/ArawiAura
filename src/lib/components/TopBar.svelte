@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { TopBarProps } from '$lib/types/top-bar.js';
 	import Logo from './Logo.svelte';
+	import Offcanvas from './Offcanvas.svelte';
 	import { slide } from 'svelte/transition';
 
 	let {
@@ -71,23 +72,30 @@
 		{/if}
 	</div>
 
-	<!-- Mobile Nav Dropdown -->
-	{#if showNav && menuOpen}
-		<nav class="ax-top-bar__nav ax-top-bar__nav--mobile" transition:slide={{ duration: 200 }}>
-			<ul class="ax-top-bar__list">
-				{#each navItems as item}
-					<li class="ax-top-bar__item">
-						<a
-							href={item.href}
-							class="ax-top-bar__link {currentPath === item.href ? 'ax-top-bar__link--active' : ''}"
-							onclick={() => (menuOpen = false)}
-						>
-							{item.label}
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</nav>
+	<!-- Mobile Menu (Offcanvas) -->
+	{#if showNav}
+		<Offcanvas bind:open={menuOpen} position="right">
+			<nav class="ax-top-bar__mobile-nav">
+				<div class="ax-top-bar__mobile-header">
+					<span class="ax-top-bar__mobile-title">Menu</span>
+				</div>
+				<ul class="ax-top-bar__mobile-list">
+					{#each navItems as item}
+						<li class="ax-top-bar__mobile-item">
+							<a
+								href={item.href}
+								class="ax-top-bar__mobile-link {currentPath === item.href
+									? 'ax-top-bar__mobile-link--active'
+									: ''}"
+								onclick={() => (menuOpen = false)}
+							>
+								{item.label}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</nav>
+		</Offcanvas>
 	{/if}
 </header>
 
@@ -158,11 +166,6 @@
 		font-weight: 700;
 	}
 
-	.ax-top-bar__nav--mobile .ax-top-bar__link--active {
-		box-shadow: inset 2px 0 0 0 var(--color-primary);
-		padding-left: var(--space-3);
-	}
-
 	.ax-top-bar__link:focus-visible {
 		box-shadow: inset 0 0 0 1px var(--color-primary);
 	}
@@ -180,6 +183,7 @@
 		height: 40px;
 		padding: 0;
 		color: var(--color-on-surface);
+		z-index: 201; /* Ensure above offcanvas if needed, though offcanvas has close button inside */
 	}
 
 	.ax-top-bar__toggle:hover {
@@ -224,17 +228,47 @@
 		transform: rotate(-45deg);
 	}
 
-	/* Mobile Menu */
-	.ax-top-bar__nav--mobile {
-		background: var(--color-surface);
+	/* Mobile Menu Styles */
+	.ax-top-bar__mobile-header {
+		margin-bottom: var(--space-6);
+		padding-bottom: var(--space-4);
 		border-bottom: var(--line-thin) solid var(--color-outline-variant);
-		padding: var(--space-4);
-		overflow: hidden;
 	}
 
-	.ax-top-bar__nav--mobile .ax-top-bar__list {
+	.ax-top-bar__mobile-title {
+		font-family: var(--font-sans);
+		font-size: var(--text-xl);
+		font-weight: 700;
+		color: var(--color-on-surface);
+	}
+
+	.ax-top-bar__mobile-list {
+		display: flex;
 		flex-direction: column;
-		gap: var(--space-3);
+		gap: var(--space-2);
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.ax-top-bar__mobile-link {
+		display: block;
+		padding: var(--space-3) var(--space-4);
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--color-on-surface-variant);
+		text-decoration: none;
+		border-left: 2px solid transparent;
+		transition: all var(--duration-fast) ease-out;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.ax-top-bar__mobile-link:hover,
+	.ax-top-bar__mobile-link--active {
+		color: var(--color-primary);
+		background-color: var(--color-surface-container-low);
+		border-left-color: var(--color-primary);
 	}
 
 	@media (min-width: 768px) {
@@ -242,8 +276,7 @@
 			display: block;
 		}
 
-		.ax-top-bar__toggle,
-		.ax-top-bar__nav--mobile {
+		.ax-top-bar__toggle {
 			display: none;
 		}
 	}
