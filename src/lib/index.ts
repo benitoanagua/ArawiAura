@@ -17,7 +17,7 @@ export { default as Overlay } from './components/Overlay.svelte';
 export { default as Tab } from './components/Tab.svelte';
 export { default as TabPanel } from './components/TabPanel.svelte';
 export { default as Tabs } from './components/Tabs.svelte';
-export { default as ThemeToggle } from './components/ThemeToggle.svelte';
+export { default as ThemeSwitcher } from './components/ThemeSwitcher.svelte';
 
 // Types
 export type * from './types/accordion';
@@ -29,7 +29,7 @@ export type * from './types/logo';
 export type * from './types/modal';
 export type * from './types/overlay';
 export type * from './types/tabs';
-export type * from './types/theme-toggle';
+export type * from './types/theme-switcher';
 
 // Utilities
 export * from './utils/title-renderer';

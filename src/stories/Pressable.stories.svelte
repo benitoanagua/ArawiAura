@@ -5,7 +5,6 @@
 
 	const { Story } = defineMeta({
 		title: 'Components/Pressable',
-		component: Pressable,
 		tags: ['autodocs']
 	});
 
