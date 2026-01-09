@@ -1,90 +1,99 @@
 <script lang="ts">
-	import type { LogoTextSize, LogoProps } from '$lib/types/logo.js';
+	import type { LogoProps } from '$lib/types/logo.js';
 
-	export let src: string = '';
-	export let alt: string = 'Logo';
-	export let href: string = '/';
-	export let width: number = 150;
-	export let height: number = 50;
-	export let showText: boolean = true;
-	export let text: string = 'Logo';
-	export let textSize: LogoTextSize = 'md';
+	let {
+		src = '',
+		alt = 'Logo',
+		href = '/',
+		width = 150,
+		height = 50,
+		showText = true,
+		text = 'Logo',
+		textSize = 'md',
+		class: className
+	}: LogoProps = $props();
 
-	let textClass = `logo-text--${textSize}`;
+	const textClass = $derived(`ax-logo__text--${textSize}`);
 </script>
 
 {#if href}
-	<a {href} class="logo-link" aria-label={alt}>
+	<a {href} class="ax-logo-link {className || ''}" aria-label={alt}>
 		{#if src}
-			<img {src} {alt} class="logo-image" style={`width: ${width}px; height: ${height}px;`} />
+			<img {src} {alt} class="ax-logo__image" style:width="{width}px" style:height="{height}px" />
 		{/if}
 
 		{#if showText && text}
-			<span class={`logo-text ${textClass}`}>{text}</span>
+			<span class="ax-logo__text {textClass}">{text}</span>
 		{/if}
 	</a>
 {:else}
-	<div class="logo">
+	<div class="ax-logo {className || ''}">
 		{#if src}
-			<img {src} {alt} class="logo-image" style={`width: ${width}px; height: ${height}px;`} />
+			<img {src} {alt} class="ax-logo__image" style:width="{width}px" style:height="{height}px" />
 		{/if}
 
 		{#if showText && text}
-			<span class={`logo-text ${textClass}`}>{text}</span>
+			<span class="ax-logo__text {textClass}">{text}</span>
 		{/if}
 	</div>
 {/if}
 
 <style>
-	.logo-link {
-		display: flex;
+	.ax-logo-link {
+		display: inline-flex;
 		align-items: center;
 		gap: var(--space-3);
 		text-decoration: none;
 		padding: var(--space-1);
 		border: var(--line-thin) solid transparent;
+		border-radius: var(--space-1);
 		transition: all var(--duration-fast) cubic-bezier(0.4, 0, 0.2, 1);
 		outline: none;
+		/* Zero Displacement: Focus ring as inset shadow */
+		box-shadow: inset 0 0 0 0 var(--color-primary);
 	}
 
-	.logo-link:focus-visible {
-		box-shadow:
-			0 0 0 2px var(--color-surface),
-			0 0 0 4px var(--color-primary);
+	.ax-logo-link:hover {
+		background-color: var(--color-surface-container-low);
 	}
 
-	.logo-link:active {
+	.ax-logo-link:focus-visible {
+		box-shadow: inset 0 0 0 2px var(--color-primary);
+	}
+
+	.ax-logo-link:active {
 		transform: scale(0.98);
 	}
 
-	.logo {
-		display: flex;
+	.ax-logo {
+		display: inline-flex;
 		align-items: center;
 		gap: var(--space-3);
+		padding: var(--space-1);
 	}
 
-	.logo-image {
+	.ax-logo__image {
 		max-width: 100%;
-		height: auto;
 		object-fit: contain;
 		filter: drop-shadow(0 0 1px var(--color-outline));
 	}
 
-	.logo-text {
+	.ax-logo__text {
 		font-family: var(--font-serif);
 		font-weight: 700;
 		color: var(--color-primary);
 		margin: 0;
 		letter-spacing: -0.02em;
+		line-height: normal;
 	}
 
-	.logo-text--sm {
+	.ax-logo__text--sm {
 		font-size: var(--text-lg);
 	}
-	.logo-text--md {
+	.ax-logo__text--md {
 		font-size: var(--text-2xl);
 	}
-	.logo-text--lg {
+	.ax-logo__text--lg {
 		font-size: var(--text-4xl);
 	}
 </style>

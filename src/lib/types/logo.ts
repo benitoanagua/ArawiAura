@@ -1,5 +1,3 @@
-// Tipos para el componente Logo
-
 export type LogoTextSize = 'sm' | 'md' | 'lg';
 
 export interface LogoProps {
@@ -11,4 +9,5 @@ export interface LogoProps {
   showText?: boolean;
   text?: string;
   textSize?: LogoTextSize;
+  class?: string;
 }
