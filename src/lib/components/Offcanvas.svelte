@@ -8,6 +8,7 @@
 		position = 'left',
 		children,
 		class: className,
+		showCloseButton = true,
 		onclose
 	}: OffcanvasProps = $props();
 
@@ -45,9 +46,11 @@
 				opacity: 1
 			}}
 		>
-			<button class="ax-offcanvas__close" onclick={handleClose} aria-label="Close offcanvas">
-				<span class="ax-offcanvas__close-icon"></span>
-			</button>
+			{#if showCloseButton}
+				<button class="ax-offcanvas__close" onclick={handleClose} aria-label="Close offcanvas">
+					<span class="ax-offcanvas__close-icon"></span>
+				</button>
+			{/if}
 
 			<div class="ax-offcanvas__content">
 				{@render children?.()}

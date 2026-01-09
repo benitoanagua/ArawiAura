@@ -2,7 +2,6 @@
 	import type { TopBarProps } from '$lib/types/top-bar.js';
 	import Logo from './Logo.svelte';
 	import Offcanvas from './Offcanvas.svelte';
-	import { slide } from 'svelte/transition';
 
 	let {
 		siteTitle = '',
@@ -74,7 +73,7 @@
 
 	<!-- Mobile Menu (Offcanvas) -->
 	{#if showNav}
-		<Offcanvas bind:open={menuOpen} position="right">
+		<Offcanvas bind:open={menuOpen} position="right" showCloseButton={false}>
 			<nav class="ax-top-bar__mobile-nav">
 				<div class="ax-top-bar__mobile-header">
 					<span class="ax-top-bar__mobile-title">Menu</span>

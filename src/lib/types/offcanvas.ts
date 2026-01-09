@@ -7,5 +7,6 @@ export interface OffcanvasProps {
     position?: OffcanvasPosition;
     children?: Snippet;
     class?: string;
+    showCloseButton?: boolean;
     onclose?: () => void;
 }

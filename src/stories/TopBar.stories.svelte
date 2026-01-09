@@ -5,6 +5,7 @@
 
 	const { Story } = defineMeta({
 		title: 'Components/TopBar',
+		component: TopBar,
 		tags: ['autodocs'],
 		argTypes: {
 			siteTitle: { control: 'text' },

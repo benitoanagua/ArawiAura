@@ -45,7 +45,6 @@
 		display: flex;
 		gap: 1rem;
 		padding: 2rem;
-		min-height: 300px;
 	}
 	nav {
 		display: flex;
