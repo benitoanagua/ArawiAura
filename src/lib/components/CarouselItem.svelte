@@ -1,24 +1,14 @@
 <script lang="ts">
-	import type { CarouselItemProps } from '$lib/types/carousel.js';
-	
-	// Receive props including the registerItem function from parent
-	let { 
-		index, 
-		registerItem,
-		children 
-	}: CarouselItemProps & { 
-		registerItem: (item: any) => number,
-		children?: any 
-	} = $props();
-	
-	// Register this item with the parent carousel using $effect
-	let itemIndex = $state(0);
-	
+	let { index, registerItem, children } = $props<{
+		index: number;
+		registerItem: (item: any) => number;
+		children?: import('svelte').Snippet;
+	}>();
+
+	let itemIndex = $state<number | null>(null);
+
 	$effect(() => {
-		const result = registerItem({ index });
-		if (result !== undefined) {
-			itemIndex = result;
-		}
+		itemIndex = registerItem({ index });
 	});
 </script>
 
@@ -30,5 +20,10 @@
 	.carousel-item {
 		flex: 0 0 100%;
 		width: 100%;
+		min-height: 300px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--color-surface);
 	}
 </style>

@@ -1,14 +1,15 @@
 import type { Preview } from '@storybook/sveltekit'
 
-// Import global CSS with CSS custom properties
-import '../src/lib/global.css'
+// Import global CSS and theme variables
+import '../static/css/material-theme.css'
+import '../static/app.css'
 
 const preview: Preview = {
   parameters: {
     controls: {
       matchers: {
-       color: /(background|color)$/i,
-       date: /Date$/i,
+        color: /(background|color)$/i,
+        date: /Date$/i,
       },
     },
   },

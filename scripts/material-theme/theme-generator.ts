@@ -61,9 +61,13 @@ function extractColors(scheme: any) {
     return colors;
 }
 
+function camelToKebab(str: string): string {
+    return str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+}
+
 export function generateThemeFiles(root: string, outputDir: string): void {
     try {
-        console.log("🎨 XauxaXcan - Generating Material Design theme...");
+        console.log("🎨 Arawi Aura - Generating Material Design theme...");
         console.log(`   🎨 Base color: ${SEED_COLOR}`);
         console.log(`   🎨 Scheme: ${SELECTED_SCHEME}`);
 
@@ -88,12 +92,12 @@ export function generateThemeFiles(root: string, outputDir: string): void {
         const lightColors = extractColors(lightScheme);
         const darkColors = extractColors(darkScheme);
 
-        const cssContent = `@theme {
-${THEME_CSS_VARS.map((k) => `  --color-${k}: ${lightColors[k]};`).join("\n")}
+        const cssContent = `:root {
+${THEME_CSS_VARS.map((k) => `  --color-${camelToKebab(k)}: ${lightColors[k]};`).join("\n")}
 }
  
 [data-theme="dark"] {
-${THEME_CSS_VARS.map((k) => `  --color-${k}: ${darkColors[k]};`).join("\n")}
+${THEME_CSS_VARS.map((k) => `  --color-${camelToKebab(k)}: ${darkColors[k]};`).join("\n")}
 }
 `;
 

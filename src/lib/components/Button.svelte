@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { ButtonVariant, ButtonSize, ButtonType, ButtonProps } from '$lib/types/button.js';
-	
+
 	// Use Svelte 5 $props() syntax
-	let { 
+	let {
 		variant = 'primary',
-		size = 'md', 
+		size = 'md',
 		disabled = false,
 		href = '',
 		type = 'button',
@@ -12,10 +12,10 @@
 		icon = false,
 		children
 	}: ButtonProps & { children?: any } = $props();
-	
+
 	// Event handlers
 	let _onclick: (e: Event) => void = () => {};
-	
+
 	function clickHandler(e: Event) {
 		if (!disabled && _onclick) {
 			_onclick(e);
@@ -24,9 +24,11 @@
 </script>
 
 {#if href}
-	<a 
-		href={href}
-		class="button button--{variant} button--{size} {fullWidth ? 'button--full-width' : ''} {icon ? 'button--icon' : ''} {disabled ? 'button--disabled' : ''}"
+	<a
+		{href}
+		class="button button--{variant} button--{size} {fullWidth ? 'button--full-width' : ''} {icon
+			? 'button--icon'
+			: ''} {disabled ? 'button--disabled' : ''}"
 		role="button"
 		aria-disabled={disabled}
 	>
@@ -34,9 +36,11 @@
 	</a>
 {:else}
 	<button
-		type={type}
-		class="button button--{variant} button--{size} {fullWidth ? 'button--full-width' : ''} {icon ? 'button--icon' : ''} {disabled ? 'button--disabled' : ''}"
-		disabled={disabled}
+		{type}
+		class="button button--{variant} button--{size} {fullWidth ? 'button--full-width' : ''} {icon
+			? 'button--icon'
+			: ''} {disabled ? 'button--disabled' : ''}"
+		{disabled}
 		onclick={clickHandler}
 	>
 		{@render children?.()}
@@ -55,91 +59,103 @@
 		font-weight: 500;
 		text-decoration: none;
 		cursor: pointer;
-		transition: all var(--duration-fast) ease-out;
+		transition: all var(--duration-fast) cubic-bezier(0.4, 0, 0.2, 1);
 		box-sizing: border-box;
+		position: relative;
+		outline: none;
 	}
-	
-	.button:focus {
-		outline: 2px solid var(--accent-primary);
-		outline-offset: 2px;
+
+	/* Architectural Outline: Focus Ring */
+	.button:focus-visible {
+		box-shadow:
+			0 0 0 2px var(--color-surface),
+			0 0 0 4px var(--color-primary);
+		z-index: 10;
 	}
-	
+
+	/* Micro-física: Industrial Switch */
+	.button:active:not(.button--disabled) {
+		transform: scale(0.98);
+	}
+
 	/* Size variants */
 	.button--sm {
 		padding: var(--space-1) var(--space-3);
 		font-size: var(--text-sm);
 	}
-	
+
 	.button--md {
 		padding: var(--space-2) var(--space-4);
 		font-size: var(--text-base);
 	}
-	
+
 	.button--lg {
 		padding: var(--space-3) var(--space-6);
 		font-size: var(--text-lg);
 	}
-	
+
 	/* Full width */
 	.button--full-width {
 		width: 100%;
 	}
-	
+
 	/* Icon only */
 	.button--icon {
 		padding: var(--space-2);
 	}
-	
+
 	/* Variant styles */
 	.button--primary {
-		background: var(--accent-primary);
-		color: white;
-		border-color: var(--accent-primary);
+		background: var(--color-primary);
+		color: var(--color-on-primary);
+		border: var(--line-base) solid var(--color-primary);
 	}
-	
+
 	.button--primary:hover:not(.button--disabled) {
-		background: var(--accent-primary-hover);
-		border-color: var(--accent-primary-hover);
-		transform: translateY(-1px);
+		background: var(--color-primary-container);
+		color: var(--color-on-primary-container);
+		border-color: var(--color-primary-container);
 	}
-	
+
 	.button--secondary {
-		background: var(--text-secondary);
-		color: white;
-		border-color: var(--text-secondary);
+		background: var(--color-secondary);
+		color: var(--color-on-secondary);
+		border: var(--line-thin) solid var(--color-secondary);
 	}
-	
+
 	.button--secondary:hover:not(.button--disabled) {
-		background: var(--text-primary);
-		border-color: var(--text-primary);
+		background: var(--color-secondary-container);
+		color: var(--color-on-secondary-container);
+		border-color: var(--color-secondary-container);
 	}
-	
+
 	.button--outline {
 		background: transparent;
-		color: var(--text-primary);
-		border-color: var(--border-medium);
+		color: var(--color-on-surface);
+		border: var(--line-thin) solid var(--color-outline);
 	}
-	
+
 	.button--outline:hover:not(.button--disabled) {
-		border-color: var(--text-primary);
-		background: var(--bg-cool);
+		border: var(--line-base) solid var(--color-primary);
+		color: var(--color-primary);
+		background: var(--color-surface-container-low);
 	}
-	
+
 	.button--ghost {
 		background: transparent;
-		color: var(--text-primary);
-		border-color: transparent;
+		color: var(--color-on-surface);
+		border: var(--line-thin) solid transparent;
 	}
-	
+
 	.button--ghost:hover:not(.button--disabled) {
-		background: var(--bg-cool);
-		color: var(--accent-primary);
+		background: var(--color-surface-container-low);
+		border-color: var(--color-outline-variant);
 	}
-	
+
 	/* Disabled state */
 	.button--disabled {
-		opacity: 0.6;
+		opacity: 0.5;
 		cursor: not-allowed;
-		transform: none !important;
+		filter: grayscale(1);
 	}
 </style>
