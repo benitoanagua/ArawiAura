@@ -1,14 +1,18 @@
-// Tipos para el componente Carousel
-
-export interface CarouselItemProps {
-  index: number;
-  registerItem?: (item: any) => number | undefined;
-}
+import type { Snippet } from 'svelte';
 
 export interface CarouselProps {
   autoPlay?: boolean;
   interval?: number;
   showArrows?: boolean;
   showIndicators?: boolean;
-  children?: any;
+  children?: Snippet;
+}
+
+export interface CarouselItemProps {
+  children?: Snippet;
+}
+
+export interface CarouselContext {
+  registerItem: (item: any) => number;
+  currentIndex: number;
 }

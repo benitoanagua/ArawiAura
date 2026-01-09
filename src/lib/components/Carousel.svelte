@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { setContext, onDestroy } from 'svelte';
 	import Icon from '@iconify/svelte';
+	import type { CarouselProps, CarouselContext } from '$lib/types/carousel.js';
 
 	let {
 		autoPlay = false,
@@ -7,17 +9,11 @@
 		showArrows = true,
 		showIndicators = true,
 		children
-	} = $props<{
-		autoPlay?: boolean;
-		interval?: number;
-		showArrows?: boolean;
-		showIndicators?: boolean;
-		children?: import('svelte').Snippet<[any]>;
-	}>();
+	}: CarouselProps = $props();
 
 	let currentIndex = $state(0);
 	let items = $state<any[]>([]);
-	let autoPlayInterval: any;
+	let timer: ReturnType<typeof setInterval> | undefined;
 
 	function registerItem(item: any) {
 		const index = items.length;
@@ -27,6 +23,7 @@
 
 	function goToSlide(index: number) {
 		currentIndex = index;
+		resetTimer();
 	}
 
 	function nextSlide() {
@@ -39,76 +36,108 @@
 		currentIndex = (currentIndex - 1 + items.length) % items.length;
 	}
 
-	$effect(() => {
-		if (autoPlay && items.length > 0) {
-			clearInterval(autoPlayInterval);
-			autoPlayInterval = setInterval(nextSlide, interval);
+	function resetTimer() {
+		if (autoPlay) {
+			clearInterval(timer);
+			timer = setInterval(nextSlide, interval);
 		}
+	}
 
-		return () => clearInterval(autoPlayInterval);
+	// Provide context for CarouselItems
+	setContext<CarouselContext>('carousel', {
+		registerItem,
+		get currentIndex() {
+			return currentIndex;
+		}
+	});
+
+	$effect(() => {
+		if (autoPlay) {
+			resetTimer();
+		}
+		return () => clearInterval(timer);
 	});
 </script>
 
-<div class="carousel">
-	<div class="carousel-container">
-		<div class="carousel-track" style:transform={`translateX(-${currentIndex * 100}%)`}>
-			{@render children?.({ registerItem })}
+<div class="ax-carousel">
+	<div class="ax-carousel__viewport">
+		<div class="ax-carousel__track" style:transform={`translateX(-${currentIndex * 100}%)`}>
+			{@render children?.()}
 		</div>
 	</div>
 
 	{#if showArrows && items.length > 1}
 		<button
-			class="carousel-arrow carousel-arrow--prev"
-			onclick={prevSlide}
+			class="ax-carousel__arrow ax-carousel__arrow--prev"
+			onclick={() => {
+				prevSlide();
+				resetTimer();
+			}}
 			aria-label="Previous slide"
 		>
-			<Icon icon="carbon:chevron-left" width="1.5rem" />
+			<Icon icon="carbon:chevron-left" />
 		</button>
 
-		<button class="carousel-arrow carousel-arrow--next" onclick={nextSlide} aria-label="Next slide">
-			<Icon icon="carbon:chevron-right" width="1.5rem" />
+		<button
+			class="ax-carousel__arrow ax-carousel__arrow--next"
+			onclick={() => {
+				nextSlide();
+				resetTimer();
+			}}
+			aria-label="Next slide"
+		>
+			<Icon icon="carbon:chevron-right" />
 		</button>
 	{/if}
 
 	{#if showIndicators && items.length > 1}
-		<div class="carousel-indicators">
+		<nav class="ax-carousel__indicators" aria-label="Carousel navigation">
 			{#each items as _, i}
 				<button
-					class="carousel-indicator"
+					class="ax-carousel__indicator"
 					class:is-active={i === currentIndex}
 					onclick={() => goToSlide(i)}
 					aria-label={`Go to slide ${i + 1}`}
+					aria-current={i === currentIndex ? 'step' : undefined}
 				></button>
 			{/each}
-		</div>
+		</nav>
 	{/if}
 </div>
 
 <style>
-	.carousel {
+	.ax-carousel {
 		position: relative;
-		overflow: hidden;
 		width: 100%;
-		border: var(--line-thin) solid var(--color-outline-variant);
 		background-color: var(--color-surface-container-lowest);
+		/* Zero Displacement: Reserve space for border */
+		border: var(--line-base) solid var(--color-outline-variant);
+		overflow: hidden;
+		transition: border-color var(--duration-base);
 	}
 
-	.carousel-container {
+	.ax-carousel:hover {
+		border-color: var(--color-outline);
+	}
+
+	.ax-carousel__viewport {
 		overflow: hidden;
 		width: 100%;
 	}
 
-	.carousel-track {
+	.ax-carousel__track {
 		display: flex;
 		transition: transform var(--duration-base) cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
-	.carousel-arrow {
+	/* Arrows with Zero Displacement */
+	.ax-carousel__arrow {
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
 		background: var(--color-surface);
-		border: var(--line-thin) solid var(--color-outline);
+		/* Use border for structural space */
+		border: var(--line-base) solid var(--color-outline);
 		width: 3rem;
 		height: 3rem;
 		display: flex;
@@ -119,33 +148,34 @@
 		transition: all var(--duration-fast) cubic-bezier(0.4, 0, 0.2, 1);
 		color: var(--color-on-surface);
 		outline: none;
+		padding: 0;
 	}
 
-	.carousel-arrow:hover {
+	.ax-carousel__arrow:hover {
 		background: var(--color-primary-container);
 		color: var(--color-on-primary-container);
 		border-color: var(--color-primary);
 	}
 
-	.carousel-arrow:focus-visible {
+	.ax-carousel__arrow:focus-visible {
 		box-shadow:
 			0 0 0 2px var(--color-surface),
 			0 0 0 4px var(--color-primary);
 	}
 
-	.carousel-arrow:active {
+	.ax-carousel__arrow:active {
 		transform: translateY(-50%) scale(0.95);
 	}
 
-	.carousel-arrow--prev {
+	.ax-carousel__arrow--prev {
 		left: var(--space-4);
 	}
-
-	.carousel-arrow--next {
+	.ax-carousel__arrow--next {
 		right: var(--space-4);
 	}
 
-	.carousel-indicators {
+	/* Indicators with Zero Displacement */
+	.ax-carousel__indicators {
 		position: absolute;
 		bottom: var(--space-4);
 		left: 50%;
@@ -155,7 +185,7 @@
 		z-index: 10;
 	}
 
-	.carousel-indicator {
+	.ax-carousel__indicator {
 		width: var(--space-6);
 		height: var(--line-base);
 		border: none;
@@ -164,14 +194,21 @@
 		transition: all var(--duration-fast) ease-out;
 		padding: 0;
 		outline: none;
+		/* Reserve vertical space for active state to avoid displacement */
+		margin: var(--line-thin) 0;
 	}
 
-	.carousel-indicator.is-active {
+	.ax-carousel__indicator.is-active {
 		background: var(--color-primary);
 		height: var(--line-thick);
+		margin: 0; /* Compensation for increased thickness */
 	}
 
-	.carousel-indicator:focus-visible {
+	.ax-carousel__indicator:hover:not(.is-active) {
+		background: var(--color-outline);
+	}
+
+	.ax-carousel__indicator:focus-visible {
 		box-shadow:
 			0 0 0 2px var(--color-surface),
 			0 0 0 4px var(--color-primary);
