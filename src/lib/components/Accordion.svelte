@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
+	import type { AccordionProps } from '$lib/types/accordion.js';
 
-	let { multiple = false, children } = $props<{
-		multiple?: boolean;
-		children?: import('svelte').Snippet;
-	}>();
+	let { multiple = false, children }: AccordionProps = $props();
 
 	let openIndexes = $state<number[]>([]);
 

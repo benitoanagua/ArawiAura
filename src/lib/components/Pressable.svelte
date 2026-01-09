@@ -1,10 +1,5 @@
 <script lang="ts">
-	import type {
-		PressableVariant,
-		PressableSize,
-		PressableType,
-		PressableProps
-	} from '$lib/types/pressable.js';
+	import type { PressableProps } from '$lib/types/pressable.js';
 
 	// Use Svelte 5 $props() syntax
 	let {

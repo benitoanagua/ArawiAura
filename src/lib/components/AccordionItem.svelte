@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import Icon from '@iconify/svelte';
+	import type { AccordionItemProps, AccordionContext } from '$lib/types/accordion.js';
 
 	let {
 		title = '',
@@ -8,19 +9,10 @@
 		isOpen: propIsOpen,
 		toggle: propToggle,
 		children
-	} = $props<{
-		title?: string;
-		index: number;
-		isOpen?: (index: number) => boolean;
-		toggle?: (index: number) => void;
-		children?: import('svelte').Snippet;
-	}>();
+	}: AccordionItemProps = $props();
 
 	// Consume context from parent Accordion
-	const accordion = getContext<{
-		toggle: (index: number) => void;
-		isOpen: (index: number) => boolean;
-	}>('accordion');
+	const accordion = getContext<AccordionContext>('accordion');
 
 	// Use prop if provided (manual), otherwise use context (automatic)
 	const effectiveToggle = $derived(propToggle || accordion?.toggle);
