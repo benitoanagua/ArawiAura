@@ -16,11 +16,15 @@
     "db:init": "tsx scripts/init-db.ts",
     "db:seed": "tsx -e \"import { seedDevelopmentData } from './src/lib/db/seed.js'; await seedDevelopmentData();\"",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "generate:theme": "tsx src/plugins/material-theme/cli.ts",
+    "prestart": "npm run generate:theme",
+    "prebuild": "npm run generate:theme"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "surrealdb": "^1.0.0"
+    "surrealdb": "^1.0.0",
+    "@material/material-color-utilities": "^0.3.0"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
