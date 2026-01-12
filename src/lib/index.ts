@@ -20,6 +20,7 @@ export { default as Tab } from './components/Tab.svelte';
 export { default as TabPanel } from './components/TabPanel.svelte';
 export { default as Tabs } from './components/Tabs.svelte';
 export { default as ThemeSwitcher } from './components/ThemeSwitcher.svelte';
+export { default as Container } from './components/Container.svelte';
 
 // Types
 export type * from './types/accordion';
@@ -37,6 +38,7 @@ export type * from './types/page-meta';
 export type * from './types/pressable';
 export type * from './types/tabs';
 export type * from './types/theme-switcher';
+export type * from './types/container';
 
 // Utilities (deprecated - use Heading component instead)
 export { escapeHtml } from './utils/title-renderer';

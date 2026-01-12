@@ -2,6 +2,8 @@
 	import type { PageData } from './$types';
 	import Card from '$lib/components/Card.svelte';
 	import Pressable from '$lib/components/Pressable.svelte';
+	import Heading from '$lib/components/Heading.svelte';
+	import Container from '$lib/components/Container.svelte';
 
 	export let data: PageData;
 
@@ -25,7 +27,7 @@
 <!-- Separador Editorial -->
 <div class="editorial-separator"></div>
 
-<!-- Tag Header: Modo Estructura Editorial -->
+<!-- Tag Header -->
 <header class="tag-header">
 	<div class="tag-header__container">
 		<div class="tag-badge-wrapper">
@@ -34,7 +36,7 @@
 			</span>
 		</div>
 
-		<h1 class="tag-title">Artículos sobre {tag.name}</h1>
+		<Heading level={1} class="tag-title">Artículos sobre {tag.name}</Heading>
 
 		{#if tag.description}
 			<p class="tag-description">{tag.description}</p>
@@ -56,7 +58,7 @@
 
 <!-- Posts: Modo Galería -->
 <section class="posts-section">
-	<div class="container container--wide">
+	<Container size="wide" spacing="loose">
 		{#if posts.length > 0}
 			<div class="gallery-grid gallery-grid--posts">
 				{#each posts as post (post.id)}
@@ -79,7 +81,7 @@
 		{:else}
 			<div class="empty-state">
 				<div class="empty-state__content">
-					<h2 class="empty-state__title">Sin artículos</h2>
+					<Heading level={2} class="empty-state__title">Sin artículos</Heading>
 					<p class="empty-state__description">
 						Aún no hay artículos publicados sobre {tag.name}. Vuelve pronto para ver más contenido.
 					</p>
@@ -87,7 +89,7 @@
 				</div>
 			</div>
 		{/if}
-	</div>
+	</Container>
 </section>
 
 <style>

@@ -3,6 +3,8 @@
 
 	import Pressable from '$lib/components/Pressable.svelte';
 	import Card from '$lib/components/Card.svelte';
+	import Heading from '$lib/components/Heading.svelte';
+	import Container from '$lib/components/Container.svelte';
 
 	export let data: PageData;
 
@@ -49,87 +51,87 @@
 </svelte:head>
 
 <!-- Hero Visual Editorial -->
-<article class="linear-article">
-	<!-- Header minimalista -->
-	<header class="linear-article__header">
-		<div class="linear-article__meta-line"></div>
+<article>
+	<Container size="narrow" spacing="normal">
+		<!-- Header minimalista -->
+		<header class="linear-article__header">
+			<div class="linear-article__meta-line"></div>
 
-		<h1 class="linear-article__title">
-			{post.title}
-		</h1>
+			<Heading level={1} class="linear-article__title">
+				{post.title}
+			</Heading>
 
-		{#if post.excerpt}
-			<p class="linear-article__excerpt">
-				{post.excerpt}
-			</p>
-		{/if}
-
-		<!-- Metadata en monoespaciado -->
-		<div class="linear-article__metadata">
-			{#if post.published_at}
-				<time datetime={post.published_at} class="metadata-item">
-					{formattedDate}
-				</time>
-				<span class="metadata-divider">•</span>
+			{#if post.excerpt}
+				<p class="linear-article__excerpt">
+					{post.excerpt}
+				</p>
 			{/if}
-			<span class="metadata-item">
-				{post.reading_time} min
-			</span>
-			{#if post.author}
-				<span class="metadata-divider">•</span>
+
+			<!-- Metadata en monoespaciado -->
+			<div class="linear-article__metadata">
+				{#if post.published_at}
+					<time datetime={post.published_at} class="metadata-item">
+						{formattedDate}
+					</time>
+					<span class="metadata-divider">•</span>
+				{/if}
 				<span class="metadata-item">
-					{post.author.name}
+					{post.reading_time} min
 				</span>
-			{/if}
+				{#if post.author}
+					<span class="metadata-divider">•</span>
+					<span class="metadata-item">
+						{post.author.name}
+					</span>
+				{/if}
+			</div>
+		</header>
+
+		<!-- Separador estructural -->
+		<div class="linear-separator linear-separator--thick"></div>
+
+		<!-- Contenido con tipografía serif -->
+		<div class="linear-article__content">
+			{@html post.html || post.content}
 		</div>
-	</header>
 
-	<!-- Separador estructural -->
-	<div class="linear-separator linear-separator--thick"></div>
-
-	<!-- Contenido con tipografía serif -->
-	<div class="linear-article__content">
-		{@html post.html || post.content}
-	</div>
-
-	<!-- Separador final -->
-	<div class="linear-separator"></div>
+		<!-- Separador final -->
+		<div class="linear-separator"></div>
+	</Container>
 </article>
 
 <!-- Related posts section -->
 {#if relatedPosts && relatedPosts.length > 0}
 	<section class="related-posts">
-		<h2>Artículos Relacionados</h2>
-		<div class="related-posts-grid">
-			{#each relatedPosts as relatedPost}
-				<Card
-					title={relatedPost.title}
-					url={`/post/${relatedPost.slug}`}
-					excerpt={relatedPost.excerpt}
-					featureImage={relatedPost.feature_image?.url || ''}
-					authorName={relatedPost.author?.name || ''}
-					authorUrl={relatedPost.author ? `/author/${relatedPost.author.slug}` : ''}
-					tagName={relatedPost.tags && relatedPost.tags.length > 0 ? relatedPost.tags[0].name : ''}
-					tagUrl={relatedPost.tags && relatedPost.tags.length > 0
-						? `/tag/${relatedPost.tags[0].slug}`
-						: ''}
-					readingTime={`${relatedPost.reading_time || 0} min`}
-					publishedAt={relatedPost.published_at}
-					density="compact"
-					elevation={1}
-					headingLevel={4}
-				/>
-			{/each}
-		</div>
+		<Container size="base" spacing="loose">
+			<Heading level={2}>Artículos Relacionados</Heading>
+			<div class="related-posts-grid">
+				{#each relatedPosts as relatedPost}
+					<Card
+						title={relatedPost.title}
+						url={`/post/${relatedPost.slug}`}
+						excerpt={relatedPost.excerpt}
+						featureImage={relatedPost.feature_image?.url || ''}
+						authorName={relatedPost.author?.name || ''}
+						authorUrl={relatedPost.author ? `/author/${relatedPost.author.slug}` : ''}
+						tagName={relatedPost.tags && relatedPost.tags.length > 0 ? relatedPost.tags[0].name : ''}
+						tagUrl={relatedPost.tags && relatedPost.tags.length > 0
+							? `/tag/${relatedPost.tags[0].slug}`
+							: ''}
+						readingTime={`${relatedPost.reading_time || 0} min`}
+						publishedAt={relatedPost.published_at}
+						density="compact"
+						elevation={1}
+						headingLevel={4}
+					/>
+				{/each}
+			</div>
+		</Container>
 	</section>
 {/if}
 
 <style>
-	.linear-article {
-		max-width: var(--container-narrow);
-		margin: 0 auto;
-		padding: var(--space-16) var(--space-8);
-	}
+
 
 	.linear-article__header {
 		margin-bottom: var(--space-16);
@@ -141,14 +143,7 @@
 		margin-bottom: var(--space-8);
 	}
 
-	.linear-article__title {
-		font-family: var(--font-serif);
-		font-size: var(--text-3xl);
-		font-weight: 600;
-		line-height: var(--leading-tight);
-		margin-bottom: var(--space-6);
-		color: var(--text-primary);
-	}
+
 
 	.linear-article__excerpt {
 		font-family: var(--font-sans);
@@ -192,13 +187,7 @@
 		border-top: var(--line-thin) solid var(--border-light);
 	}
 
-	.related-posts h2 {
-		font-family: var(--font-sans);
-		font-size: var(--text-2xl);
-		font-weight: 600;
-		margin-bottom: var(--space-8);
-		color: var(--text-primary);
-	}
+
 
 	.related-posts-grid {
 		display: grid;

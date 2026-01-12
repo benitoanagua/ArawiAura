@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import Pressable from '$lib/components/Pressable.svelte';
+	import Heading from '$lib/components/Heading.svelte';
 	
 	let dbStatus: 'checking' | 'connected' | 'disconnected' | 'error' = 'checking';
 	let isInitializing = false;
@@ -51,15 +53,15 @@
 
 <div class="admin-container">
 	<header class="admin-header">
-		<h1>Administración - Arawi Aura</h1>
+		<Heading level={1}>Administración - Arawi Aura</Heading>
 		<nav>
-			<a href="/">← Volver al blog</a>
+			<Pressable href="/" variant="ghost">← Volver al blog</Pressable>
 		</nav>
 	</header>
 
 	<main class="admin-main">
 		<section class="db-section">
-			<h2>Estado de la Base de Datos</h2>
+			<Heading level={2}>Estado de la Base de Datos</Heading>
 			
 			<div class="status-card">
 				<div class="status-indicator">
@@ -75,22 +77,22 @@
 				</div>
 				
 				<div class="actions">
-					<button 
-						on:click={checkDatabaseStatus}
+					<Pressable 
+						onclick={checkDatabaseStatus}
+						variant="outline"
 						disabled={dbStatus === 'checking'}
-						class="btn-secondary"
 					>
 						Verificar Conexión
-					</button>
+					</Pressable>
 					
 					{#if dbStatus === 'disconnected' || dbStatus === 'error'}
-						<button 
-							on:click={initializeDatabase}
+						<Pressable 
+							onclick={initializeDatabase}
 							disabled={isInitializing}
-							class="btn-primary"
+							variant="primary"
 						>
 							{isInitializing ? 'Inicializando...' : 'Inicializar Base de Datos'}
-						</button>
+						</Pressable>
 					{/if}
 				</div>
 				
@@ -104,25 +106,25 @@
 
 		{#if dbStatus === 'connected'}
 			<section class="tools-section">
-				<h2>Herramientas</h2>
+				<Heading level={2}>Herramientas</Heading>
 				
 				<div class="tools-grid">
 					<div class="tool-card">
-						<h3>Posts</h3>
+						<Heading level={3}>Posts</Heading>
 						<p>Gestionar artículos del blog</p>
-						<button class="btn-secondary" disabled>Próximamente</button>
+						<Pressable variant="outline" disabled>Próximamente</Pressable>
 					</div>
 					
 					<div class="tool-card">
-						<h3>Tags</h3>
+						<Heading level={3}>Tags</Heading>
 						<p>Administrar etiquetas</p>
-						<button class="btn-secondary" disabled>Próximamente</button>
+						<Pressable variant="outline" disabled>Próximamente</Pressable>
 					</div>
 					
 					<div class="tool-card">
-						<h3>Configuración</h3>
+						<Heading level={3}>Configuración</Heading>
 						<p>Ajustes del sitio</p>
-						<button class="btn-secondary" disabled>Próximamente</button>
+						<Pressable variant="outline" disabled>Próximamente</Pressable>
 					</div>
 				</div>
 			</section>
@@ -145,21 +147,7 @@
 		align-items: center;
 	}
 
-	.admin-header h1 {
-		margin: 0;
-		color: #1a202c;
-		font-size: 1.5rem;
-	}
 
-	.admin-header nav a {
-		color: #3182ce;
-		text-decoration: none;
-		font-size: 0.875rem;
-	}
-
-	.admin-header nav a:hover {
-		text-decoration: underline;
-	}
 
 	.admin-main {
 		max-width: 1200px;
@@ -171,10 +159,7 @@
 		margin-bottom: 3rem;
 	}
 
-	.db-section h2 {
-		margin-bottom: 1rem;
-		color: #2d3748;
-	}
+
 
 	.status-card {
 		background: white;
@@ -216,40 +201,7 @@
 		margin-bottom: 1rem;
 	}
 
-	.btn-primary,
-	.btn-secondary {
-		padding: 0.5rem 1rem;
-		border-radius: 0.25rem;
-		border: none;
-		font-weight: 500;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
 
-	.btn-primary {
-		background: #3182ce;
-		color: white;
-	}
-
-	.btn-primary:hover:not(:disabled) {
-		background: #2c5282;
-	}
-
-	.btn-secondary {
-		background: #edf2f7;
-		color: #4a5568;
-		border: 1px solid #e2e8f0;
-	}
-
-	.btn-secondary:hover:not(:disabled) {
-		background: #e2e8f0;
-	}
-
-	.btn-primary:disabled,
-	.btn-secondary:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-	}
 
 	.message {
 		padding: 0.75rem;
@@ -259,10 +211,7 @@
 		font-size: 0.875rem;
 	}
 
-	.tools-section h2 {
-		margin-bottom: 1rem;
-		color: #2d3748;
-	}
+
 
 	.tools-grid {
 		display: grid;
@@ -277,10 +226,7 @@
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
 
-	.tool-card h3 {
-		margin: 0 0 0.5rem 0;
-		color: #2d3748;
-	}
+
 
 	.tool-card p {
 		margin: 0 0 1rem 0;

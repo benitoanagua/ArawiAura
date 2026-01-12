@@ -2,7 +2,7 @@
 	import TopBar from '$lib/components/TopBar.svelte';
 	import PageMeta from '$lib/components/PageMeta.svelte';
 	import { page } from '$app/stores';
-	import '../app.css';
+
 
 	let { children } = $props();
 	let currentPath = $derived($page.url.pathname);
