@@ -3,9 +3,11 @@
 	import type { Theme, ThemeSwitcherProps } from '$lib/types/theme-switcher.js';
 	import Icon from '@iconify/svelte';
 
+	let systemTheme: 'light' | 'dark' = 'light';
+
 	let {
-		theme = $bindable('light'),
-		showLabel = true,
+		theme = $bindable('auto'),
+		showLabel = false,
 		class: className,
 		children
 	}: ThemeSwitcherProps = $props();
@@ -13,57 +15,70 @@
 	onMount(() => {
 		// Initialize from localStorage or system preference
 		const savedTheme = localStorage.getItem('ax-theme') as Theme | null;
-		const systemTheme: Theme = window.matchMedia('(prefers-color-scheme: dark)').matches
-			? 'dark'
-			: 'light';
+		systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
-		theme = savedTheme || systemTheme;
-		applyTheme(theme);
+		theme = savedTheme || 'auto';
+		const resolvedTheme = theme === 'auto' ? systemTheme : theme;
+		document.documentElement.setAttribute('data-theme', resolvedTheme);
 
 		// Listen for storage changes (sync across tabs/instances)
 		const handleStorage = (e: StorageEvent) => {
 			if (e.key === 'ax-theme' && e.newValue) {
 				theme = e.newValue as Theme;
+				const newResolved = theme === 'auto' ? systemTheme : theme;
+				document.documentElement.setAttribute('data-theme', newResolved);
 			}
 		};
 
-		// Listen for theme changes via custom event (sync within same page)
-		const handleThemeChange = (e: CustomEvent<Theme>) => {
-			theme = e.detail;
-		};
-
 		window.addEventListener('storage', handleStorage);
-		window.addEventListener('ax-theme-change', handleThemeChange as EventListener);
 
 		return () => {
 			window.removeEventListener('storage', handleStorage);
-			window.removeEventListener('ax-theme-change', handleThemeChange as EventListener);
 		};
 	});
 
-	function applyTheme(newTheme: Theme) {
-		document.documentElement.setAttribute('data-theme', newTheme);
+	function applyTheme(newTheme: Theme, sysTheme: 'light' | 'dark') {
+		const resolvedTheme = newTheme === 'auto' ? sysTheme : newTheme;
+		document.documentElement.setAttribute('data-theme', resolvedTheme);
 		localStorage.setItem('ax-theme', newTheme);
-		// Dispatch custom event to sync other instances on same page
-		window.dispatchEvent(new CustomEvent('ax-theme-change', { detail: newTheme }));
+	}
+
+	function getResolvedTheme(): 'light' | 'dark' {
+		if (theme === 'auto') {
+			return systemTheme;
+		}
+		return theme;
 	}
 
 	function toggleTheme() {
-		theme = theme === 'light' ? 'dark' : 'light';
-		applyTheme(theme);
+		// Cycle through: auto → light → dark → auto
+		if (theme === 'auto') {
+			theme = 'light';
+		} else if (theme === 'light') {
+			theme = 'dark';
+		} else {
+			theme = 'auto';
+		}
+		applyTheme(theme, systemTheme);
 	}
 
-	const isDark = $derived(theme === 'dark');
+	const isDark = $derived(getResolvedTheme() === 'dark');
+	const isAuto = $derived(theme === 'auto');
+	const themeLabel = $derived(
+		theme === 'auto' ? `Auto (${systemTheme})` : theme === 'dark' ? 'Night' : 'Day'
+	);
 </script>
 
 <button
 	class="ax-theme-switcher {className || ''}"
 	onclick={toggleTheme}
-	aria-label="Switch theme"
-	title="Switch to {isDark ? 'light' : 'dark'} mode"
+	aria-label="Switch theme mode"
+	title="Current: {theme} mode. Click to cycle through auto, light, and dark modes."
 >
 	<div class="ax-theme-switcher__icon">
-		{#if isDark}
+		{#if isAuto}
+			<Icon icon="carbon:settings" width="18" height="18" />
+		{:else if isDark}
 			<Icon icon="carbon:moon" width="18" height="18" />
 		{:else}
 			<Icon icon="carbon:sun" width="18" height="18" />
@@ -72,7 +87,7 @@
 
 	{#if showLabel}
 		<span class="ax-theme-switcher__label">
-			{isDark ? 'Night' : 'Day'}
+			{themeLabel}
 		</span>
 	{/if}
 

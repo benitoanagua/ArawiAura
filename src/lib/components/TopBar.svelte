@@ -2,6 +2,7 @@
 	import type { TopBarProps } from '$lib/types/top-bar.js';
 	import Logo from './Logo.svelte';
 	import Offcanvas from './Offcanvas.svelte';
+	import ThemeSwitcher from './ThemeSwitcher.svelte';
 
 	let {
 		siteTitle = '',
@@ -56,6 +57,9 @@
 							</a>
 						</li>
 					{/each}
+					<li class="ax-top-bar__item">
+						<ThemeSwitcher />
+					</li>
 				</ul>
 			</nav>
 
@@ -92,6 +96,9 @@
 							</a>
 						</li>
 					{/each}
+					<li class="ax-top-bar__mobile-item">
+						<ThemeSwitcher />
+					</li>
 				</ul>
 			</nav>
 		</Offcanvas>
@@ -132,6 +139,7 @@
 
 	.ax-top-bar__list {
 		display: flex;
+		align-items: center;
 		list-style: none;
 		margin: 0;
 		padding: 0;
