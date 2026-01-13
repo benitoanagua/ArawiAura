@@ -1,4 +1,4 @@
-import { getAllSettings } from '$lib/db/queries.js';
+import { getAllSettings } from '$lib/db/settings.js';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async () => {

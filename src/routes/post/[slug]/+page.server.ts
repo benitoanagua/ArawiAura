@@ -1,4 +1,4 @@
-import { getPostBySlug } from '$lib/db/queries.js';
+import { getPostBySlug } from '$lib/db/posts.js';
 import { calculateReadingTime, countWords } from '$lib/utils/markdown.js';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';

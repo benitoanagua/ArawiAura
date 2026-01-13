@@ -6,8 +6,19 @@
 // Conexión
 export { initDB, getDB, closeDB } from './connection.js';
 
-// Queries
-export * from './queries.js';
+// Queries - Posts
+export * from './posts.js';
+
+// Queries - Tags
+export * from './tags.js';
+
+// Queries - Users
+export * from './users.js';
+
+// Queries - Settings
+export * from './settings.js';
+
+// Legacy queries file has been deleted - using modular structure
 
 // Tipos
 export type * from './types.js';

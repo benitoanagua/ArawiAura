@@ -1,4 +1,5 @@
-import { getPublishedPosts, getAllTags } from '$lib/db/queries.js';
+import { getPublishedPosts } from '$lib/db/posts.js';
+import { getAllTags } from '$lib/db/tags.js';
 import { calculateReadingTime, countWords } from '$lib/utils/markdown.js';
 import type { PageServerLoad } from './$types';
 
