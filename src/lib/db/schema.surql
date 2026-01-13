@@ -3,18 +3,44 @@
 -- ============================================
 
 -- 1. USERS (Autores del blog)
-DEFINE TABLE user SCHEMAFULL;
+DEFINE TABLE user SCHEMAFULL
+  PERMISSIONS
+    FOR select, update, delete WHERE id = $auth.id;
+
 DEFINE FIELD name ON user TYPE string;
 DEFINE FIELD slug ON user TYPE string;
 DEFINE FIELD email ON user TYPE string;
-DEFINE FIELD password_hash ON user TYPE string;
+DEFINE FIELD password ON user TYPE string;
 DEFINE FIELD bio ON user TYPE string;
 DEFINE FIELD profile_image ON user TYPE option<record<asset>>;
+DEFINE FIELD enabled ON user TYPE bool DEFAULT true;
+DEFINE FIELD role ON user TYPE string DEFAULT 'author' ASSERT $value INSIDE ['admin', 'author'];
 DEFINE FIELD created_at ON user TYPE datetime DEFAULT time::now();
 
 -- Índices para users
 DEFINE INDEX user_slug_idx ON user FIELDS slug UNIQUE;
 DEFINE INDEX user_email_idx ON user FIELDS email UNIQUE;
+
+-- Record User Access Control for Authentication
+DEFINE ACCESS user ON DATABASE TYPE RECORD
+  SIGNUP (
+    CREATE user CONTENT {
+      name: $name,
+      slug: $slug,
+      email: $email,
+      password: crypto::argon2::generate($password),
+      bio: $bio,
+      enabled: true,
+      role: 'author'
+    }
+  )
+  SIGNIN (
+    SELECT * FROM user 
+    WHERE email = $email 
+    AND crypto::argon2::compare(password, $password) = true
+  )
+  DURATION FOR TOKEN 5m
+  DURATION FOR SESSION 7d;
 
 -- 2. POSTS (Core del blog)
 DEFINE TABLE post SCHEMAFULL;
@@ -65,13 +91,15 @@ DEFINE TABLE setting SCHEMALESS;
 -- DATOS INICIALES
 -- ============================================
 
--- Usuario por defecto
+-- Usuario admin por defecto (contraseña será establecida durante la inicialización)
 CREATE user:admin SET
     name = 'Arawi Aura',
     slug = 'arawi-aura',
     email = 'admin@arawiaura.com',
-    password_hash = '',
+    password = crypto::argon2::generate('admin123'),
     bio = 'Creador de contenido y desarrollador',
+    enabled = true,
+    role = 'admin',
     created_at = time::now();
 
 -- Settings iniciales del sitio

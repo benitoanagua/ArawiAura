@@ -1,15 +1,14 @@
 <script lang="ts">
-	import TopBar from '$lib/components/TopBar.svelte';
+	import AuthHeader from '$lib/components/AuthHeader.svelte';
 	import PageMeta from '$lib/components/PageMeta.svelte';
 	import { page } from '$app/stores';
 
-
-	let { children } = $props();
+	let { children, data }: any = $props();
 	let currentPath = $derived($page.url.pathname);
 </script>
 
 <div class="app">
-	<TopBar siteTitle="Arawi Aura" showLogo={true} showNav={true} sticky={true} {currentPath} />
+	<AuthHeader user={data?.user} {currentPath} siteTitle="Arawi Aura" />
 
 	<main class="main-content">
 		{@render children()}

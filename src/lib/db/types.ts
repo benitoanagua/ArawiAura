@@ -7,9 +7,11 @@ export interface User {
 	name: string;
 	slug: string;
 	email: string;
-	password_hash: string;
+	password?: string;
 	bio: string;
 	profile_image?: Asset;
+	enabled: boolean;
+	role: 'admin' | 'author';
 	created_at: string;
 }
 
@@ -17,8 +19,8 @@ export interface Post {
 	id: string;
 	title: string;
 	slug: string;
-	content: string;        // Markdown
-	html: string;           // HTML renderizado
+	content: string; // Markdown
+	html: string; // HTML renderizado
 	excerpt?: string;
 	feature_image?: Asset;
 	status: 'draft' | 'published';
@@ -57,6 +59,24 @@ export interface Setting {
 // ============================================
 // TIPOS PARA FORMULARIOS Y REQUESTS
 // ============================================
+
+export interface SignupData {
+	name: string;
+	slug: string;
+	email: string;
+	password: string;
+	bio?: string;
+}
+
+export interface SigninData {
+	email: string;
+	password: string;
+}
+
+export interface AuthResponse {
+	user: User;
+	token: string;
+}
 
 export interface CreatePostData {
 	title: string;

@@ -13,12 +13,12 @@ import { DB_CONFIG } from './config';
  */
 async function connectForSeed(): Promise<Surreal> {
 	const db = new Surreal();
-	
+
 	try {
 		// Add /rpc to the URL if not already present
 		const connectUrl = DB_CONFIG.URL.endsWith('/rpc') ? DB_CONFIG.URL : `${DB_CONFIG.URL}/rpc`;
 		await db.connect(connectUrl);
-		
+
 		// Use database-level authentication
 		await db.signin({
 			username: DB_CONFIG.USERNAME,
@@ -36,7 +36,7 @@ async function connectForSeed(): Promise<Surreal> {
 		console.log('  Password:', DB_CONFIG.PASSWORD ? 'Provided' : 'Missing');
 		throw error;
 	}
-	
+
 	return db;
 }
 
@@ -45,33 +45,35 @@ async function connectForSeed(): Promise<Surreal> {
  */
 export async function runSchema(): Promise<void> {
 	const db = await connectForSeed();
-	
+
 	try {
 		console.log('🚀 Ejecutando esquema de base de datos...');
-		
+
 		// Leer el archivo de esquema
 		const schemaPath = join(process.cwd(), 'src/lib/db/schema.surql');
 		const schema = readFileSync(schemaPath, 'utf-8');
-		
+
 		// Ejecutar el esquema línea por línea
 		const statements = schema
 			.split(';')
-			.map(stmt => stmt.trim())
-			.filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
-		
+			.map((stmt) => stmt.trim())
+			.filter((stmt) => stmt.length > 0 && !stmt.startsWith('--'));
+
 		console.log(`📝 Ejecutando ${statements.length} declaraciones...`);
-		
+
 		for (const [index, statement] of statements.entries()) {
 			try {
 				await db.query(statement);
 				console.log(`   ✓ Declaración ${index + 1}/${statements.length} ejecutada`);
 			} catch (error) {
-				console.warn(`   ⚠️  Declaración ${index + 1} falló (puede ser normal si ya existe):`, error);
+				console.warn(
+					`   ⚠️  Declaración ${index + 1} falló (puede ser normal si ya existe):`,
+					error
+				);
 			}
 		}
-		
+
 		console.log('✅ Esquema ejecutado correctamente');
-		
 	} catch (error) {
 		console.error('❌ Error ejecutando esquema:', error);
 		throw error;
@@ -85,10 +87,10 @@ export async function runSchema(): Promise<void> {
  */
 export async function seedDevelopmentData(): Promise<void> {
 	const db = await connectForSeed();
-	
+
 	try {
 		console.log('🌱 Creando datos de desarrollo...');
-		
+
 		// Verificar si ya existe el post de ejemplo
 		try {
 			const existingExamplePost = await db.query('SELECT * FROM post:ejemplo;');
@@ -100,7 +102,7 @@ export async function seedDevelopmentData(): Promise<void> {
 			// If the query fails, it might mean the record doesn't exist, so we continue
 			console.log('🔍 El post de ejemplo no existe, creando...');
 		}
-		
+
 		// Crear post de ejemplo
 		try {
 			await db.query(`
@@ -108,12 +110,14 @@ export async function seedDevelopmentData(): Promise<void> {
 					name = "Arawi Aura",
 					slug = "arawi-aura",
 					email = "admin@arawiaura.com",
-					password_hash = "",
+					password = crypto::argon2::generate("admin123"),
 					bio = "Creador de contenido y desarrollador",
+					enabled = true,
+					role = "admin",
 					created_at = time::now();
 			`);
 		} catch (error) {
-			console.log("⚠️  Usuario admin ya existe, continuando...");
+			console.log('⚠️  Usuario admin ya existe, continuando...');
 		}
 
 		await db.query(`
@@ -148,9 +152,8 @@ Este es tu primer post en **Arawi Aura**, un blog minimalista construido con Sve
 				author = user:admin,
 				tags = [tag:tecnologia, tag:sveltekit];
 		`);
-		
+
 		console.log('✅ Datos de desarrollo creados');
-		
 	} catch (error) {
 		console.error('❌ Error creando datos de desarrollo:', error);
 		throw error;
@@ -178,23 +181,23 @@ export async function checkConnection(): Promise<boolean> {
  */
 export async function initializeDatabase(): Promise<void> {
 	console.log('🔍 Verificando conexión a SurrealDB Cloud...');
-	
+
 	const isConnected = await checkConnection();
-	
+
 	if (!isConnected) {
 		console.error('❌ No se puede conectar a SurrealDB Cloud');
 		console.log('💡 Verifica las variables de entorno en .env');
 		throw new Error('No se puede conectar a la base de datos');
 	}
-	
+
 	console.log('✅ SurrealDB Cloud está disponible');
-	
+
 	// Ejecutar esquema
 	await runSchema();
-	
+
 	// Crear datos de desarrollo
 	await seedDevelopmentData();
-	
+
 	console.log('🎉 ¡Base de datos inicializada correctamente!');
 	console.log('');
 	console.log('Ahora puedes ejecutar: pnpm dev');

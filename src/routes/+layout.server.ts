@@ -1,11 +1,12 @@
 import { getAllSettings } from '$lib/db/settings.js';
 import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async () => {
+export const load: LayoutServerLoad = async ({ locals }) => {
 	try {
 		const settings = await getAllSettings();
-		
+
 		return {
+			user: locals.user,
 			settings: {
 				site_title: settings.site_title || 'Arawi Aura',
 				site_description: settings.site_description || 'Blog personal',
@@ -14,9 +15,10 @@ export const load: LayoutServerLoad = async () => {
 		};
 	} catch (error) {
 		console.error('Error loading settings:', error);
-		
+
 		// Fallback settings
 		return {
+			user: locals.user,
 			settings: {
 				site_title: 'Arawi Aura',
 				site_description: 'Blog personal de tecnología y desarrollo',
