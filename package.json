@@ -24,6 +24,7 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
     "dotenv": "^16.4.7",
+    "nanoid": "^5.1.6",
     "surrealdb": "^1.0.0"
   },
   "devDependencies": {

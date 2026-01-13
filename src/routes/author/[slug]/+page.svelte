@@ -5,7 +5,7 @@
 	import Heading from '$lib/components/Heading.svelte';
 	import Container from '$lib/components/Container.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
 	// Access data directly without reactivity
 	const author = data.author;
@@ -25,6 +25,16 @@
 	}
 	
 	const safePostCount = postCount ?? 0;
+	
+	// Check if this is the current user's profile
+	const isOwnProfile = data.user && data.user.slug === author.slug;
+	
+	// Show welcome message for own profile
+	$effect(() => {
+		if (isOwnProfile && typeof window !== 'undefined') {
+			window.toast?.success(`Bienvenido a tu perfil, ${author.name}!`);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -55,6 +65,11 @@
 			<div class="author-info">
 				<Heading level={1} class="author-name">
 					{author.name}
+					{#if isOwnProfile}
+						<span class="own-profile-badge">
+							✓ Tu perfil
+						</span>
+					{/if}
 				</Heading>
 				
 				{#if author.bio}
@@ -135,9 +150,10 @@
 </section>
 
 <style>
-	/* Author Header */
+	/* Author Header - Architectural Outline Style */
 	.author-header {
-		background: var(--bg-cool);
+		background: var(--color-surface-container-low);
+		border-bottom: var(--line-thin) solid var(--stroke-subtle);
 	}
 
 	.author-profile {
@@ -153,7 +169,8 @@
 		height: 120px;
 		border-radius: 50%;
 		object-fit: cover;
-		border: 4px solid var(--border-light);
+		border: var(--line-base) solid var(--stroke-medium);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	}
 
 	.author-avatar-placeholder {
@@ -164,23 +181,25 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border: 4px solid var(--border-light);
+		border: var(--line-base) solid var(--color-primary);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	}
 
 	.author-initials {
 		font-family: var(--font-sans);
 		font-size: var(--text-3xl);
 		font-weight: 700;
-		color: white;
+		color: var(--color-on-primary);
+		line-height: 1;
 	}
 
-
+	/* Author name styled via Heading component */
 
 	.author-bio {
 		font-family: var(--font-serif);
 		font-size: var(--text-lg);
 		line-height: var(--leading-relaxed);
-		color: var(--text-secondary);
+		color: var(--color-on-surface-variant);
 		max-width: 600px;
 		margin-bottom: var(--space-6);
 	}
@@ -192,6 +211,10 @@
 		gap: var(--space-4);
 		flex-wrap: wrap;
 		font-family: var(--font-sans);
+		padding: var(--space-3) var(--space-4);
+		background-color: var(--color-surface-container-lowest);
+		border: var(--line-thin) solid var(--stroke-subtle);
+		border-radius: clamp(4px, 1vw, 8px);
 	}
 
 	.stat-item {
@@ -202,32 +225,41 @@
 
 	.stat-number {
 		font-weight: 700;
-		color: var(--text-primary);
+		color: var(--color-primary);
+		font-size: var(--text-base);
 	}
 
 	.stat-label {
-		color: var(--text-secondary);
+		color: var(--color-on-surface-variant);
 		text-transform: uppercase;
 		font-size: var(--text-xs);
-		letter-spacing: var(--tracking-wide);
+		letter-spacing: 0.05em;
+		font-weight: 500;
 	}
 
 	.stat-divider {
-		color: var(--border-light);
+		color: var(--stroke-subtle);
+		font-weight: 600;
 	}
 
 	/* Posts Section */
+	.author-posts {
+		background-color: var(--color-surface);
+	}
+
 	.section-header {
 		text-align: center;
 		margin-bottom: var(--space-12);
+		padding: var(--space-4);
 	}
 
 	.section-subtitle {
 		font-family: var(--font-serif);
 		font-size: var(--text-lg);
-		color: var(--text-secondary);
+		color: var(--color-on-surface-variant);
 		max-width: 600px;
 		margin: var(--space-4) auto 0;
+		line-height: var(--leading-relaxed);
 	}
 
 	.posts-grid {
@@ -239,7 +271,10 @@
 	/* Empty State */
 	:global(.empty-state) {
 		text-align: center;
-		padding: var(--space-20) 0;
+		padding: var(--space-20) var(--space-4);
+		background-color: var(--color-surface-container-lowest);
+		border: var(--line-thin) dashed var(--stroke-subtle);
+		border-radius: clamp(8px, 2vw, 12px);
 	}
 
 	:global(.empty-state__content) {
@@ -251,16 +286,33 @@
 		font-family: var(--font-sans);
 		font-size: var(--text-2xl);
 		font-weight: 600;
-		color: var(--text-primary);
+		color: var(--color-on-surface);
 		margin-bottom: var(--space-4);
+		line-height: var(--leading-tight);
 	}
 
 	:global(.empty-state__description) {
 		font-family: var(--font-serif);
 		font-size: var(--text-md);
 		line-height: var(--leading-relaxed);
-		color: var(--text-secondary);
+		color: var(--color-on-surface-variant);
 		margin-bottom: var(--space-8);
+	}
+
+	/* Own Profile Indicator */
+	.own-profile-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: var(--space-1) var(--space-3);
+		background-color: var(--color-primary-container);
+		color: var(--color-on-primary-container);
+		border: var(--line-thin) solid var(--color-primary);
+		border-radius: clamp(4px, 1vw, 8px);
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		font-weight: 600;
+		margin-top: var(--space-2);
 	}
 
 	/* Responsive */
@@ -287,7 +339,9 @@
 			font-size: var(--text-2xl);
 		}
 
-		
+		.author-stats {
+			padding: var(--space-2) var(--space-3);
+		}
 
 		.posts-grid {
 			grid-template-columns: 1fr;
@@ -295,7 +349,27 @@
 		}
 
 		:global(.empty-state) {
-			padding: var(--space-16) 0;
+			padding: var(--space-16) var(--space-3);
+		}
+
+		.section-header {
+			margin-bottom: var(--space-8);
+		}
+	}
+
+	@media (max-width: 480px) {
+		.author-profile {
+			gap: var(--space-6);
+		}
+
+		.author-avatar,
+		.author-avatar-placeholder {
+			width: 80px;
+			height: 80px;
+		}
+
+		.author-initials {
+			font-size: var(--text-xl);
 		}
 	}
 </style>

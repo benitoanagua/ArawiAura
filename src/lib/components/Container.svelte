@@ -20,9 +20,10 @@
 		width: 100%;
 		margin-left: auto;
 		margin-right: auto;
+		box-sizing: border-box;
 	}
 
-	/* Size variants */
+	/* Size variants - Following architectural outline proportions */
 	.ax-container--base {
 		max-width: var(--container-base);
 	}
@@ -39,9 +40,11 @@
 		max-width: 100%;
 		padding-left: var(--space-4);
 		padding-right: var(--space-4);
+		border-left: var(--line-thin) solid var(--stroke-subtle);
+		border-right: var(--line-thin) solid var(--stroke-subtle);
 	}
 
-	/* Spacing variants */
+	/* Spacing variants - Using architectural outline spacing system */
 	.ax-container--spacing-tight {
 		padding-top: var(--space-8);
 		padding-bottom: var(--space-8);
@@ -62,10 +65,28 @@
 		padding-bottom: 0;
 	}
 
+	/* Architectural outline responsive behavior */
+	@media (max-width: 1200px) {
+		.ax-container--base,
+		.ax-container--wide {
+			padding-left: var(--space-6);
+			padding-right: var(--space-6);
+		}
+	}
+
 	@media (max-width: 768px) {
 		.ax-container--full {
-			padding-left: var(--space-2);
-			padding-right: var(--space-2);
+			padding-left: var(--space-3);
+			padding-right: var(--space-3);
+			border-left-width: 0;
+			border-right-width: 0;
+		}
+
+		.ax-container--base,
+		.ax-container--wide,
+		.ax-container--narrow {
+			padding-left: var(--space-4);
+			padding-right: var(--space-4);
 		}
 
 		.ax-container--spacing-tight {
@@ -81,6 +102,31 @@
 		.ax-container--spacing-loose {
 			padding-top: var(--space-16);
 			padding-bottom: var(--space-16);
+		}
+	}
+
+	@media (max-width: 480px) {
+		.ax-container--base,
+		.ax-container--wide,
+		.ax-container--narrow,
+		.ax-container--full {
+			padding-left: var(--space-2);
+			padding-right: var(--space-2);
+		}
+
+		.ax-container--spacing-tight {
+			padding-top: var(--space-4);
+			padding-bottom: var(--space-4);
+		}
+
+		.ax-container--spacing-normal {
+			padding-top: var(--space-8);
+			padding-bottom: var(--space-8);
+		}
+
+		.ax-container--spacing-loose {
+			padding-top: var(--space-12);
+			padding-bottom: var(--space-12);
 		}
 	}
 </style>

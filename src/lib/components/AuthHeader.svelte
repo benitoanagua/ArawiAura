@@ -68,15 +68,18 @@
 		position: sticky;
 		top: 0;
 		z-index: 100;
+		background-color: var(--color-surface);
+		border-bottom: var(--line-thin) solid var(--stroke-medium);
 	}
 
 	.auth-bar {
-		background-color: var(--color-surface, #f5f5f5);
-		border-bottom: 1px solid var(--color-border, #ddd);
-		padding: 0.75rem 1rem;
+		background-color: var(--color-surface-container-low);
+		border-bottom: var(--line-thin) solid var(--stroke-subtle);
+		padding: var(--space-3) var(--space-4);
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
+		gap: var(--space-4);
 	}
 
 	.user-menu {
@@ -85,32 +88,44 @@
 
 	.user-menu-toggle {
 		background: none;
-		border: 1px solid var(--color-border, #ddd);
-		padding: 0.5rem 1rem;
-		border-radius: 4px;
+		border: var(--line-thin) solid var(--stroke-medium);
+		padding: var(--space-2) var(--space-4);
+		border-radius: clamp(4px, 1vw, 8px);
 		cursor: pointer;
 		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.9rem;
-		transition: background-color 0.2s;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-1);
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
+		transition: all var(--duration-base);
+		min-width: 120px;
 	}
 
 	.user-menu-toggle:hover {
-		background-color: var(--color-surface-hover, #efefef);
+		background-color: var(--color-surface-container-high);
+		border-color: var(--stroke-maximum);
+	}
+
+	.user-menu-toggle:focus {
+		outline: var(--line-thin) solid var(--ring-color);
+		outline-offset: var(--ring-offset);
 	}
 
 	.user-name {
 		font-weight: 600;
+		color: var(--color-on-surface);
+		line-height: var(--leading-tight);
 	}
 
 	.user-role {
-		font-size: 0.8rem;
-		color: var(--color-text-secondary, #666);
+		font-size: var(--text-xs);
+		color: var(--color-on-surface-variant);
+		line-height: var(--leading-tight);
 	}
 
 	.user-role.admin {
-		color: #ff6b00;
+		color: var(--color-primary);
 		font-weight: 600;
 	}
 
@@ -118,82 +133,119 @@
 		position: absolute;
 		top: 100%;
 		right: 0;
-		background: white;
-		border: 1px solid var(--color-border, #ddd);
-		border-radius: 4px;
-		margin-top: 0.5rem;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		background: var(--color-surface-container-lowest);
+		border: var(--line-thin) solid var(--stroke-medium);
+		border-radius: clamp(4px, 1vw, 8px);
+		margin-top: var(--space-2);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 		min-width: 200px;
 		z-index: 10;
+		animation: dropdownSlide var(--duration-base) ease-out;
+	}
+
+	@keyframes dropdownSlide {
+		from {
+			transform: translateY(-8px);
+			opacity: 0;
+		}
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
 	}
 
 	.menu-item {
 		display: block;
-		padding: 0.75rem 1rem;
+		padding: var(--space-3) var(--space-4);
 		text-decoration: none;
-		color: var(--color-text, #333);
+		color: var(--color-on-surface);
 		border: none;
 		background: none;
 		cursor: pointer;
 		width: 100%;
 		text-align: left;
-		transition: background-color 0.2s;
-		font-size: 0.95rem;
+		transition: background-color var(--duration-fast);
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
+		line-height: var(--leading-snug);
 	}
 
 	.menu-item:hover {
-		background-color: var(--color-surface, #f5f5f5);
+		background-color: var(--color-surface-container-low);
+	}
+
+	.menu-item:focus {
+		outline: var(--line-thin) solid var(--ring-color);
+		outline-offset: calc(-1 * var(--ring-offset));
 	}
 
 	.logout-btn {
-		color: #c00;
+		color: var(--color-error);
 		font-weight: 600;
+		border-top: var(--line-thin) solid var(--stroke-subtle);
+		margin-top: var(--space-1);
+		padding-top: var(--space-3);
 	}
 
 	.auth-links {
 		display: flex;
-		gap: 1rem;
+		gap: var(--space-3);
 	}
 
 	.auth-link {
-		padding: 0.5rem 1rem;
+		padding: var(--space-2) var(--space-4);
 		text-decoration: none;
-		color: var(--color-text, #333);
-		border-radius: 4px;
-		transition: background-color 0.2s;
-		font-size: 0.95rem;
+		color: var(--color-on-surface);
+		border: var(--line-thin) solid var(--stroke-medium);
+		border-radius: clamp(4px, 1vw, 8px);
+		transition: all var(--duration-fast);
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
+		font-weight: 500;
 	}
 
 	.auth-link:hover {
-		background-color: var(--color-surface-hover, #efefef);
+		background-color: var(--color-surface-container-high);
+		border-color: var(--stroke-maximum);
+	}
+
+	.auth-link:focus {
+		outline: var(--line-thin) solid var(--ring-color);
+		outline-offset: var(--ring-offset);
 	}
 
 	.auth-link--primary {
-		background-color: var(--color-primary, #007bff);
-		color: white;
+		background-color: var(--color-primary);
+		color: var(--color-on-primary);
+		border-color: var(--color-primary);
+		font-weight: 600;
 	}
 
 	.auth-link--primary:hover {
-		background-color: var(--color-primary-dark, #0056b3);
+		background-color: var(--color-primary-container);
+		color: var(--color-on-primary-container);
+		border-color: var(--color-primary-container);
 	}
 
 	@media (max-width: 640px) {
 		.auth-bar {
-			padding: 0.5rem;
+			padding: var(--space-2) var(--space-3);
+			gap: var(--space-2);
 		}
 
 		.user-menu-toggle {
-			font-size: 0.85rem;
-			padding: 0.4rem 0.75rem;
+			font-size: var(--text-xs);
+			padding: var(--space-1-5) var(--space-3);
+			min-width: 100px;
 		}
 
 		.auth-links {
-			gap: 0.5rem;
+			gap: var(--space-2);
 		}
 
 		.auth-link {
-			padding: 0.4rem 0.75rem;
-			font-size: 0.85rem;
+			padding: var(--space-1-5) var(--space-3);
+			font-size: var(--text-xs);
 		}
 	}
 </style>

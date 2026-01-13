@@ -1,6 +1,7 @@
 <script lang="ts">
 	import AuthHeader from '$lib/components/AuthHeader.svelte';
 	import PageMeta from '$lib/components/PageMeta.svelte';
+	import ToastManager from '$lib/components/ToastManager.svelte';
 	import { page } from '$app/stores';
 
 	let { children, data }: any = $props();
@@ -22,6 +23,8 @@
 			{ label: 'Terms', href: '/terms' }
 		]}
 	/>
+	
+	<ToastManager />
 </div>
 
 <style>
