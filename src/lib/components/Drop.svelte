@@ -16,12 +16,12 @@
 		class: className
 	}: DropProps = $props();
 
-	// Use trigger if provided, otherwise fallback to children
-	const renderTrigger = () => {
+	// Check if trigger exists and is a snippet
+	const hasTrigger = () => {
 		try {
-			return trigger?.() || (children ? children() : null);
+			return trigger || children;
 		} catch (error) {
-			console.warn('Drop component: Error rendering trigger', error);
+			console.warn('Drop component: Error checking trigger', error);
 			return null;
 		}
 	};
@@ -40,15 +40,15 @@
 
 	function handleOptionClick(option: DropOption) {
 		if (option.disabled || option.divider) return;
-		
+
 		if (onSelect) {
 			onSelect(option);
 		}
-		
+
 		if (option.href) {
 			window.location.href = option.href;
 		}
-		
+
 		dispatch('select', option);
 		closeDropdown();
 	}
@@ -79,13 +79,13 @@
 
 <!-- Architectural Blueprint Structure -->
 <!-- The skeleton becomes visible - honest engineering -->
-<div class="ax-drop {className || ''}" data-open="{isOpen}" bind:this={dropElement}>
+<div class="ax-drop {className || ''}" data-open={isOpen} bind:this={dropElement}>
 	<!-- Blueprint grid foundation -->
 	<div class="ax-drop__structure">
-		{#if renderTrigger()}
+		{#if hasTrigger()}
 			<!-- Custom trigger - maintains structural integrity -->
-			<div 
-				class="ax-drop__trigger ax-drop__trigger--custom" 
+			<div
+				class="ax-drop__trigger ax-drop__trigger--custom"
 				onclick={toggleDropdown}
 				bind:this={triggerElement}
 				role="button"
@@ -97,12 +97,16 @@
 					}
 				}}
 			>
-				{@render renderTrigger()}
+				{#if trigger}
+					{@render trigger()}
+				{:else if children}
+					{@render children()}
+				{/if}
 			</div>
 		{:else}
 			<!-- Standard trigger - industrial switch precision -->
-			<button 
-				class="ax-drop__trigger ax-drop__trigger--standard" 
+			<button
+				class="ax-drop__trigger ax-drop__trigger--standard"
 				onclick={toggleDropdown}
 				bind:this={triggerElement}
 			>
@@ -116,7 +120,7 @@
 
 	<!-- Dropdown expansion - geometric revelation -->
 	{#if isOpen}
-		<div 
+		<div
 			class="ax-drop__panel ax-drop__panel--{align} ax-drop__panel--width-{width}"
 			role="menu"
 			aria-orientation="vertical"
@@ -154,7 +158,7 @@
 <style>
 	/* Architectural Outline Philosophy */
 	/* The skeleton becomes the skin - structure as narrative */
-	
+
 	.ax-drop {
 		position: relative;
 		display: inline-block;
@@ -348,11 +352,13 @@
 		margin: var(--space-1) calc(var(--space-1) * -1);
 		/* Shared border principle - continuous grid */
 		height: var(--line-thin);
-		background: linear-gradient(90deg, 
-			transparent 0%, 
-			var(--color-outline-variant) 15%, 
-			var(--color-outline-variant) 85%, 
-			transparent 100%);
+		background: linear-gradient(
+			90deg,
+			transparent 0%,
+			var(--color-outline-variant) 15%,
+			var(--color-outline-variant) 85%,
+			transparent 100%
+		);
 		/* Blueprint grid continuity */
 	}
 
@@ -394,7 +400,7 @@
 	}
 
 	/* Structural transformation - panel state indicator */
-	.ax-drop[data-open="true"] .ax-drop__trigger-icon {
+	.ax-drop[data-open='true'] .ax-drop__trigger-icon {
 		transform: rotate(180deg);
 	}
 
@@ -424,9 +430,7 @@
 		right: -1px;
 		bottom: -1px;
 		/* CAD-style intersection */
-		background: radial-gradient(circle at 315deg, 
-			var(--color-outline-variant) 0%, 
-			transparent 70%);
+		background: radial-gradient(circle at 315deg, var(--color-outline-variant) 0%, transparent 70%);
 		pointer-events: none;
 		opacity: 0.15;
 	}

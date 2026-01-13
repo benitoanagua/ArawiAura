@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 
 	let email = '';
 	let password = '';
@@ -29,16 +29,15 @@
 
 			// Show success message
 			window.toast?.success('Welcome back! Redirecting...');
-			
+
+			// Invalidate all data to refresh user state from server
+			await invalidateAll();
+
 			// Small delay to show toast before redirect
 			setTimeout(async () => {
-				// Redirect based on user role
-				if (data.user?.role === 'admin') {
-					await goto('/admin');
-				} else {
-					await goto('/');
-				}
-			}, 1000);
+				// Always redirect to home
+				await goto('/');
+			}, 500);
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : 'An error occurred';
 			error = errorMessage;

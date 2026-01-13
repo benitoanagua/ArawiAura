@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 
-	import Pressable from '$lib/components/Pressable.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import Container from '$lib/components/Container.svelte';
@@ -114,7 +113,9 @@
 						featureImage={relatedPost.feature_image?.url || ''}
 						authorName={relatedPost.author?.name || ''}
 						authorUrl={relatedPost.author ? `/author/${relatedPost.author.slug}` : ''}
-						tagName={relatedPost.tags && relatedPost.tags.length > 0 ? relatedPost.tags[0].name : ''}
+						tagName={relatedPost.tags && relatedPost.tags.length > 0
+							? relatedPost.tags[0].name
+							: ''}
 						tagUrl={relatedPost.tags && relatedPost.tags.length > 0
 							? `/tag/${relatedPost.tags[0].slug}`
 							: ''}
@@ -131,8 +132,6 @@
 {/if}
 
 <style>
-
-
 	.linear-article__header {
 		margin-bottom: var(--space-16);
 	}
@@ -142,8 +141,6 @@
 		background: var(--border-light);
 		margin-bottom: var(--space-8);
 	}
-
-
 
 	.linear-article__excerpt {
 		font-family: var(--font-sans);
@@ -186,8 +183,6 @@
 		padding-top: var(--space-12);
 		border-top: var(--line-thin) solid var(--border-light);
 	}
-
-
 
 	.related-posts-grid {
 		display: grid;

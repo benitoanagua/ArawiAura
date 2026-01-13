@@ -2,9 +2,8 @@
 	import type { PageMetaProps } from '$lib/types/page-meta.js';
 	import type { User } from '$lib/db/types';
 	import Drop from '$lib/components/Drop.svelte';
-	import Pressable from '$lib/components/Pressable.svelte';
 	import Icon from '@iconify/svelte';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 
 	interface BottomNavProps extends PageMetaProps {
 		user?: User | null;
@@ -21,9 +20,12 @@
 	async function handleLogout() {
 		try {
 			await fetch('/api/auth/logout', { method: 'POST' });
-			window.location.href = '/';
+			await invalidateAll();
+			window.toast?.success('Logged out successfully');
+			await goto('/');
 		} catch (error) {
 			console.error('Logout failed:', error);
+			window.toast?.error('Logout failed');
 		}
 	}
 
@@ -51,13 +53,7 @@
 
 	async function handleUserMenuSelect(option: any) {
 		if (option.value === 'logout') {
-			try {
-				await fetch('/api/auth/logout', { method: 'POST' });
-				window.toast?.success('Logged out successfully');
-				await goto('/');
-			} catch (error) {
-				window.toast?.error('Logout failed');
-			}
+			await handleLogout();
 		}
 	}
 
@@ -75,33 +71,25 @@
 		<div class="ax-footer__left">
 			<span class="ax-footer__credits">{copyright}</span>
 		</div>
-		
+
 		<!-- Right Slot: Menu -->
 		<div class="ax-footer__right">
 			{#if user}
-				<Drop 
-					options={finalUserMenuOptions()} 
-					onSelect={handleUserMenuSelect}
-					align="right"
-				>
-					<Pressable variant="ghost" size="sm">
-						{user.name} 
+				<Drop options={finalUserMenuOptions()} onSelect={handleUserMenuSelect} align="right">
+					<div class="ax-footer__user-menu">
+						{user.name}
 						<Icon icon="carbon:chevron-down" width="1.1em" height="1.1em" />
-					</Pressable>
+					</div>
 				</Drop>
 			{:else}
 				<div class="ax-footer__guest-actions">
 					{#each finalGuestNavOptions() as option}
-						<Pressable 
-							variant="ghost" 
-							size="sm"
-							onclick={() => handleGuestNavSelect(option)}
-						>
+						<button class="ax-footer__nav-btn" onclick={() => handleGuestNavSelect(option)}>
 							{#if option.iconComponent}
 								<Icon icon={option.iconComponent} width="1.2em" height="1.2em" />
 							{/if}
 							{option.label}
-						</Pressable>
+						</button>
 					{/each}
 				</div>
 			{/if}
@@ -154,13 +142,59 @@
 		gap: var(--space-2);
 		align-items: center;
 	}
+
+	.ax-footer__user-menu {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-1-5);
+		padding: var(--space-2) var(--space-3);
+		background: transparent;
+		border: 1px solid var(--stroke-medium);
+		border-radius: clamp(4px, 1vw, 8px);
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
+		color: var(--color-on-surface);
+		cursor: pointer;
+		transition: all var(--duration-fast);
+	}
+
+	.ax-footer__user-menu:hover {
+		background-color: var(--color-surface-container-low);
+		border-color: var(--stroke-maximum);
+	}
+
+	.ax-footer__nav-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-1-5);
+		padding: var(--space-2) var(--space-3);
+		background: transparent;
+		border: 1px solid var(--stroke-medium);
+		border-radius: clamp(4px, 1vw, 8px);
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
+		color: var(--color-on-surface);
+		cursor: pointer;
+		transition: all var(--duration-fast);
+	}
+
+	.ax-footer__nav-btn:hover {
+		background-color: var(--color-surface-container-low);
+		border-color: var(--stroke-maximum);
+	}
+
+	.ax-footer__nav-btn:active {
+		transform: scale(0.97);
+	}
 	/* Responsive adjustments */
 	@media (max-width: 768px) {
 		.ax-footer__container {
 			padding: 0 var(--space-3);
 			gap: var(--space-3);
 		}
-	
+
 		.ax-footer {
 			padding: var(--space-1-5) 0;
 		}
@@ -170,11 +204,11 @@
 		.ax-footer__container {
 			padding: 0 var(--space-2);
 		}
-	
+
 		.ax-footer__credits {
 			font-size: var(--text-xs);
 		}
-	
+
 		.ax-footer {
 			padding: var(--space-1) 0;
 		}
