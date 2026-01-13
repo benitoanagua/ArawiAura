@@ -7,49 +7,45 @@
 
 	let { data }: { data: PageData } = $props();
 
-	// Access data directly without reactivity
-	const author = data.author;
-	const posts = data.posts || [];
-	const postCount = data.postCount || 0;
-	const status = data.status;
-	
-	// Handle 404 case
-	if (status === 404) {
-		// This will be handled by SvelteKit's error handling
-		throw new Error('Author not found');
-	}
-	
-	// Guard clauses for type safety
-	if (!author) {
-		throw new Error('Author data is missing');
-	}
-	
-	const safePostCount = postCount ?? 0;
-	
-	// Check if this is the current user's profile
-	const isOwnProfile = data.user && data.user.slug === author.slug;
+	// Declare reactive state
+	let author = $derived(data.author);
+	let posts = $derived(data.posts || []);
+	let postCount = $derived(data.postCount || 0);
+	let status = $derived(data.status);
+	let isOwnProfile = $derived(data.user && data.user.slug === data.author?.slug);
+	let safePostCount = $derived(postCount ?? 0);
+
+	// Handle errors reactively
+	$effect(() => {
+		if (status === 404) {
+			throw new Error('Author not found');
+		}
+		if (!author) {
+			throw new Error('Author data is missing');
+		}
+	});
 	
 	// Show welcome message for own profile
 	$effect(() => {
 		if (isOwnProfile && typeof window !== 'undefined') {
-			window.toast?.success(`Bienvenido a tu perfil, ${author.name}!`);
+			window.toast?.success(`Bienvenido a tu perfil, ${author!.name}!`);
 		}
 	});
 </script>
 
 <svelte:head>
-	<title>{author.name} - Arawi Aura</title>
-	<meta name="description" content={author.bio || `Artículos escritos por ${author.name}`} />
+	<title>{author!.name} - Arawi Aura</title>
+	<meta name="description" content={author!.bio || `Artículos escritos por ${author!.name}`} />
 </svelte:head>
 
 <!-- Author Header -->
 <header class="author-header">
 	<Container size="base" spacing="loose">
 		<div class="author-profile">
-			{#if author.profile_image?.url}
+			{#if author!.profile_image?.url}
 				<img 
-					src={author.profile_image.url} 
-					alt={author.name}
+					src={author!.profile_image.url}
+					alt={author!.name}
 					class="author-avatar"
 					width="120"
 					height="120"
@@ -57,14 +53,14 @@
 			{:else}
 				<div class="author-avatar-placeholder">
 					<span class="author-initials">
-						{author.name.charAt(0).toUpperCase()}
+						{author!.name.charAt(0).toUpperCase()}
 					</span>
 				</div>
 			{/if}
 			
 			<div class="author-info">
 				<Heading level={1} class="author-name">
-					{author.name}
+					{author!.name}
 					{#if isOwnProfile}
 						<span class="own-profile-badge">
 							✓ Tu perfil
@@ -72,23 +68,23 @@
 					{/if}
 				</Heading>
 				
-				{#if author.bio}
-					<p class="author-bio">{author.bio}</p>
+				{#if author!.bio}
+					<p class="author-bio">{author!.bio}</p>
 				{/if}
 				
 				<div class="author-stats">
 					<span class="stat-item">
-						<span class="stat-number">{postCount}</span>
+						<span class="stat-number">{safePostCount}</span>
 						<span class="stat-label">
 							{postCount === 1 ? 'artículo' : 'artículos'}
 						</span>
 					</span>
-					{#if author.created_at}
+					{#if author!.created_at}
 						<span class="stat-divider">•</span>
 						<span class="stat-item">
 							<span class="stat-label">Desde</span>
 							<span class="stat-number">
-								{new Date(author.created_at).getFullYear()}
+								{new Date(author!.created_at).getFullYear()}
 							</span>
 						</span>
 					{/if}
@@ -103,11 +99,11 @@
 	<Container size="base" spacing="normal">
 		<div class="section-header">
 			<Heading level={2}>
-				Artículos de {author.name}
+				Artículos de {author!.name}
 			</Heading>
 			{#if safePostCount > 0}
 				<p class="section-subtitle">
-					Explora los {safePostCount} artículos escritos por {author.name}
+					Explora los {safePostCount} artículos escritos por {author!.name}
 				</p>
 			{/if}
 		</div>
@@ -138,7 +134,7 @@
 						Sin artículos aún
 					</Heading>
 					<p class="empty-state__description">
-						{author.name} aún no ha publicado ningún artículo. ¡Vuelve pronto!
+						{author!.name} aún no ha publicado ningún artículo. ¡Vuelve pronto!
 					</p>
 					<Pressable href="/" variant="ghost">
 						Volver al blog

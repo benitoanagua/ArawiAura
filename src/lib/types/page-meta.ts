@@ -3,9 +3,16 @@ export interface PageMetaLink {
     href: string;
 }
 
+import type { User } from '$lib/db/types';
+import type { DropOption } from '$lib/types/drop.js';
+
 export interface PageMetaProps {
     copyright?: string;
-    links?: PageMetaLink[];
+    user?: User | null;
+    userMenuOptions?: DropOption[];
+    guestNavOptions?: DropOption[];
+    siteTitle?: string;
     showLogo?: boolean;
+    currentPath?: string;
     class?: string;
 }

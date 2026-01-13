@@ -1,6 +1,20 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import PageMeta from '$lib/components/PageMeta.svelte';
+	import type { User } from '$lib/db/types';
+
+	// Mock user data for stories
+	const mockUser: User = {
+		id: 'user_123',
+		name: 'John Doe',
+		email: 'john@example.com',
+		slug: 'john-doe',
+		role: 'author',
+		bio: 'Writer and poet',
+		profile_image: undefined,
+		enabled: true,
+		created_at: new Date().toISOString()
+	};
 
 	const { Story } = defineMeta({
 		title: 'Components/PageMeta',
@@ -11,23 +25,35 @@
 <Story name="Variants Overview">
 	<div class="story-grid">
 		<section>
-			<h3>Default</h3>
+			<h3>Guest View</h3>
 			<div class="demo-box">
 				<PageMeta />
 			</div>
 		</section>
 
 		<section>
-			<h3>With Links & Logo Mark</h3>
+			<h3>Authenticated User</h3>
 			<div class="demo-box">
 				<PageMeta
-					showLogo={true}
+					user={mockUser}
+				/>
+			</div>
+		</section>
+		
+		<section>
+			<h3>Custom Copyright</h3>
+			<div class="demo-box">
+				<PageMeta
 					copyright="© 2026 Benito Anagua"
-					links={[
-						{ label: 'Privacy', href: '/privacy' },
-						{ label: 'Terms', href: '/terms' },
-						{ label: 'Sitemap', href: '/sitemap' }
-					]}
+				/>
+			</div>
+		</section>
+
+		<section>
+			<h3>Admin User</h3>
+			<div class="demo-box">
+				<PageMeta
+					user={{...mockUser, role: 'admin'}}
 				/>
 			</div>
 		</section>

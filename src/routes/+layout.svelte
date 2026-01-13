@@ -1,5 +1,4 @@
 <script lang="ts">
-	import AuthHeader from '$lib/components/AuthHeader.svelte';
 	import PageMeta from '$lib/components/PageMeta.svelte';
 	import ToastManager from '$lib/components/ToastManager.svelte';
 	import { page } from '$app/stores';
@@ -9,20 +8,15 @@
 </script>
 
 <div class="app">
-	<AuthHeader user={data?.user} {currentPath} siteTitle="Arawi Aura" />
+	<PageMeta 
+		copyright="© 2026 Benito Anagua"
+		user={data?.user}
+		{currentPath}
+	/>
 
 	<main class="main-content">
 		{@render children()}
 	</main>
-
-	<PageMeta
-		showLogo={true}
-		copyright="© 2026 Benito Anagua"
-		links={[
-			{ label: 'Privacy', href: '/privacy' },
-			{ label: 'Terms', href: '/terms' }
-		]}
-	/>
 	
 	<ToastManager />
 </div>
