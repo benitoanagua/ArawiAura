@@ -6,16 +6,21 @@
 
 	let { children, data }: any = $props();
 	let currentPath = $derived(page.url.pathname);
+	let isAdminRoute = $derived(currentPath.startsWith('/admin'));
 </script>
 
 <div class="app">
-	<TopBar siteTitle="Arawi Aura" showLogo={true} showNav={true} sticky={true} {currentPath} />
+	{#if !isAdminRoute}
+		<TopBar siteTitle="Arawi Aura" showLogo={true} showNav={true} sticky={true} {currentPath} />
+	{/if}
 
 	<main class="main-content">
 		{@render children()}
 	</main>
 
-	<BottomBar copyright="© 2026 Benito Anagua" user={data?.user} />
+	{#if !isAdminRoute}
+		<BottomBar copyright="© 2026 Benito Anagua" user={data?.user} />
+	{/if}
 
 	<ToastManager />
 </div>
