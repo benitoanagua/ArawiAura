@@ -1,4 +1,6 @@
-export type LogoTextSize = 'sm' | 'md' | 'lg';
+import type { Snippet } from 'svelte';
+
+export type LogoSize = 'sm' | 'md' | 'lg';
 
 export interface LogoProps {
   src?: string;
@@ -8,6 +10,7 @@ export interface LogoProps {
   height?: number;
   showText?: boolean;
   text?: string;
-  textSize?: LogoTextSize;
+  textSize?: LogoSize;
   class?: string;
+  children?: Snippet;
 }

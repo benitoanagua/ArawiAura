@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Theme, ThemeSwitcherProps } from '$lib/types/theme-switcher.js';
+	import type { Theme, ThemeSwitcherProps } from '$lib/types/ThemeSwitcher.js';
 	import Icon from '@iconify/svelte';
 
 	let systemTheme: 'light' | 'dark' = 'light';

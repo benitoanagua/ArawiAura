@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { getContext, onMount, onDestroy } from 'svelte';
-	import type { GrilleItemProps, GrilleContext } from '$lib/types/grille.js';
+	import type { GrilleItemProps, GrilleContext } from '$lib/types/Grille.js';
 
 	let { children }: GrilleItemProps = $props();
 
-	const grille = getContext<GrilleContext & { getItemIndex: (id: number) => number }>('grille');
+	const grille = getContext<GrilleContext>('grille');
 
 	let myId = -1;
 

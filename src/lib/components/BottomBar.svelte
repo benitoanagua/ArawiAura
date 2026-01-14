@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { PageMetaProps } from '$lib/types/page-meta.js';
+	import type { BottomBarProps } from '$lib/types/BottomBar';
 	import type { User } from '$lib/db/types';
 	import Drop from '$lib/components/Drop.svelte';
 	import Icon from '@iconify/svelte';
 	import { goto, invalidateAll } from '$app/navigation';
 
-	interface BottomNavProps extends PageMetaProps {
+	interface BottomNavProps extends BottomBarProps {
 		user?: User | null;
 	}
 

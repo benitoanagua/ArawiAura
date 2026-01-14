@@ -7,7 +7,7 @@
 		OverlayBox,
 		OverlayFill,
 		OverlayProps
-	} from '$lib/types/overlay.js';
+	} from '$lib/types/Overlay.js';
 	import * as falso from '@ngneat/falso';
 
 	const { Story } = defineMeta({

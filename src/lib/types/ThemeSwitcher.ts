@@ -1,10 +1,10 @@
 import type { Snippet } from 'svelte';
 
-export type Theme = 'light' | 'dark' | 'auto';
+export type Theme = 'auto' | 'light' | 'dark';
 
 export interface ThemeSwitcherProps {
 	theme?: Theme;
 	showLabel?: boolean;
 	class?: string;
-	children?: Snippet; // Optional content to wrap or use as trigger
+	children?: Snippet;
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import type { TabPanelProps, TabsContext } from '$lib/types/tabs.js';
+	import type { TabPanelProps, TabsContext } from '$lib/types/Tabs.js';
 
 	let { index, children, class: className }: TabPanelProps = $props();
 

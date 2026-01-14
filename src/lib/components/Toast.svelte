@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ToastType } from '$lib/types/toast';
+	import type { ToastType } from '$lib/types/Toast';
 
 	interface ToastProps {
 		id: string;

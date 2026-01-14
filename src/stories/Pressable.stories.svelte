@@ -1,7 +1,7 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Pressable from '$lib/components/Pressable.svelte';
-	import type { PressableVariant, PressableSize } from '$lib/types/pressable.js';
+	import type { PressableVariant, PressableSize } from '$lib/types/Pressable.js';
 
 	const { Story } = defineMeta({
 		title: 'Components/Pressable',

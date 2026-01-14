@@ -1,30 +1,14 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Card from '$lib/components/Card.svelte';
-	import type { CardDensity, CardMediaAlign, CardElevation } from '$lib/types/card.js';
-	import * as falso from '@ngneat/falso';
+	import type { CardDensity, CardElevation } from '$lib/types/Card.js';
 
 	const { Story } = defineMeta({
 		title: 'Components/Card',
 		tags: ['autodocs']
 	});
 
-	// Mock data generators with strict typing
-	const createCardData = () => ({
-		title: falso.randSentence(),
-		url: '#',
-		excerpt: falso.randParagraph(),
-		featureImage: `https://picsum.photos/800/600?random=${falso.randNumber()}`,
-		authorName: falso.randFullName(),
-		authorUrl: '#',
-		tagName: falso.randWord(),
-		tagUrl: '#',
-		readingTime: `${falso.randNumber({ min: 2, max: 15 })} min`,
-		publishedAt: falso.randRecentDate().toISOString()
-	});
-
-	const cardData = createCardData();
-	const densities: CardDensity[] = ['normal', 'compact', 'minimal'];
+	const densities: CardDensity[] = ['normal', 'compact', 'comfortable'];
 	const elevations: CardElevation[] = [0, 1, 2, 3];
 </script>
 
@@ -35,7 +19,10 @@
 			<div class="row row--scroll">
 				{#each densities as density}
 					<div class="col col--300">
-						<Card {...cardData} {density} />
+						<Card {density}>
+							<h4>Card Content</h4>
+							<p>This is a {density} density card with balanced spacing and layout.</p>
+						</Card>
 						<div class="label">{density}</div>
 					</div>
 				{/each}
@@ -47,7 +34,10 @@
 			<div class="row row--scroll">
 				{#each elevations as elevation}
 					<div class="col col--300">
-						<Card {...cardData} {elevation} />
+						<Card {elevation}>
+							<h4>Elevation {elevation}</h4>
+							<p>Card with elevation level {elevation} showing depth and visual hierarchy.</p>
+						</Card>
 						<div class="label">Elevation {elevation}</div>
 					</div>
 				{/each}
@@ -55,54 +45,43 @@
 		</section>
 
 		<section>
-			<h3>By Alignment (Vertical)</h3>
+			<h3>Content Variations</h3>
 			<div class="row row--scroll">
 				<div class="col col--300">
-					<Card {...cardData} mediaAlign="top" />
-					<div class="label">Top (Default)</div>
+					<Card elevation={2}>
+						<h4>With Header</h4>
+						<p>Card with title and description content.</p>
+					</Card>
+					<div class="label">Header + Content</div>
 				</div>
+				
 				<div class="col col--300">
-					<Card {...cardData} mediaAlign="bottom" />
-					<div class="label">Bottom</div>
+					<Card elevation={1} density="compact">
+						<h4>Compact Layout</h4>
+						<p>Dense card suitable for lists and grids.</p>
+					</Card>
+					<div class="label">Compact</div>
+				</div>
+				
+				<div class="col col--300">
+					<Card elevation={3} density="comfortable">
+						<h4>Comfortable Spacing</h4>
+						<p>Spacious card for detailed content and better readability.</p>
+					</Card>
+					<div class="label">Comfortable</div>
 				</div>
 			</div>
 		</section>
 
 		<section>
-			<h3>By Alignment (Horizontal)</h3>
-			<div class="column column--gap-4">
-				<div class="col-full">
-					<Card {...cardData} mediaAlign="left" density="compact" />
-					<div class="label">Aligned Left (Compact)</div>
-				</div>
-				<div class="col-full">
-					<Card {...cardData} mediaAlign="right" density="compact" />
-					<div class="label">Aligned Right (Compact)</div>
-				</div>
-			</div>
-		</section>
-
-		<section>
-			<h3>Mixed Grid (Simulation)</h3>
-			<div class="grid-layout">
-				<div class="grid-main">
-					<Card {...createCardData()} mediaAlign="top" elevation={2} />
-				</div>
-				<div class="grid-side">
-					<Card
-						{...createCardData()}
-						density="compact"
-						mediaAlign="left"
-						mediaWidth="is-one-third"
-						elevation={1}
-					/>
-					<Card
-						{...createCardData()}
-						density="compact"
-						mediaAlign="left"
-						mediaWidth="is-one-third"
-						elevation={1}
-					/>
+			<h3>Interactive States</h3>
+			<div class="row row--scroll">
+				<div class="col col--300">
+					<Card elevation={2}>
+						<h4>Hover Effect</h4>
+						<p>Cards with elevation 2+ have subtle hover interactions.</p>
+					</Card>
+					<div class="label">Interactive</div>
 				</div>
 			</div>
 		</section>
@@ -131,37 +110,12 @@
 		padding-bottom: 1rem;
 	}
 
-	.column {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.column--gap-4 {
-		gap: 1.5rem;
-	}
-
 	.col {
 		flex-shrink: 0;
 	}
 
 	.col--300 {
 		width: 320px;
-	}
-
-	.col-full {
-		width: 100%;
-	}
-
-	.grid-layout {
-		display: grid;
-		grid-template-columns: 2fr 1.5fr;
-		gap: 1.5rem;
-	}
-
-	.grid-side {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
 	}
 
 	.label {
@@ -183,9 +137,17 @@
 		padding-bottom: 0.5rem;
 	}
 
-	@media (max-width: 1024px) {
-		.grid-layout {
-			grid-template-columns: 1fr;
-		}
+	:global(.svelte-storybook) h4 {
+		margin: 0 0 0.5rem 0;
+		font-size: var(--text-base);
+		font-weight: 600;
+		color: var(--color-on-surface);
+	}
+
+	:global(.svelte-storybook) p {
+		margin: 0;
+		font-size: var(--text-sm);
+		color: var(--color-on-surface-variant);
+		line-height: 1.5;
 	}
 </style>

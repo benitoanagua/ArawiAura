@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { ModalProps } from '$lib/types/modal.js';
+	import type { ModalProps } from '$lib/types/Modal.js';
 
 	let {
 		open = $bindable(false),

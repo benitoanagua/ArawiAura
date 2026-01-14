@@ -2,7 +2,7 @@
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Carousel from '$lib/components/Carousel.svelte';
 	import CarouselItem from '$lib/components/CarouselItem.svelte';
-	import type { CarouselGap } from '$lib/types/carousel.js';
+	import type { CarouselGap } from '$lib/types/Carousel';
 	import * as falso from '@ngneat/falso';
 
 	const { Story } = defineMeta({

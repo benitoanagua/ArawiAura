@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Toast from './Toast.svelte';
-	import type { ToastNotification, ToastOptions } from '$lib/types/toast';
+	import type { ToastNotification, ToastOptions } from '$lib/types/Toast';
 	import { nanoid } from 'nanoid';
 
 	let toasts = $state<ToastNotification[]>([]);
@@ -18,7 +18,7 @@
 	}
 
 	function removeToast(id: string) {
-		toasts = toasts.filter(toast => toast.id !== id);
+		toasts = toasts.filter((toast) => toast.id !== id);
 	}
 
 	// Convenience methods

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Heading from './Heading.svelte';
-	import type { OverlayProps } from '$lib/types/overlay.js';
+	import type { OverlayProps } from '$lib/types/Overlay.js';
 
 	let {
 		title,

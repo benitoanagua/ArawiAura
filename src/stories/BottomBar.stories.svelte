@@ -1,6 +1,6 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
-	import PageMeta from '$lib/components/PageMeta.svelte';
+	import BottomBar from '$lib/components/BottomBar.svelte';
 	import type { User } from '$lib/db/types';
 
 	// Mock user data for stories
@@ -17,7 +17,7 @@
 	};
 
 	const { Story } = defineMeta({
-		title: 'Components/PageMeta',
+		title: 'Components/BottomBar',
 		tags: ['autodocs']
 	});
 </script>
@@ -27,34 +27,28 @@
 		<section>
 			<h3>Guest View</h3>
 			<div class="demo-box">
-				<PageMeta />
+				<BottomBar />
 			</div>
 		</section>
 
 		<section>
 			<h3>Authenticated User</h3>
 			<div class="demo-box">
-				<PageMeta
-					user={mockUser}
-				/>
+				<BottomBar user={mockUser} />
 			</div>
 		</section>
-		
+
 		<section>
 			<h3>Custom Copyright</h3>
 			<div class="demo-box">
-				<PageMeta
-					copyright="© 2026 Benito Anagua"
-				/>
+				<BottomBar copyright="© 2026 Benito Anagua" />
 			</div>
 		</section>
 
 		<section>
 			<h3>Admin User</h3>
 			<div class="demo-box">
-				<PageMeta
-					user={{...mockUser, role: 'admin'}}
-				/>
+				<BottomBar user={{ ...mockUser, role: 'admin' }} />
 			</div>
 		</section>
 	</div>

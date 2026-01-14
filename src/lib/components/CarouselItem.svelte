@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext, onMount, onDestroy } from 'svelte';
-	import type { CarouselItemProps, CarouselContext } from '$lib/types/carousel.js';
+	import type { CarouselItemProps, CarouselContext } from '$lib/types/Carousel.js';
 
 	let { children, class: className }: CarouselItemProps = $props();
 
@@ -9,7 +9,7 @@
 
 	onMount(() => {
 		if (carousel) {
-			itemIndex = carousel.registerItem({});
+			itemIndex = carousel.registerItem();
 		}
 	});
 
@@ -29,10 +29,13 @@
 <style>
 	.ax-carousel-item {
 		/* Simple width calculation: (100% - total gaps) / items */
-		flex: 0 0 calc((100% - (var(--items-per-view, 1) - 1) * var(--gap, 8px)) / var(--items-per-view, 1));
+		flex: 0 0
+			calc((100% - (var(--items-per-view, 1) - 1) * var(--gap, 8px)) / var(--items-per-view, 1));
 		min-width: 0;
-		max-width: calc((100% - (var(--items-per-view, 1) - 1) * var(--gap, 8px)) / var(--items-per-view, 1));
-		
+		max-width: calc(
+			(100% - (var(--items-per-view, 1) - 1) * var(--gap, 8px)) / var(--items-per-view, 1)
+		);
+
 		/* Styling */
 		border: 1px solid var(--color-outline-variant, rgba(0, 0, 0, 0.08));
 		border-radius: 4px;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
-	import type { AccordionProps } from '$lib/types/accordion.js';
+	import type { AccordionProps, AccordionItemProps } from '$lib/types/Accordion';
 
 	let { multiple = false, children }: AccordionProps = $props();
 

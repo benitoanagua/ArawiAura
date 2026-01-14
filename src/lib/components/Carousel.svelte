@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { setContext, onMount, onDestroy } from 'svelte';
 	import Icon from '@iconify/svelte';
-	import type { CarouselProps, CarouselContext, CarouselGap } from '$lib/types/carousel.js';
+	import type { CarouselProps, CarouselContext, CarouselGap } from '$lib/types/Carousel.js';
 
 	let {
 		desktop = 3,

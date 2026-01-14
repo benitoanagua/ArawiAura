@@ -1,6 +1,6 @@
 <script lang="ts">
 	import TopBar from '$lib/components/TopBar.svelte';
-	import PageMeta from '$lib/components/PageMeta.svelte';
+	import BottomBar from '$lib/components/BottomBar.svelte';
 	import ToastManager from '$lib/components/ToastManager.svelte';
 	import { page } from '$app/state';
 
@@ -15,7 +15,7 @@
 		{@render children()}
 	</main>
 
-	<PageMeta copyright="© 2026 Benito Anagua" user={data?.user} />
+	<BottomBar copyright="© 2026 Benito Anagua" user={data?.user} />
 
 	<ToastManager />
 </div>

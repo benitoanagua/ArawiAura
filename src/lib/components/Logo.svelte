@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { LogoProps } from '$lib/types/logo.js';
+	import type { LogoProps } from '$lib/types/Logo';
 
 	let {
 		src = '',

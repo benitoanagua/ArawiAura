@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ContainerProps } from '$lib/types/container.js';
+	import type { ContainerProps } from '$lib/types/Container.js';
 
 	let {
 		size = 'base',

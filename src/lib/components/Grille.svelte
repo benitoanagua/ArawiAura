@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
-	import type { GrilleProps, GrilleContext } from '$lib/types/grille.js';
+	import type { GrilleProps, GrilleContext } from '$lib/types/Grille.js';
 
 	let { desktop = 3, mobile = 2, gap = 'medium', children }: GrilleProps = $props();
 

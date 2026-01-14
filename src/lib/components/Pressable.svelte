@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PressableProps } from '$lib/types/pressable.js';
+	import type { PressableProps } from '$lib/types/Pressable.js';
 
 	let {
 		variant = 'primary',
@@ -164,6 +164,42 @@
 	.ax-pressable--link:hover:not(.ax-pressable--disabled) {
 		--ring-color-default: var(--color-primary);
 		background: transparent;
+	}
+
+	/* Danger variant for admin use */
+	.ax-pressable--danger {
+		background: var(--color-error);
+		color: var(--color-on-error);
+		--ring-color-default: var(--color-error);
+	}
+
+	.ax-pressable--danger:hover:not(.ax-pressable--disabled) {
+		background: var(--color-error-container);
+		color: var(--color-on-error-container);
+		--ring-color-default: var(--color-error-container);
+	}
+
+	/* Loading state */
+	.ax-pressable--loading {
+		cursor: wait;
+		pointer-events: none;
+	}
+
+	.ax-pressable--loading::after {
+		content: '';
+		width: 16px;
+		height: 16px;
+		border: 2px solid currentColor;
+		border-radius: 50%;
+		border-top-color: transparent;
+		animation: spin 1s linear infinite;
+		margin-left: var(--space-2);
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	/* Disabled state */

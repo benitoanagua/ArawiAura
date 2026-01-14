@@ -10,7 +10,7 @@
 </script>
 
 <script lang="ts">
-	import type { Theme } from '$lib/types/theme-switcher.js';
+	import type { Theme } from '$lib/types/ThemeSwitcher.js';
 
 	let currentTheme: Theme = 'auto';
 	let showLabel = false;

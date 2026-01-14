@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { HeroProps } from '$lib/types/hero.js';
+	import type { HeroProps } from '$lib/types/Hero';
 
 	let { title = '', subtitle = '', children, class: className }: HeroProps = $props();
 </script>

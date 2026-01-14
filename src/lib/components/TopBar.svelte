@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TopBarProps } from '$lib/types/top-bar.js';
+	import type { TopBarProps } from '$lib/types/TopBar.js';
 	import Logo from './Logo.svelte';
 	import Offcanvas from './Offcanvas.svelte';
 	import ThemeSwitcher from './ThemeSwitcher.svelte';

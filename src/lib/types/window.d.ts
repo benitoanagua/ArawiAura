@@ -1,4 +1,4 @@
-import type { ToastOptions } from '$lib/types/toast';
+import type { ToastOptions } from '$lib/types/Toast';
 
 declare global {
 	interface Window {

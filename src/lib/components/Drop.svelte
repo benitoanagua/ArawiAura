@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
 	import Icon from '@iconify/svelte';
-	import type { DropOption, DropProps } from '$lib/types/drop.js';
+	import type { DropOption, DropProps } from '$lib/types/Drop';
 
 	const dispatch = createEventDispatcher();
 

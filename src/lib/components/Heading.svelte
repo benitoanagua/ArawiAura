@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { HeadingProps } from '$lib/types/heading.js';
+	import type { HeadingProps } from '$lib/types/Heading.js';
 
 	let { level = 4, class: className = '', children }: HeadingProps = $props();
 </script>

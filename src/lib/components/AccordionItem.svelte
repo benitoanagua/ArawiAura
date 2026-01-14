@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import Icon from '@iconify/svelte';
-	import type { AccordionItemProps, AccordionContext } from '$lib/types/accordion.js';
+	import type { AccordionItemProps, AccordionContext } from '$lib/types/Accordion';
 
 	let {
 		title = '',
@@ -12,7 +12,7 @@
 	}: AccordionItemProps = $props();
 
 	// Consume context from parent Accordion
-	const accordion = getContext<AccordionContext>('accordion');
+	const accordion = getContext<AccordionContext | undefined>('accordion');
 
 	// Use prop if provided (manual), otherwise use context (automatic)
 	const effectiveToggle = $derived(propToggle || accordion?.toggle);
@@ -33,7 +33,11 @@
 	</button>
 
 	{#if isExpanded}
-		<div id="accordion-content-{index}" class="ax-accordion-item__content" aria-hidden={!isExpanded}>
+		<div
+			id="accordion-content-{index}"
+			class="ax-accordion-item__content"
+			aria-hidden={!isExpanded}
+		>
 			<div class="ax-accordion-item__body">
 				{@render children?.()}
 			</div>
