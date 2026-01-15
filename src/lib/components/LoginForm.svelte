@@ -32,13 +32,23 @@
 			// Show success message
 			window.toast?.success('Welcome back! Redirecting...');
 
+			// Log user role for debugging
+			console.log('User role:', data.user?.role);
+			console.log('User data:', data.user);
+
 			// Invalidate all data to refresh user state from server
 			await invalidateAll();
 
 			// Small delay to show toast before redirect
 			setTimeout(async () => {
-				// Always redirect to home
-				await goto('/');
+				// Redirect based on user role
+				if (data.user?.role === 'admin') {
+					console.log('Redirecting to admin...');
+					await goto('/admin');
+				} else {
+					console.log('Redirecting to home...');
+					await goto('/');
+				}
 			}, 500);
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : 'An error occurred';

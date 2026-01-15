@@ -3,14 +3,20 @@ import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/db/connection.js';
 
 export const load: PageServerLoad = async ({ locals }) => {
+	// Log for debugging
+	console.log('Admin page - user:', locals.user);
+	console.log('Admin page - user role:', locals.user?.role);
+
 	// Require authentication
 	if (!locals.user) {
+		console.log('No user found, redirecting to login');
 		redirect(302, '/login');
 	}
 
 	// Optionally require admin role
 	if (locals.user.role !== 'admin') {
 		// If not admin, redirect to a public user page or home
+		console.log('User is not admin, redirecting to home. Role:', locals.user.role);
 		redirect(302, '/');
 	}
 
