@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import Icon from '@iconify/svelte';
 	import type { InputProps } from '$lib/types/Input';
 
 	let {
@@ -18,16 +19,28 @@
 		children
 	}: InputProps = $props();
 
+	let showPassword = $state(false);
+
+	$effect(() => {
+		if (type !== 'password') {
+			showPassword = false;
+		}
+	});
+
 	const dispatch = createEventDispatcher();
 
 	function handleChange(e: Event) {
-		const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+		const target = e.target as HTMLInputElement | HTMLInputElement;
 		dispatch('change', { value: target.value });
 	}
 
 	function handleInput(e: Event) {
-		const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+		const target = e.target as HTMLInputElement | HTMLInputElement;
 		dispatch('input', { value: target.value });
+	}
+
+	function togglePassword() {
+		showPassword = !showPassword;
 	}
 </script>
 
@@ -59,6 +72,38 @@
 			onchange={handleChange}
 			{rows}
 		></textarea>
+	{:else if type === 'password'}
+		<div class="ax-input__password-wrapper">
+			<input
+				class="ax-input"
+				type={showPassword ? 'text' : 'password'}
+				{id}
+				{name}
+				{placeholder}
+				{disabled}
+				{readonly}
+				{required}
+				bind:value
+				oninput={handleInput}
+				onchange={handleChange}
+			/>
+			<button
+				type="button"
+				class="ax-input__toggle"
+				aria-label={showPassword ? 'Hide password' : 'Show password'}
+				onclick={togglePassword}
+				{disabled}
+				tabindex="-1"
+			>
+				{#if showPassword}
+					<!-- Eye Off Icon -->
+					<Icon icon="carbon:view-off" width="1.2em" height="1.2em" class="ax-input__toggle-icon" />
+				{:else}
+					<!-- Eye Icon -->
+					<Icon icon="carbon:view" width="1.2em" height="1.2em" class="ax-input__toggle-icon" />
+				{/if}
+			</button>
+		</div>
 	{:else}
 		<input
 			class="ax-input"
@@ -130,48 +175,28 @@
 		outline: none;
 		width: 100%;
 		box-sizing: border-box;
-
-		/* Anti-Reflow Focus */
-		box-shadow: 0 0 0 var(--line-thin) transparent;
 	}
 
-	.ax-input:focus {
+	/* Hover State - Enhanced Color Ring */
+	.ax-input:hover:not([disabled]) {
 		border-color: var(--color-primary);
-		box-shadow:
-			0 0 0 var(--space-1) var(--color-surface),
-			0 0 0 var(--space-2) var(--color-primary);
+		box-shadow: 0 0 0 1px var(--color-primary);
 		background: var(--color-surface-container-high);
 	}
 
-	.ax-input:hover:not(:focus):not([disabled]) {
-		border-color: var(--color-outline-variant);
-		background: var(--color-surface-container-low);
+	/* Error State - Enhanced Red Ring */
+	.ax-input-group--error .ax-input:hover:not([disabled]) {
+		border-color: var(--color-error);
+		box-shadow:
+			0 0 0 1px var(--color-error),
+			0 0 0 2px rgba(186, 26, 26, 0.2);
+		background: var(--color-error-container);
 	}
 
 	/* Textarea Specific */
 	.ax-input--textarea {
 		resize: vertical;
 		min-height: 100px;
-	}
-
-	/* States */
-	.ax-input-group--error .ax-input {
-		border-color: var(--color-error);
-		background: var(--color-error-container);
-		color: var(--color-on-error-container);
-	}
-
-	.ax-input-group--error .ax-input:focus {
-		border-color: var(--color-error);
-		box-shadow:
-			0 0 0 var(--space-1) var(--color-surface),
-			0 0 0 var(--space-2) var(--color-error);
-	}
-
-	.ax-input-group--disabled .ax-input {
-		opacity: 0.6;
-		cursor: not-allowed;
-		background: var(--color-surface-container-low);
 	}
 
 	/* Description - Supporting Text */
@@ -199,6 +224,52 @@
 		flex-shrink: 0;
 	}
 
+	.ax-input__toggle {
+		position: absolute;
+		right: 8px;
+		top: 50%;
+		transform: translateY(-50%);
+		background: none;
+		border: none;
+		padding: 4px;
+		cursor: pointer;
+		color: var(--color-on-surface-variant);
+		border-radius: var(--space-1);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: color 200ms var(--ease-out);
+		z-index: 1;
+	}
+
+	.ax-input__toggle:hover {
+		color: var(--color-on-surface);
+	}
+
+	.ax-input__password-wrapper {
+		position: relative;
+	}
+
+	/* States */
+	.ax-input-group--error .ax-input {
+		border-color: var(--color-error);
+		background: var(--color-error-container);
+		color: var(--color-on-error-container);
+	}
+
+	.ax-input-group--error .ax-input:focus {
+		border-color: var(--color-error);
+		box-shadow:
+			0 0 0 var(--space-1) var(--color-surface),
+			0 0 0 var(--space-2) var(--color-error);
+	}
+
+	.ax-input-group--disabled .ax-input {
+		opacity: 0.6;
+		cursor: not-allowed;
+		background: var(--color-surface-container-low);
+	}
+
 	/* Responsive */
 	@media (max-width: 768px) {
 		.ax-input {
@@ -208,6 +279,14 @@
 
 		.ax-input__label {
 			font-size: var(--text-sm);
+		}
+
+		.ax-input__description {
+			font-size: var(--text-xs);
+		}
+
+		.ax-input--textarea {
+			min-height: 80px;
 		}
 	}
 </style>
