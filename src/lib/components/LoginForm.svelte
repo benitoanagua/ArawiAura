@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
+	import Input from '$lib/components/Input.svelte';
+	import Pressable from '$lib/components/Pressable.svelte';
 
 	let email = '';
 	let password = '';
@@ -56,33 +58,31 @@
 	{/if}
 
 	<form on:submit|preventDefault={handleSignin}>
-		<div class="form-group">
-			<label for="email">Email</label>
-			<input
-				id="email"
-				type="email"
-				bind:value={email}
-				placeholder="your@email.com"
-				required
-				disabled={loading}
-			/>
-		</div>
+		<Input
+			id="email"
+			type="email"
+			bind:value={email}
+			label="Email"
+			placeholder="your@email.com"
+			required
+			disabled={loading}
+			error={error && email ? '' : error}
+		/>
 
-		<div class="form-group">
-			<label for="password">Password</label>
-			<input
-				id="password"
-				type="password"
-				bind:value={password}
-				placeholder="••••••••"
-				required
-				disabled={loading}
-			/>
-		</div>
+		<Input
+			id="password"
+			type="password"
+			bind:value={password}
+			label="Password"
+			placeholder="••••••••"
+			required
+			disabled={loading}
+			error={error && !email ? error : ''}
+		/>
 
-		<button type="submit" disabled={loading}>
+		<Pressable type="submit" disabled={loading} fullWidth>
 			{loading ? 'Signing in...' : 'Sign In'}
-		</button>
+		</Pressable>
 	</form>
 
 	<p class="signup-link">
@@ -129,85 +129,6 @@
 		gap: var(--space-4);
 	}
 
-	.form-group {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-	}
-
-	label {
-		font-weight: 600;
-		font-family: var(--font-sans);
-		font-size: var(--text-sm);
-		color: var(--color-on-surface);
-		line-height: var(--leading-snug);
-	}
-
-	input {
-		padding: var(--space-3);
-		border: var(--line-thin) solid var(--stroke-medium);
-		border-radius: clamp(4px, 1vw, 8px);
-		font-family: var(--font-sans);
-		font-size: var(--text-base);
-		color: var(--color-on-surface);
-		background-color: var(--color-surface);
-		transition: all var(--duration-fast);
-	}
-
-	input:focus {
-		outline: none;
-		border-color: var(--stroke-maximum);
-		box-shadow: 0 0 0 var(--ring-width) var(--ring-color);
-		background-color: var(--color-surface-container-lowest);
-	}
-
-	input:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-		background-color: var(--color-surface-container-low);
-	}
-
-	input::placeholder {
-		color: var(--color-on-surface-variant);
-	}
-
-	button {
-		padding: var(--space-3);
-		background-color: var(--color-primary);
-		color: var(--color-on-primary);
-		border: var(--line-thin) solid var(--color-primary);
-		border-radius: clamp(4px, 1vw, 8px);
-		font-family: var(--font-sans);
-		font-size: var(--text-base);
-		font-weight: 600;
-		cursor: pointer;
-		transition: all var(--duration-base);
-		line-height: var(--leading-snug);
-	}
-
-	button:hover:not(:disabled) {
-		background-color: var(--color-primary-container);
-		color: var(--color-on-primary-container);
-		border-color: var(--color-primary-container);
-		transform: translateY(-1px);
-	}
-
-	button:active:not(:disabled) {
-		transform: translateY(0);
-		scale: 0.98;
-	}
-
-	button:focus {
-		outline: var(--line-thin) solid var(--ring-color);
-		outline-offset: var(--ring-offset);
-	}
-
-	button:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-		transform: none;
-	}
-
 	.signup-link {
 		text-align: center;
 		margin-top: var(--space-6);
@@ -237,12 +158,6 @@
 
 		h2 {
 			font-size: var(--text-xl);
-		}
-
-		input,
-		button {
-			padding: var(--space-2-5);
-			font-size: var(--text-sm);
 		}
 	}
 </style>

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import Input from '$lib/components/Input.svelte';
+	import Pressable from '$lib/components/Pressable.svelte';
 
 	let name = '';
 	let slug = '';
@@ -41,7 +43,7 @@
 
 			// Show success message
 			window.toast?.success('Account created successfully! Welcome to Arawi Aura.');
-			
+
 			// Small delay to show toast before redirect
 			setTimeout(async () => {
 				// Redirect based on user role
@@ -69,84 +71,76 @@
 	{/if}
 
 	<form on:submit|preventDefault={handleSignup}>
-		<div class="form-group">
-			<label for="name">Full Name</label>
-			<input
-				id="name"
-				type="text"
-				bind:value={name}
-				placeholder="John Doe"
-				required
-				disabled={loading}
-			/>
-		</div>
+		<Input
+			id="name"
+			type="text"
+			bind:value={name}
+			label="Full Name"
+			placeholder="John Doe"
+			required
+			disabled={loading}
+		/>
 
-		<div class="form-group">
-			<label for="slug">Username (URL slug)</label>
-			<input
-				id="slug"
-				type="text"
-				bind:value={slug}
-				placeholder="john-doe"
-				pattern="[a-z0-9-]+"
-				required
-				disabled={loading}
-			/>
-			<small>Lowercase letters, numbers, and hyphens only</small>
-		</div>
+		<Input
+			id="slug"
+			type="text"
+			bind:value={slug}
+			label="Username (URL slug)"
+			placeholder="john-doe"
+			description="Lowercase letters, numbers, and hyphens only"
+			pattern="[a-z0-9-]+"
+			required
+			disabled={loading}
+		/>
 
-		<div class="form-group">
-			<label for="email">Email</label>
-			<input
-				id="email"
-				type="email"
-				bind:value={email}
-				placeholder="your@email.com"
-				required
-				disabled={loading}
-			/>
-		</div>
+		<Input
+			id="email"
+			type="email"
+			bind:value={email}
+			label="Email"
+			placeholder="your@email.com"
+			required
+			disabled={loading}
+		/>
 
-		<div class="form-group">
-			<label for="bio">Bio</label>
-			<textarea
-				id="bio"
-				bind:value={bio}
-				placeholder="Tell us about yourself"
-				rows="3"
-				disabled={loading}
-			></textarea>
-		</div>
+		<Input
+			id="bio"
+			type="textarea"
+			bind:value={bio}
+			label="Bio"
+			placeholder="Tell us about yourself"
+			rows={3}
+			disabled={loading}
+		/>
 
-		<div class="form-group">
-			<label for="password">Password</label>
-			<input
-				id="password"
-				type="password"
-				bind:value={password}
-				placeholder="••••••••"
-				minlength="8"
-				required
-				disabled={loading}
-			/>
-			<small>At least 8 characters</small>
-		</div>
+		<Input
+			id="password"
+			type="password"
+			bind:value={password}
+			label="Password"
+			placeholder="••••••••"
+			description="At least 8 characters"
+			minlength={8}
+			required
+			disabled={loading}
+		/>
 
-		<div class="form-group">
-			<label for="confirmPassword">Confirm Password</label>
-			<input
-				id="confirmPassword"
-				type="password"
-				bind:value={confirmPassword}
-				placeholder="••••••••"
-				required
-				disabled={loading}
-			/>
-		</div>
+		<Input
+			id="confirmPassword"
+			type="password"
+			bind:value={confirmPassword}
+			label="Confirm Password"
+			placeholder="••••••••"
+			required
+			disabled={loading}
+			error={password && confirmPassword && password !== confirmPassword
+				? 'Passwords do not match'
+				: ''}
+		/>
 
-		<button type="submit" disabled={loading}>
+		<Pressable type="submit" disabled={loading} fullWidth>
 			{loading ? 'Creating account...' : 'Sign Up'}
-		</button>
+		</Pressable>
 	</form>
 
 	<p class="signin-link">
@@ -193,101 +187,6 @@
 		gap: var(--space-4);
 	}
 
-	.form-group {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-	}
-
-	label {
-		font-weight: 600;
-		font-family: var(--font-sans);
-		font-size: var(--text-sm);
-		color: var(--color-on-surface);
-		line-height: var(--leading-snug);
-	}
-
-	input,
-	textarea {
-		padding: var(--space-3);
-		border: var(--line-thin) solid var(--stroke-medium);
-		border-radius: clamp(4px, 1vw, 8px);
-		font-family: var(--font-sans);
-		font-size: var(--text-base);
-		color: var(--color-on-surface);
-		background-color: var(--color-surface);
-		transition: all var(--duration-fast);
-	}
-
-	input:focus,
-	textarea:focus {
-		outline: none;
-		border-color: var(--stroke-maximum);
-		box-shadow: 0 0 0 var(--ring-width) var(--ring-color);
-		background-color: var(--color-surface-container-lowest);
-	}
-
-	input:disabled,
-	textarea:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-		background-color: var(--color-surface-container-low);
-	}
-
-	input::placeholder,
-	textarea::placeholder {
-		color: var(--color-on-surface-variant);
-	}
-
-	small {
-		font-family: var(--font-sans);
-		font-size: var(--text-xs);
-		color: var(--color-on-surface-variant);
-		line-height: var(--leading-snug);
-	}
-
-	textarea {
-		resize: vertical;
-		min-height: 80px;
-	}
-
-	button {
-		padding: var(--space-3);
-		background-color: var(--color-primary);
-		color: var(--color-on-primary);
-		border: var(--line-thin) solid var(--color-primary);
-		border-radius: clamp(4px, 1vw, 8px);
-		font-family: var(--font-sans);
-		font-size: var(--text-base);
-		font-weight: 600;
-		cursor: pointer;
-		transition: all var(--duration-base);
-		line-height: var(--leading-snug);
-	}
-
-	button:hover:not(:disabled) {
-		background-color: var(--color-primary-container);
-		color: var(--color-on-primary-container);
-		border-color: var(--color-primary-container);
-		transform: translateY(-1px);
-	}
-
-	button:active:not(:disabled) {
-		transform: translateY(0);
-		scale: 0.98;
-	}
-
-	button:focus {
-		outline: var(--line-thin) solid var(--ring-color);
-		outline-offset: var(--ring-offset);
-	}
-
-	button:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-		transform: none;
-	}
-
 	.signin-link {
 		text-align: center;
 		margin-top: var(--space-6);
@@ -317,13 +216,6 @@
 
 		h2 {
 			font-size: var(--text-xl);
-		}
-
-		input,
-		textarea,
-		button {
-			padding: var(--space-2-5);
-			font-size: var(--text-sm);
 		}
 	}
 </style>

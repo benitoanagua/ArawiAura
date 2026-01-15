@@ -25,6 +25,9 @@ export interface InputProps {
 	error?: string;
 	rows?: number;
 	showPassword?: boolean;
+	pattern?: string;
+	minlength?: number;
+	maxlength?: number;
 	onchange?: (value: string) => void;
 	class?: string;
 	children?: Snippet;

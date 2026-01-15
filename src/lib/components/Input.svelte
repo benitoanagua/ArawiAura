@@ -5,7 +5,7 @@
 
 	let {
 		type = 'text',
-		value = '',
+		value = $bindable(''),
 		placeholder = '',
 		label = '',
 		description = '',
@@ -16,6 +16,9 @@
 		name = '',
 		id = '',
 		rows = 4,
+		pattern,
+		minlength,
+		maxlength,
 		children
 	}: InputProps = $props();
 
@@ -67,6 +70,8 @@
 			{disabled}
 			{readonly}
 			{required}
+			{minlength}
+			{maxlength}
 			bind:value
 			oninput={handleInput}
 			onchange={handleChange}
@@ -83,6 +88,9 @@
 				{disabled}
 				{readonly}
 				{required}
+				{pattern}
+				{minlength}
+				{maxlength}
 				bind:value
 				oninput={handleInput}
 				onchange={handleChange}
@@ -114,6 +122,9 @@
 			{disabled}
 			{readonly}
 			{required}
+			{pattern}
+			{minlength}
+			{maxlength}
 			bind:value
 			oninput={handleInput}
 			onchange={handleChange}
