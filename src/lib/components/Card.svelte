@@ -4,146 +4,152 @@
 	let {
 		elevation = 2,
 		density = 'normal',
-		children
+		top,
+		body,
+		footer,
+		children,
+		class: className
 	}: CardProps = $props();
+
+	// Determinar si es interactivo (tiene slots)
+	const isInteractive = $derived(Boolean(top || body || footer || children));
 </script>
 
-<div class="ax-card ax-card--elevation-{elevation} ax-card--{density}">
+<div
+	class="ax-card ax-card--elevation-{elevation} ax-card--{density} {isInteractive
+		? 'ax-card--interactive'
+		: ''} {className || ''}"
+	role={isInteractive ? 'button' : undefined}
+>
 	<div class="ax-card__container">
-		{@render children?.()}
+		<!-- Top Slot -->
+		{#if top}
+			<header class="ax-card__top-slot">
+				{@render top()}
+			</header>
+		{/if}
+
+		<!-- Body Slot -->
+		{#if body}
+			<div class="ax-card__body-slot">
+				{@render body()}
+			</div>
+		{:else if children}
+			<div class="ax-card__body-slot">
+				{@render children()}
+			</div>
+		{/if}
+
+		<!-- Footer Slot -->
+		{#if footer}
+			<footer class="ax-card__footer-slot">
+				{@render footer()}
+			</footer>
+		{/if}
 	</div>
 </div>
 
 <style>
 	.ax-card {
-		/* Structural Honesty */
+		/* Architectural Honesty: Blueprint-Core Foundation */
 		background: var(--color-surface-container);
-		border-radius: var(--space-3);
-		transition: all var(--duration-base) cubic-bezier(0.4, 0, 0.2, 1);
+		border-radius: clamp(4px, 1vw, 12px);
+		transition:
+			box-shadow 200ms var(--ease-out),
+			border-color 200ms var(--ease-out);
 		position: relative;
 		overflow: hidden;
-		
-		/* Shared Border Grid */
-		border: var(--line-thin) solid transparent;
+
+		/* Zero Displacement: Reserve space for border */
+		border: var(--line-base) solid transparent;
 	}
 
-	/* Elevations - Linear Weight System */
+	/* Linear Elevation System - Weight as Hierarchy */
 	.ax-card--elevation-0 {
+		/* E-0 (Base): Total Integration */
 		background: transparent;
 		border: none;
-		box-shadow: none;
+		padding: 0;
 	}
 
 	.ax-card--elevation-1 {
+		/* E-1 (Surface): Subtle Delimitation */
 		border-color: var(--color-outline-variant);
+		border-width: var(--line-thin);
 	}
 
 	.ax-card--elevation-2 {
+		/* E-2 (Focus): Primary Interaction Object */
 		border-color: var(--color-outline);
-		box-shadow: 
-			0 2px 8px rgba(0, 0, 0, 0.05),
-			inset 0 0 0 var(--line-thin) var(--color-surface);
+		border-width: var(--line-thin);
 	}
 
 	.ax-card--elevation-3 {
+		/* E-3 (High): Maximum Visual Authority */
 		border-color: var(--color-primary);
 		border-width: var(--line-base);
-		box-shadow: 
-			0 4px 16px rgba(0, 0, 0, 0.1),
-			inset 0 0 0 var(--line-thin) var(--color-surface);
 	}
 
-	/* Hover States - Anti-Reflow */
-	.ax-card--elevation-2:hover {
-		border-color: var(--color-primary);
-		transform: translateY(-1px);
-		box-shadow: 
-			0 4px 12px rgba(0, 0, 0, 0.08),
-			inset 0 0 0 var(--line-thin) var(--color-surface);
-	}
-
-	.ax-card--elevation-3:hover {
-		transform: translateY(-2px);
-		box-shadow: 
-			0 8px 24px rgba(0, 0, 0, 0.12),
-			inset 0 0 0 var(--line-thin) var(--color-surface);
-	}
-
-	/* Density Variants - Dynamic Geometry */
+	/* Dynamic Density - Contextual Geometry */
 	.ax-card--compact {
-		--card-padding: var(--space-3);
+		--card-padding: clamp(12px, 2vw, 16px);
 	}
 
 	.ax-card--normal {
-		--card-padding: var(--space-5);
+		--card-padding: clamp(16px, 3vw, 24px);
 	}
 
 	.ax-card--comfortable {
-		--card-padding: var(--space-6);
+		--card-padding: clamp(20px, 4vw, 32px);
 	}
 
 	.ax-card__container {
-		padding: var(--card-padding);
 		height: 100%;
 		display: flex;
 		flex-direction: column;
 	}
 
-	/* Header */
-	.ax-card__header {
-		margin-bottom: var(--space-4);
-		padding-bottom: var(--space-4);
+	/* Slot Styles - Non-Conventional Architecture */
+	.ax-card__top-slot {
+		padding: var(--card-padding);
 		border-bottom: var(--line-thin) solid var(--color-outline-variant);
+		flex-shrink: 0;
 	}
 
-	.ax-card__title {
-		font-family: var(--font-display);
-		font-size: var(--text-xl);
-		font-weight: 700;
-		color: var(--color-on-surface);
-		margin: 0 0 var(--space-2);
-		letter-spacing: -0.02em;
-	}
-
-	.ax-card__subtitle {
-		font-family: var(--font-sans);
-		font-size: var(--text-base);
-		color: var(--color-on-surface-variant);
-		margin: 0;
-	}
-
-	/* Content */
-	.ax-card__content {
+	.ax-card__body-slot {
+		padding: var(--card-padding);
 		flex: 1;
+		font-family: var(--font-sans);
+		line-height: 1.6;
+		color: var(--color-on-surface);
+		display: flex;
+		flex-direction: column;
 	}
 
-	/* Footer */
-	.ax-card__footer {
-		margin-top: auto;
-		padding-top: var(--space-4);
+	.ax-card__footer-slot {
+		padding: var(--card-padding);
 		border-top: var(--line-thin) solid var(--color-outline-variant);
-	}
-
-	/* Actions */
-	.ax-card__actions {
+		margin-top: auto;
 		display: flex;
 		gap: var(--space-2);
 		flex-wrap: wrap;
-		margin-top: var(--space-4);
+		flex-shrink: 0;
 	}
 
-	/* Responsive */
+	/* Responsive Geometry */
 	@media (max-width: 768px) {
-		.ax-card--normal {
+		.ax-card--compact {
+			--card-padding: var(--space-3);
+		}
+
+		.ax-card--comfortable {
 			--card-padding: var(--space-4);
 		}
-		
-		.ax-card--comfortable {
-			--card-padding: var(--space-5);
-		}
-		
-		.ax-card__title {
-			font-size: var(--text-lg);
+
+		.ax-card__top-slot,
+		.ax-card__body-slot,
+		.ax-card__footer-slot {
+			padding: var(--space-3);
 		}
 	}
 </style>

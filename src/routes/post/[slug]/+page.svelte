@@ -106,25 +106,31 @@
 			<Heading level={2}>Artículos Relacionados</Heading>
 			<div class="related-posts-grid">
 				{#each relatedPosts as relatedPost}
-					<Card
-						title={relatedPost.title}
-						url={`/post/${relatedPost.slug}`}
-						excerpt={relatedPost.excerpt}
-						featureImage={relatedPost.feature_image?.url || ''}
-						authorName={relatedPost.author?.name || ''}
-						authorUrl={relatedPost.author ? `/author/${relatedPost.author.slug}` : ''}
-						tagName={relatedPost.tags && relatedPost.tags.length > 0
-							? relatedPost.tags[0].name
-							: ''}
-						tagUrl={relatedPost.tags && relatedPost.tags.length > 0
-							? `/tag/${relatedPost.tags[0].slug}`
-							: ''}
-						readingTime={`${relatedPost.reading_time || 0} min`}
-						publishedAt={relatedPost.published_at}
-						density="compact"
-						elevation={1}
-						headingLevel={4}
-					/>
+					<Card density="compact" elevation={1}>
+						{#snippet body()}
+							<div>
+								{#if relatedPost.title}
+									<a
+										href={`/post/${relatedPost.slug}`}
+										style="text-decoration: none; color: var(--color-on-surface);"
+									>
+										<h4
+											style="margin: 0 0 var(--space-2) 0; font-size: var(--text-base); font-weight: 600; line-height: 1.2;"
+										>
+											{relatedPost.title}
+										</h4>
+									</a>
+								{/if}
+								{#if relatedPost.excerpt}
+									<p
+										style="margin: 0 0 var(--space-2) 0; font-size: var(--text-xs); color: var(--color-on-surface-variant); line-height: 1.4;"
+									>
+										{relatedPost.excerpt}
+									</p>
+								{/if}
+							</div>
+						{/snippet}
+					</Card>
 				{/each}
 			</div>
 		</Container>

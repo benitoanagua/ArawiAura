@@ -24,7 +24,7 @@
 			throw new Error('Author data is missing');
 		}
 	});
-	
+
 	// Show welcome message for own profile
 	$effect(() => {
 		if (isOwnProfile && typeof window !== 'undefined') {
@@ -43,7 +43,7 @@
 	<Container size="base" spacing="loose">
 		<div class="author-profile">
 			{#if author!.profile_image?.url}
-				<img 
+				<img
 					src={author!.profile_image.url}
 					alt={author!.name}
 					class="author-avatar"
@@ -57,21 +57,19 @@
 					</span>
 				</div>
 			{/if}
-			
+
 			<div class="author-info">
 				<Heading level={1} class="author-name">
 					{author!.name}
 					{#if isOwnProfile}
-						<span class="own-profile-badge">
-							✓ Tu perfil
-						</span>
+						<span class="own-profile-badge"> ✓ Tu perfil </span>
 					{/if}
 				</Heading>
-				
+
 				{#if author!.bio}
 					<p class="author-bio">{author!.bio}</p>
 				{/if}
-				
+
 				<div class="author-stats">
 					<span class="stat-item">
 						<span class="stat-number">{safePostCount}</span>
@@ -111,34 +109,98 @@
 		{#if safePostCount > 0}
 			<div class="posts-grid">
 				{#each posts as post (post.id)}
-					<Card
-						title={post.title || 'Sin título'}
-						url={`/post/${post.slug || ''}`}
-						excerpt={post.excerpt || ''}
-						featureImage={post.feature_image?.url || ''}
-						authorName={post.author?.name || ''}
-						authorUrl={post.author ? `/author/${post.author.slug || ''}` : ''}
-						authorProfileImage={post.author?.profile_image?.url || ''}
-						tagName={post.tags && post.tags.length > 0 ? post.tags[0].name || '' : ''}
-						tagUrl={post.tags && post.tags.length > 0 ? `/tag/${post.tags[0].slug || ''}` : ''}
-						readingTime={`${post.reading_time || 0} min`}
-						publishedAt={post.published_at || ''}
-						density="normal"
-					/>
+					<Card density="normal">
+						{#snippet top()}
+							{#if post.feature_image?.url}
+								<img
+									src={post.feature_image.url}
+									alt={post.title || 'Sin título'}
+									style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; margin-bottom: var(--space-3);"
+								/>
+							{/if}
+							{#if post.author?.name}
+								<div
+									style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2);"
+								>
+									{#if post.author.profile_image?.url}
+										<img
+											src={post.author.profile_image.url}
+											alt={post.author.name}
+											style="width: 20px; height: 20px; border-radius: 50%;"
+										/>
+									{:else}
+										<div
+											style="width: 20px; height: 20px; background: var(--color-primary); border-radius: 50%;"
+										></div>
+									{/if}
+									<span
+										style="font-size: var(--text-xs); color: var(--color-on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em;"
+									>
+										{post.author.name}
+									</span>
+								</div>
+							{/if}
+						{/snippet}
+						{#snippet body()}
+							{#if post.title}
+								<a
+									href={`/post/${post.slug || ''}`}
+									style="text-decoration: none; color: var(--color-on-surface);"
+								>
+									<h3
+										style="margin: 0 0 var(--space-2) 0; font-size: var(--text-lg); font-weight: 600; line-height: 1.2;"
+									>
+										{post.title}
+									</h3>
+								</a>
+							{/if}
+							{#if post.excerpt}
+								<p
+									style="margin: 0 0 var(--space-2) 0; font-size: var(--text-sm); color: var(--color-on-surface-variant); line-height: 1.5;"
+								>
+									{post.excerpt}
+								</p>
+							{/if}
+						{/snippet}
+						{#snippet footer()}
+							<div
+								style="display: flex; align-items: center; justify-content: space-between; font-size: var(--text-xs); color: var(--color-on-surface-variant);"
+							>
+								<div>
+									{#if post.published_at}
+										<time datetime={post.published_at}
+											>{new Date(post.published_at).toLocaleDateString('es-ES', {
+												year: 'numeric',
+												month: 'short',
+												day: 'numeric'
+											})}</time
+										>
+									{/if}
+									{#if post.reading_time}
+										<span> • {post.reading_time} min</span>
+									{/if}
+								</div>
+								{#if post.tags && post.tags.length > 0}
+									<a
+										href={`/tag/${post.tags[0].slug || ''}`}
+										style="color: var(--color-primary); text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;"
+									>
+										{post.tags[0].name}
+									</a>
+								{/if}
+							</div>
+						{/snippet}
+					</Card>
 				{/each}
 			</div>
 		{:else}
 			<div class="empty-state">
 				<div class="empty-state__content">
-					<Heading level={3} class="empty-state__title">
-						Sin artículos aún
-					</Heading>
+					<Heading level={3} class="empty-state__title">Sin artículos aún</Heading>
 					<p class="empty-state__description">
 						{author!.name} aún no ha publicado ningún artículo. ¡Vuelve pronto!
 					</p>
-					<Pressable href="/" variant="ghost">
-						Volver al blog
-					</Pressable>
+					<Pressable href="/" variant="ghost">Volver al blog</Pressable>
 				</div>
 			</div>
 		{/if}
