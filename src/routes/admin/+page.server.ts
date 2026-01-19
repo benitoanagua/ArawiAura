@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 		// Get recent posts
 		const recentPostsResult = (await db.query(
-			'SELECT id, title, published, created_at, feature_image, IF(published = true, "published", "draft") as status FROM post ORDER BY updated_at DESC LIMIT 5'
+			'SELECT id, title, published, created_at, feature_image, CASE WHEN published = true THEN "published" ELSE "draft" END as status FROM post ORDER BY updated_at DESC LIMIT 5'
 		)) as any[];
 		const recentPosts = (recentPostsResult[0] || []) as Array<{
 			id: string;

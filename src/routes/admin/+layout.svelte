@@ -20,8 +20,4 @@
 	];
 </script>
 
-<AdminLayout {navItems} title="Admin Dashboard" user={data?.user}>
-	{#snippet children()}
-		{@render children?.()}
-	{/snippet}
-</AdminLayout>
+<AdminLayout {navItems} title="Admin Dashboard" user={data?.user} {children}></AdminLayout>
